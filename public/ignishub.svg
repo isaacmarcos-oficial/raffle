@@ -1,0 +1,9 @@
+<svg 
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ width="1082.5px" height="1082.5px">
+<path fill-rule="evenodd"  stroke="rgb(0, 0, 0)" stroke-width="1px" stroke-linecap="butt" stroke-linejoin="miter" fill="rgb(0, 0, 0)"
+ d="M76.060,1.060 L1005.940,1.060 C1047.361,1.060 1080.940,34.639 1080.940,76.060 L1080.940,1005.940 C1080.940,1047.361 1047.361,1080.940 1005.940,1080.940 L76.060,1080.940 C34.639,1080.940 1.060,1047.361 1.060,1005.940 L1.060,76.060 C1.060,34.639 34.639,1.060 76.060,1.060 Z"/>
+<text kerning="auto" font-family="Myriad Pro" fill="rgb(0, 0, 0)" transform="matrix( 25.3762335910948, 0, 0, 25.3762335910948,267.121835523136, 502.004934364379)" font-size="10px"><tspan font-size="10px" font-family="GeneralSansVariable" fill="#FFFFFF">IGNIS</tspan></text>
+<text kerning="auto" font-family="Myriad Pro" fill="rgb(0, 0, 0)" transform="matrix( 30.8889878478422, 0, 0, 30.8889878478422,280.372280944452, 786.055951391369)" font-size="10px"><tspan font-size="10px" font-family="GeneralSansVariable" font-weight="bold" fill="#FFFFFF">HUB</tspan></text>
+</svg>
