@@ -7,16 +7,17 @@ type SidebarProps = {
   tickets: Ticket[];
   totalNumbers: number;
   onTogglePayment: (ticketNumber: string) => void;
+  onReleaseNumber: (ticketNumber: string) => void;
 };
 
-export function Sidebar({ tickets, totalNumbers, onTogglePayment }: SidebarProps) {
+export function Sidebar({ tickets, totalNumbers, onTogglePayment, onReleaseNumber }: SidebarProps) {
   
   return (
     <div className="space-y-6">
       <div className="bg-gray-800 p-6 rounded-lg shadow hidden md:block">
       <Summary totalNumbers={totalNumbers} soldTickets={tickets.length} />
       </div>
-      <SoldTicketsList tickets={tickets} onTogglePayment={onTogglePayment} />
+      <SoldTicketsList tickets={tickets} onTogglePayment={onTogglePayment} onReleaseNumber={onReleaseNumber} />
     </div>
   );
 }

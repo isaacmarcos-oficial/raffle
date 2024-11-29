@@ -14,7 +14,7 @@ export function TicketForm({ selectedNumber, onSubmit, onClose }: TicketFormProp
   const [phone, setPhone] = useState('');
   const [paid, setPaid] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const ticket: Ticket = {
@@ -25,8 +25,25 @@ export function TicketForm({ selectedNumber, onSubmit, onClose }: TicketFormProp
       purchaseDate: new Date(),
     };
 
-    onSubmit(ticket);
-    onClose();
+    try {
+      const response = await fetch("/api/tickets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ticket),
+      });
+  
+      if (response.ok) {
+        const savedTicket = await response.json();
+        onSubmit(savedTicket); // Atualiza o estado local com o ticket salvo
+        onClose();
+      } else {
+        console.error("Failed to save ticket");
+      }
+    } catch (error) {
+      console.error("Error submitting ticket:", error);
+    }
   };
 
   return (

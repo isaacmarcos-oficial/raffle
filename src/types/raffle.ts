@@ -1,4 +1,5 @@
 export interface Ticket {
+    id?: string;
     number: string;
     buyer: string;
     phone: string;

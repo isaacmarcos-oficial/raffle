@@ -3,9 +3,10 @@ import { Ticket } from "@/types/raffle";
 interface SoldTicketsListProps {
   tickets: Ticket[];
   onTogglePayment: (ticketNumber: string) => void;
+  onReleaseNumber : (ticketNumber: string) => void;
 }
 
-export function SoldTicketsList({ tickets, onTogglePayment }: SoldTicketsListProps) {
+export function SoldTicketsList({ tickets, onTogglePayment, onReleaseNumber }: SoldTicketsListProps) {
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow">
       <h2 className="text-xl font-semibold mb-4">Números Vendidos</h2>
@@ -22,13 +23,19 @@ export function SoldTicketsList({ tickets, onTogglePayment }: SoldTicketsListPro
                 <p> {ticket.buyer}</p>
                 <p> {ticket.phone} </p>
               </div>
-              <div>
+              <div className="flex gap-2">
                 <button
                   className={`px-3 py-1 text-sm font-semibold rounded ${ticket.paid ? "bg-green-500 text-white" : "bg-yellow-500 text-gray-800"
                     }`}
                   onClick={() => onTogglePayment(ticket.number)}
                 >
                   {ticket.paid ? "Pago" : "Não Pago"}
+                </button>
+                <button
+                  onClick={() => onReleaseNumber(ticket.number)}
+                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition-colors"
+                >
+                  Liberar
                 </button>
               </div>
             </div>
