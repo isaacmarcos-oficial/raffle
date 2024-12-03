@@ -14,9 +14,6 @@ export function Sidebar({ tickets, totalNumbers, onTogglePayment, onReleaseNumbe
   
   return (
     <div className="space-y-6">
-      <div className="bg-gray-800 p-6 rounded-lg shadow hidden md:block">
-      <Summary totalNumbers={totalNumbers} soldTickets={tickets.length} />
-      </div>
       <SoldTicketsList tickets={tickets} onTogglePayment={onTogglePayment} onReleaseNumber={onReleaseNumber} />
     </div>
   );

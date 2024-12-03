@@ -1,14 +1,17 @@
 import { Ticket } from "@/types/raffle";
+import { Card } from "./ui/card";
+import { Ban, CheckCircle } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface SoldTicketsListProps {
   tickets: Ticket[];
   onTogglePayment: (ticketNumber: string) => void;
-  onReleaseNumber : (ticketNumber: string) => void;
+  onReleaseNumber: (ticketNumber: string) => void;
 }
 
 export function SoldTicketsList({ tickets, onTogglePayment, onReleaseNumber }: SoldTicketsListProps) {
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow">
+    <Card className="">
       <h2 className="text-xl font-semibold mb-4">Números Vendidos</h2>
       <ul className="space-y-2">
         {tickets.map((ticket) => (
@@ -18,30 +21,39 @@ export function SoldTicketsList({ tickets, onTogglePayment, onReleaseNumber }: S
               }`}
           >
             <div className="flex text-sm justify-between items-center text-gray-800">
-              <div>
-                <p> Nº: <strong>{ticket.number}</strong></p>
-                <p> {ticket.buyer}</p>
-                <p> {ticket.phone} </p>
-              </div>
               <div className="flex gap-2">
-                <button
-                  className={`px-3 py-1 text-sm font-semibold rounded ${ticket.paid ? "bg-green-500 text-white" : "bg-yellow-500 text-gray-800"
-                    }`}
-                  onClick={() => onTogglePayment(ticket.number)}
-                >
-                  {ticket.paid ? "Pago" : "Não Pago"}
-                </button>
-                <button
-                  onClick={() => onReleaseNumber(ticket.number)}
-                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition-colors"
-                >
-                  Liberar
-                </button>
+                <p> <strong>{ticket.number}</strong></p>
+                <p> {ticket.buyer}</p>
+              </div>
+              <div className="flex gap-2 items-center">
+                {ticket.paid ? null :
+                  <Button
+                    size="icon"
+                    className={"bg-green-600 hover:bg-green-800 text-white h-7 w-7  text-xs"}
+                    onClick={() => onTogglePayment(ticket.number)}
+                  >
+                    {ticket.paid ? null : <button
+                      onClick={() => onReleaseNumber(ticket.number)}>
+                      <CheckCircle className="h-4 w-4" />
+                    </button>}
+                  </Button>
+                }
+
+                {ticket.paid ? null :
+                  <Button
+                    size="icon"
+                    onClick={() => onReleaseNumber(ticket.number)}
+                    className="bg-red-600 hover:bg-red-700 text-white h-7 w-7 text-xs"
+                  >
+                    <Ban className="h-4 w-4" />
+                  </Button>
+                }
+
               </div>
             </div>
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 }

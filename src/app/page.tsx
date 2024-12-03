@@ -1,134 +1,87 @@
-"use client"
-import { type Ticket as TicketType } from '../types/raffle';
-import { useEffect, useState } from "react";
-import { TicketForm } from "@/components/TicketForm";
-import { Sidebar } from "@/components/Sidebar";
-import { MainContent } from "@/components/MainContent";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Gift, Ticket, Users } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
-  const [tickets, setTickets] = useState<TicketType[]>([]);
-  const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
-  const TOTAL_NUMBERS = 200;
-
-  useEffect(() => {
-    async function fetchTickets() {
-      try {
-        const response = await fetch("/api/tickets");
-        if (response.ok) {
-          const data = await response.json();
-          setTickets(data);
-        } else {
-          console.error("Failed to fetch tickets");
-        }
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-      }
-    }
-
-    fetchTickets();
-  }, []);
-
-  const handleTicketSubmit = async (ticket: Omit<TicketType, "paid">) => {
-    try {
-      const response = await fetch("/api/tickets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(ticket),
-      });
-
-      if (response.ok) {
-        const savedTicket = await response.json();
-        setTickets((prevTickets) => [...prevTickets, savedTicket]);
-      } else {
-        console.error("Failed to save ticket");
-      }
-    } catch (error) {
-      console.error("Error submitting ticket:", error);
-    }
-  };
-
-  const handleTogglePayment = async (ticketNumber: string) => {
-    const ticketToUpdate = tickets.find((ticket) => ticket.number === ticketNumber);
-    if (!ticketToUpdate) return;
-  
-    const updatedPaidStatus = !ticketToUpdate.paid;
-  
-    try {
-      const response = await fetch(`/api/tickets/${ticketToUpdate.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ paid: updatedPaidStatus }),
-      });
-  
-      if (response.ok) {
-        const updatedTicket = await response.json();
-        setTickets((prevTickets) =>
-          prevTickets.map((ticket) =>
-            ticket.id === updatedTicket.id ? updatedTicket : ticket
-          )
-        );
-      } else {
-        console.error("Failed to update ticket payment status");
-      }
-    } catch (error) {
-      console.error("Error updating ticket payment status:", error);
-    }
-  };
-  
-  const handleReleaseNumber = async (ticketNumber: string) => {
-    const ticketToDelete = tickets.find((ticket) => ticket.number === ticketNumber);
-    if (!ticketToDelete) return;
-  
-    try {
-      const response = await fetch(`/api/tickets/${ticketToDelete.id}`, {
-        method: "DELETE",
-      });
-  
-      if (response.ok) {
-        setTickets((prevTickets) =>
-          prevTickets.filter((ticket) => ticket.id !== ticketToDelete.id)
-        );
-      } else {
-        console.error("Failed to delete ticket");
-      }
-    } catch (error) {
-      console.error("Error deleting ticket:", error);
-    }
-  };
-  
-
   return (
-    <div className="min-h-screen bg-gray-950">
-      <main className="max-w-[1000px] container mx-auto p-4">
-        <div className="grid md:grid-cols-[2fr,1fr] gap-6">
+    <div className="flex flex-col min-h-screen">
 
-          <MainContent
-            tickets={tickets}
-            totalNumbers={TOTAL_NUMBERS}
-            onTicketSelect={setSelectedNumber}
-          />
-
-          <Sidebar
-            tickets={tickets}
-            totalNumbers={TOTAL_NUMBERS}
-            onTogglePayment={handleTogglePayment}
-            onReleaseNumber={handleReleaseNumber}
-          />
-
-        </div>
+      <main className="flex-1">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                  O seu sorteio facilitado com o Raffle
+                </h1>
+                <p className="mx-auto max-w-[500px] text-zinc-300 md:text-xl dark:text-zinc-400">
+                  Crie e participe de rifas e sorteio emocionantes. Sua chance de ganhar muito espera!
+                </p>
+              </div>
+              <div className="space-x-4">
+                <Button asChild>
+                  <Link href="/create">
+                    Criar sorteio
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/sorteios">Ver sorteios</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="features" className="w-full flex py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800 items-center justify-center">
+          <div className="container px-4 md:px-6 max-w-[1100px]">
+            <h2 id="features" className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">Funcionalidades</h2>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
+                <Ticket className="h-12 w-12 mb-2" />
+                <h3 className="text-xl font-bold">Rifa</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-center">
+                  Crie rifas gerenciando cada número.
+                </p>
+              </div>
+              <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
+                <Gift className="h-12 w-12 mb-2" />
+                <h3 className="text-xl font-bold">Sorteio</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-center">
+                 Crie sorteios fácil de gerenciar.
+                </p>
+              </div>
+              <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
+                <Users className="h-12 w-12 mb-2" />
+                <h3 className="text-xl font-bold">Facil participação</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-center">
+                Participe de sorteios com apenas alguns cliques e aumente suas chances de ganhar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Pronto para começar?</h2>
+                <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
+                  Crie seu próprio sorteio ou navegue pelos existentes. Sua próxima grande vitória pode estar a apenas um clique de distância!
+                </p>
+              </div>
+              <div className="space-x-4">
+                <Button asChild>
+                  <Link href="/create">Criar sorteio</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/sorteios">Ver sorteios</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
-
-      {selectedNumber && (
-        <TicketForm
-          selectedNumber={selectedNumber}
-          onSubmit={handleTicketSubmit}
-          onClose={() => setSelectedNumber(null)}
-        />
-      )}
+      
     </div>
-  );
+  )
 }

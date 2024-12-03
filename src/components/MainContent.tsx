@@ -2,6 +2,7 @@ import React from "react";
 import { TicketGrid } from "@/components/TicketGrid";
 import { Ticket } from "../types/raffle";
 import { Summary } from "./Sumary";
+import { Card } from "./ui/card";
 
 type MainContentProps = {
   tickets: Ticket[];
@@ -15,18 +16,15 @@ export function MainContent({
   onTicketSelect,
 }: MainContentProps) {
   return (
-    <div className="space-y-6">
-      <div className="bg-gray-800 p-6 rounded-lg shadow">
+    <div className="flex w-full space-y-6">
+      <Card className="w-full p-6">
         <h2 className="text-xl font-semibold mb-4">Escolha seu Número</h2>
         <TicketGrid
           tickets={tickets}
           totalNumbers={totalNumbers}
           onTicketSelect={onTicketSelect}
         />
-      </div>
-      <div className="bg-gray-800 p-6 rounded-lg shadow md:hidden">
-        <Summary totalNumbers={totalNumbers} soldTickets={tickets.length} />
-      </div>
+      </Card>
     </div>
   );
 }
