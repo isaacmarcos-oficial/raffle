@@ -50,13 +50,13 @@ export const raffles = [
 ]
 
 export const lotteryNumbers = [
-    { id: '5050333', value: 'MIL REAIS', status: 'available' },
-    { id: '2144742', value: 'Trezentos reais', status: 'available' },
-    { id: '9965039', value: 'Quinhentos reais', status: 'available' },
-    { id: '2686300', value: 'MIL REAIS', status: 'available' },
-    { id: '7355435', value: 'Trezentos reais', status: 'available' },
-    { id: '5072549', value: 'Trezentos reais', winner: 'João S.' },
-    { id: '5604169', value: 'Duzentos reais', winner: 'Clayton F.' },
-    { id: '9322643', value: 'Quinhentos reais', status: 'available' },
+    { id: 5050333, value: 'MIL REAIS', status: 'available' },
+    { id: 2144742, value: 'Trezentos reais', status: 'available' },
+    { id: 9965039, value: 'Quinhentos reais', status: 'available' },
+    { id: 2686300, value: 'MIL REAIS', status: 'available' },
+    { id: 7355435, value: 'Trezentos reais', status: 'available' },
+    { id: 5072549, value: 'Trezentos reais', winner: 'João S.' },
+    { id: 5604169, value: 'Duzentos reais', winner: 'Clayton F.' },
+    { id: 9322643, value: 'Quinhentos reais', status: 'available' },
     // Add more mock data as needed
   ]

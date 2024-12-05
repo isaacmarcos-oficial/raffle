@@ -1,21 +1,22 @@
 "use client"
 import { type Ticket as TicketType } from '../../../types/raffle';
 import { useEffect, useState } from "react";
-import { TicketForm } from "@/components/TicketForm";
-import { Sidebar } from "@/components/Sidebar";
-import { MainContent } from "@/components/MainContent";
+import { TicketForm } from "@/app/sorteios/rifa/_components/TicketForm";
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Calendar, Users } from 'lucide-react';
+import TicketsDrawer from './_components/TicketDrawer';
+import { TicketGrid } from './_components/TicketGrid';
 
 interface RifaProps {
   title: string;
   endDate: string;
   participants: number;
   price: number;
+  initialTickets?: TicketType[]
 }
 
-export default function Rifa({ title, endDate, participants, price }: RifaProps) {
-  const [tickets, setTickets] = useState<TicketType[]>([]);
+export default function Rifa({ title, endDate, participants, initialTickets =[] }: RifaProps) {
+  const [tickets, setTickets] = useState<TicketType[]>(initialTickets);
   const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
   const TOTAL_NUMBERS = 200;
 
@@ -58,69 +59,18 @@ export default function Rifa({ title, endDate, participants, price }: RifaProps)
     }
   };
 
-  const handleTogglePayment = async (ticketNumber: string) => {
-    const ticketToUpdate = tickets.find((ticket) => ticket.number === ticketNumber);
-    if (!ticketToUpdate) return;
-
-    const updatedPaidStatus = !ticketToUpdate.paid;
-
-    try {
-      const response = await fetch(`/api/tickets/${ticketToUpdate.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ paid: updatedPaidStatus }),
-      });
-
-      if (response.ok) {
-        const updatedTicket = await response.json();
-        setTickets((prevTickets) =>
-          prevTickets.map((ticket) =>
-            ticket.id === updatedTicket.id ? updatedTicket : ticket
-          )
-        );
-      } else {
-        console.error("Failed to update ticket payment status");
-      }
-    } catch (error) {
-      console.error("Error updating ticket payment status:", error);
-    }
-  };
-
-  const handleReleaseNumber = async (ticketNumber: string) => {
-    const ticketToDelete = tickets.find((ticket) => ticket.number === ticketNumber);
-    if (!ticketToDelete) return;
-
-    try {
-      const response = await fetch(`/api/tickets/${ticketToDelete.id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setTickets((prevTickets) =>
-          prevTickets.filter((ticket) => ticket.id !== ticketToDelete.id)
-        );
-      } else {
-        console.error("Failed to delete ticket");
-      }
-    } catch (error) {
-      console.error("Error deleting ticket:", error);
-    }
-  };
-
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen">
 
       <main className="flex flex-col max-w-[1000px] container mx-auto p-4 gap-4">
         <Card className='w-full p-0 h-[200px] flex flex-col items-center justify-center overflow-hidden'>
-          <div className="bg-gray-800 w-full h-full flex items-center justify-center">
+          <div className=" w-full h-full flex items-center justify-center">
             IMAGEM EM BREVE
           </div>
 
           <div className="flex w-full py-2 px-4 justify-between items-center space-y-2 mt-auto">
-            <h1 className="text-lg font-bold text-white">{title}</h1>
+            <h1 className="text-lg font-bold">{title}</h1>
             <div className="flex items-center justify-center gap-4">
               <div className="flex items-center">
                 <Calendar className="text-green-500 h-4 w-4 mr-2" />
@@ -134,6 +84,8 @@ export default function Rifa({ title, endDate, participants, price }: RifaProps)
 
           </div>
         </Card>
+
+        <TicketsDrawer/>
 
         <div className="grid grid-cols-3 gap-4">
           <Card className='flex flex-col gap-2'>
@@ -150,18 +102,11 @@ export default function Rifa({ title, endDate, participants, price }: RifaProps)
           </Card>
         </div>
         <div className="flex w-full gap-6">
-          <MainContent
+          <TicketGrid
             tickets={tickets}
             totalNumbers={TOTAL_NUMBERS}
             onTicketSelect={setSelectedNumber}
           />
-
-          {/* <Sidebar
-            tickets={tickets}
-            totalNumbers={TOTAL_NUMBERS}
-            onTogglePayment={handleTogglePayment}
-            onReleaseNumber={handleReleaseNumber}
-          /> */}
 
         </div>
       </main>

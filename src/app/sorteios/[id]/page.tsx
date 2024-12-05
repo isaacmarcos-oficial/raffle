@@ -2,24 +2,11 @@ import Rifa from "../rifa/page";
 import Lottery from "../titulo/page";
 import { raffles } from "@/app/api/tickets/raffles";
 
-interface Params {
-  params: { id: string };
-}
+export default async function RafflePage({ params }: {params: Promise <{ id: string}>}) {
+  const { id } = await params;
+  const raffle = raffles.find((r) => r.id === Number(id));
 
-export async function generateStaticParams() {
-  return raffles.map((raffle) => ({
-    id: raffle.id.toString(),
-  }));
-}
-
-export default function RafflePage({ params }: Params) {
-  const raffle = raffles.find((r) => r.id === parseInt(params.id, 10));
-
-  if (!raffle) {
-    <div>
-      Não foi possível encontrar as rifas
-    </div> // Redireciona para a página 404 caso o ID não seja encontrado
-  }
+  if (!raffle) return <div>Não foi possível encontrar as rifas</div>
 
   return (
     raffle.type === "rifa" ? (

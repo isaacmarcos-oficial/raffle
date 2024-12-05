@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 
 interface LotteryNumber {
-  id: string
+  id: number
   value: string
   status?: string
   winner?: string

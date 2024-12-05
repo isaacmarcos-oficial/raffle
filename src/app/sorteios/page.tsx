@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Gift, LogIn, Ticket, Users } from "lucide-react"
@@ -41,7 +41,7 @@ export default function Raffles() {
                             </Select>
                         </div>
 
-                        <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
+                        <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                             {raffles.map((raffle) => (
                                 <Card key={raffle.id} className="gap-1 p-4">
                                     <CardHeader className="items-start gap-2 p-0">

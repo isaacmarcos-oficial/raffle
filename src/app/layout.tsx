@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "IGNIS HUB | Transformando ideias em realidade digital",
@@ -18,12 +19,17 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/ignishub.png" sizes="any" />
       </head>
-      <body
-        className="antialiased"
-      >
-        <Header/>
-        {children}
-        <Footer/>
+      <body className="antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          {children}
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

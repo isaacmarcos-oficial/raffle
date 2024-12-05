@@ -1,5 +1,4 @@
 'use client'
-
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -17,8 +16,8 @@ const priceOptions = [
 export function LotteryTicketsSelector({ onTicketsSelect }: { onTicketsSelect: (price: number) => void }) {
   return (
     <div className="flex flex-col gap-2">
-      <Card className="flex bg-green-950 items-center justify-center p-2 w-full rounded">
-        <p className='font-bold antialiased'>
+      <Card className="flex items-center justify-center p-2 w-full rounded">
+        <p className='font-bold antialiased '>
           Quanto mais títulos, mais chances de ganhar!
         </p>
       </Card>
@@ -29,11 +28,11 @@ export function LotteryTicketsSelector({ onTicketsSelect }: { onTicketsSelect: (
             variant="outline"
             onClick={() => onTicketsSelect(option.value)}
             className={cn(
-              "h-16 text-lg font-semibold border-gray-800 bg-gray-900 hover:bg-gray-800 gap-1",
+              "h-16 text-lg font-semibold",
               option.value === 200 && "border-green-500 text-green-500 hover:bg-green-500/10"
             )}
           >
-            <Plus className='h-4 w-4' />
+            <Plus className='h-4 w-4 text-green-500' />
             {option.label}
           </Button>
         ))}

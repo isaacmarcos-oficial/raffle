@@ -1,7 +1,7 @@
 import { Ticket } from "@/types/raffle";
-import { Card } from "./ui/card";
+import { Card } from "../../../../components/ui/card";
 import { Ban, CheckCircle } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../../../../components/ui/button";
 
 interface SoldTicketsListProps {
   tickets: Ticket[];

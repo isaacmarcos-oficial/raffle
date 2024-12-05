@@ -1,6 +1,6 @@
 "use client"
 import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ShoppingCart } from 'lucide-react'
 
 interface TicketPurchaseProps {
   price: number
@@ -18,13 +18,10 @@ export function TicketPurchase({ ticketCount, price }: TicketPurchaseProps) {
     <div className="w-full">
       <Button
         onClick={handlePurchase}
-        className="bg-green-500 text-white hover:bg-green-600 flex items-center gap-4 p-6 w-full"
+        className=" bg-green-500 text-white hover:bg-green-500/80 flex items-center justify-between gap-4 p-6 w-full"
       >
-        <ArrowRight className="w-8 h-8 p-1 bg-white rounded text-green-500" />
-        <div>
-          <div className="font-bold">Participar</div>
+        <ShoppingCart className="w-8 h-8 p-1 bg-white rounded text-green-500" />
           <div className="text-sm font-bold">R$ {(ticketCount * price).toFixed(2)}</div>
-        </div>
       </Button>
     </div>
   )
