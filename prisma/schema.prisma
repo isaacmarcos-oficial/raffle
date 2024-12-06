@@ -7,11 +7,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RaffleType {
+  FIXED
+  ALEATORY
+}
+
+model Raffle {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  code         String     @unique // Código de identificação (ex.: ABC123)
+  type         RaffleType // Tipo da rifa (FIXED ou ALEATORY)
+  name         String // Nome da rifa
+  description  String // Descrição da rifa
+  quote        Int // Quantidade de números disponíveis
+  price        Float // Preço por número
+  startDate    DateTime // Data de início
+  drawDate     DateTime // Data do sorteio
+  pixCode      String // Chave Pix para pagamento
+  contactPhone String // Telefone para envio do comprovante
+  minQuotes    Int? // Quantidade mínima (aplicável apenas para rifas aleatórias)
+  digitLength  Int? // Número de dígitos para rifas aleatórias
+  ownerId      String     @db.ObjectId
+  Owner        Owner      @relation(fields: [ownerId], references: [id])
+  tickets      Ticket[] // Tickets vinculados à rifa
+}
+
 model Ticket {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  number       String
-  buyer        String
-  phone        String?
-  paid         Boolean
-  purchaseDate DateTime
+  number       String // Número escolhido ou atribuído
+  paid         Boolean // Se o pagamento foi aprovado
+  purchaseDate DateTime // Data da compra
+  raffleId     String?  @db.ObjectId
+  Raffle       Raffle?  @relation(fields: [raffleId], references: [id])
+  buyerId      String?  @db.ObjectId
+  buyer        Buyer?   @relation(fields: [buyerId], references: [id]) // Relacionamento com o comprador
+}
+
+model Owner {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  email    String   @unique // E-mail do owner para login
+  password String // Senha do owner (para integrar ao NextAuth)
+  name     String
+  phone    String
+  raffles  Raffle[] // Rifas criadas pelo owner
+}
+
+model Buyer {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String // Nome do comprador
+  phone   String   @unique // Telefone como identificador único
+  tickets Ticket[] // Tickets adquiridos pelo comprador
 }
