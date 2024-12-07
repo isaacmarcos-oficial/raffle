@@ -5,6 +5,7 @@ import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Session } from "next-auth";
 import SessionProviderClientComponent from "@/providers/SessionProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ export default async function RootLayout({
             <Header />
             {children}
             <Footer />
+            <Toaster />
           </SessionProviderClientComponent>
         </ThemeProvider>
       </body>
