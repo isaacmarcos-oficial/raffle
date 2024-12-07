@@ -2,6 +2,7 @@ import React from 'react';
 import { Ticket } from 'lucide-react';
 import Link from 'next/link';
 import { ModeToggle } from './ModeTogle';
+import AuthButton from './authButton';
 
 export default function Header() {
   return (
@@ -11,9 +12,13 @@ export default function Header() {
           <Ticket className="h-8 w-8" />
           <span className="ml-2 text-2xl font-bold">Raffle</span>
         </Link>
-        
+
 
         <nav className="ml-auto items-center flex gap-4 sm:gap-6">
+          <AuthButton/>
+          {/* <Link className="text-sm font-semibold hover:underline underline-offset-4" href="/login">
+            Login
+          </Link> */}
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#features">
             Funcionalidades
           </Link>
@@ -23,7 +28,7 @@ export default function Header() {
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#">
             Sobre
           </Link>
-          <ModeToggle/>
+          <ModeToggle />
         </nav>
       </div>
     </header>
