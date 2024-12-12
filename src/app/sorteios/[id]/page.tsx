@@ -1,28 +1,47 @@
 import Rifa from "../rifa/page";
 import Lottery from "../titulo/page";
-import { raffles } from "@/app/api/tickets/raffles";
 
-export default async function RafflePage({ params }: {params: Promise <{ id: string}>}) {
-  const { id } = await params;
-  const raffle = raffles.find((r) => r.id === Number(id));
+export default async function RafflePage({ params }: { params: Promise<{ id?: string }> }) {
+  const resolvedParams = await params;
+  console.log("Parâmetros resolvidos:", resolvedParams);
 
-  if (!raffle) return <div>Não foi possível encontrar as rifas</div>
+  const code = resolvedParams.id;
+  console.info("verificação do código:", code)
+
+  if (!code) {
+    return <div>Erro: Código da campanha não encontrado.</div>;
+  }
+
+  const response = await fetch(`${process.env.API_URL}/api/campaign/${code}`, {
+    cache: "no-cache",
+  });
+
+  if (!response.ok) {
+    return <div>Erro ao carregar a campanha
+      {response.body && <pre>{JSON.stringify(await response.json(), null, 2)}</pre>}
+    </div>;
+  }
+
+  const campaign = await response.json();
+
+  if (!campaign) {
+    return <div>Campanha não encontrada</div>;
+  }
 
   return (
-    raffle.type === "rifa" ? (
+    campaign.type === "FIXED" ? (
       <Rifa
-        title={raffle.title}
-        endDate={raffle.endDate}
-        participants={raffle.participants}
-        price={raffle.price}
+        title={campaign.title}
+        description={campaign.description}
+        price={campaign.price}
+        drawDate={campaign.drawDate}
       />
     ) : (
       <Lottery
-        id={raffle.id}
-        title={raffle.title}
-        endDate={raffle.endDate}
-        participants={raffle.participants}
-        price={raffle.price}
+        title={campaign.title}
+        description={campaign.description}
+        price={campaign.price}
+        drawDate={campaign.drawDate}
       />
     )
   )

@@ -21,7 +21,12 @@ export function TicketPurchase({ ticketCount, price }: TicketPurchaseProps) {
         className=" bg-green-500 text-white hover:bg-green-500/80 flex items-center justify-between gap-4 p-6 w-full"
       >
         <ShoppingCart className="w-8 h-8 p-1 bg-white rounded text-green-500" />
-          <div className="text-sm font-bold">R$ {(ticketCount * price).toFixed(2)}</div>
+        <div className="text-sm font-bold">
+          {new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }).format(price)}
+        </div>
       </Button>
     </div>
   )

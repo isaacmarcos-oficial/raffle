@@ -7,16 +7,11 @@ import { LotteryTicketsSelector } from './_components/lotteryTicketsSelector'
 import { TicketInput } from './_components/ticketInput'
 import { useState } from 'react'
 import { TicketPurchase } from './_components/ticketPurchase'
+import { Campaign } from '@/types/campaign'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
-interface LotteryProps {
-  id: number
-  title: string;
-  endDate: string;
-  participants: number;
-  price: number;
-}
-
-export default function LotteryPage({ title, price, endDate, participants }: LotteryProps) {
+export default function LotteryPage({ title, drawDate, price, description }: Campaign) {
   const [ticketCount, setTicketCount] = useState(1)
 
   const handleTicketsSelect = (price: number) => {
@@ -54,11 +49,15 @@ export default function LotteryPage({ title, price, endDate, participants }: Lot
                 <div className="flex items-center justify-center gap-4">
                   <div className="flex items-center">
                     <Calendar className="text-green-500 h-4 w-4 mr-2" />
-                    <p className="text-xs ">{endDate}</p>
+                    <p className="text-xs ">
+                      {format(new Date(drawDate), "dd/MM/yyyy", {
+                        locale: ptBR,
+                      })}
+                    </p>
                   </div>
                   <div className="flex items-center">
                     <Users className="text-green-500 h-4 w-4 mr-2" />
-                    <p className="text-xs">{participants}</p>
+                    <p className="text-xs">BREVE</p>
                   </div>
                 </div>
 
@@ -87,18 +86,10 @@ export default function LotteryPage({ title, price, endDate, participants }: Lot
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold">Descrição/ Regulamento</h2>
-                  
+
                 </div>
                 <div className="space-y-4">
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil dolor, consequuntur ex exercitationem quis perferendis culpa esse? Ut dolores consequuntur quaerat. Doloremque officiis temporibus exercitationem molestiae autem eveniet quisquam.
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae rem, ipsa animi maxime totam consequuntur exercitationem reprehenderit. Explicabo culpa aperiam odit amet, reprehenderit nam iure est mollitia. Provident, atque nisi.
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae rem, ipsa animi maxime totam consequuntur exercitationem reprehenderit. Explicabo culpa aperiam odit amet, reprehenderit nam iure est mollitia. Provident, atque nisi.
-                  </p>
+                  {description}
                 </div>
               </div>
             </Card>

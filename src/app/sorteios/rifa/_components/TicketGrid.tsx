@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Ticket } from '../../../../types/raffle';
+import { type Ticket } from '../../../../types/campaign';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 
 interface TicketGridProps {

@@ -7,8 +7,6 @@ import {
   CardContent,
   Card,
 } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { signIn } from 'next-auth/react'
@@ -50,13 +48,13 @@ export default function Auth() {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">Login</CardTitle>
         <CardDescription>
-          Entre com suas credenciais ou faça login com Google.
+          Faça login com Google.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -65,8 +63,8 @@ export default function Auth() {
                 type="email"
                 {...form.register('email')}
               />
-            </div>
-            <div className="space-y-2">
+            </div> */}
+            {/* <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
@@ -75,14 +73,14 @@ export default function Auth() {
                 type="password"
                 {...form.register('password')}
               />
-            </div>
-            <Button
+            </div> */}
+            {/* <Button
               className="w-full"
               type="submit"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
-            </Button>
+            </Button> */}
             <Button
               className="w-full bg-red-600 text-white hover:bg-red-700"
               type="button"

@@ -1,42 +1,16 @@
 "use client"
-import { type Ticket as TicketType } from '../../../types/raffle';
-import { useEffect, useState } from "react";
+import { Campaign, type Ticket as TicketType } from '../../../types/campaign';
+import { useState } from "react";
 import { TicketForm } from "@/app/sorteios/rifa/_components/TicketForm";
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Calendar, Users } from 'lucide-react';
 import TicketsDrawer from './_components/TicketDrawer';
 import { TicketGrid } from './_components/TicketGrid';
 
-interface RifaProps {
-  title: string;
-  endDate: string;
-  participants: number;
-  price: number;
-  initialTickets?: TicketType[]
-}
-
-export default function Rifa({ title, endDate, participants, initialTickets =[] }: RifaProps) {
-  const [tickets, setTickets] = useState<TicketType[]>(initialTickets);
+export default function Rifa({title, drawDate,}: Campaign) {
+  const [tickets, setTickets] = useState<TicketType[]>([]);
   const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
   const TOTAL_NUMBERS = 200;
-
-  useEffect(() => {
-    async function fetchTickets() {
-      try {
-        const response = await fetch("/api/tickets");
-        if (response.ok) {
-          const data = await response.json();
-          setTickets(data);
-        } else {
-          console.error("Failed to fetch tickets");
-        }
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-      }
-    }
-
-    fetchTickets();
-  }, []);
 
   const handleTicketSubmit = async (ticket: Omit<TicketType, "paid">) => {
     try {
@@ -59,10 +33,8 @@ export default function Rifa({ title, endDate, participants, initialTickets =[] 
     }
   };
 
-
   return (
     <div className="min-h-screen">
-
       <main className="flex flex-col max-w-[1000px] container mx-auto p-4 gap-4">
         <Card className='w-full p-0 h-[200px] flex flex-col items-center justify-center overflow-hidden'>
           <div className=" w-full h-full flex items-center justify-center">
@@ -74,11 +46,11 @@ export default function Rifa({ title, endDate, participants, initialTickets =[] 
             <div className="flex items-center justify-center gap-4">
               <div className="flex items-center">
                 <Calendar className="text-green-500 h-4 w-4 mr-2" />
-                <p className="text-xs ">{endDate}</p>
+                <p className="text-xs ">{drawDate}</p>
               </div>
               <div className="flex items-center">
                 <Users className="text-green-500 h-4 w-4 mr-2" />
-                <p className="text-xs">{participants}</p>
+                <p className="text-xs">200</p>
               </div>
             </div>
 

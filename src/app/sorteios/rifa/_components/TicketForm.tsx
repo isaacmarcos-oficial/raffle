@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { type Ticket } from '../../../../types/raffle';
+import { type Ticket } from '../../../../types/campaign';
 
 interface TicketFormProps {
   selectedNumber: string;

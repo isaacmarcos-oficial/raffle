@@ -22,3 +22,13 @@ export interface RaffleState {
 	tickets: Ticket[];
 	totalNumbers: number;
 }
+
+export interface Campaign {
+  id?: string;
+  description: string
+  title?: string;
+  code?: string;
+  type?: "fixed" | "aleatory";
+  price: number;
+  drawDate: string;
+}

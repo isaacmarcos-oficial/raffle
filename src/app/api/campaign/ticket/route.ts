@@ -6,21 +6,21 @@ const prisma = new PrismaClient();
 // Handle POST (Criar um ticket)
 export async function POST(req: Request) {
   try {
-    const { number, buyerName, phone, paid, purchaseDate, raffleId } = await req.json();
+    const { number, buyerName, phone, paid, purchaseDate, campaignId } = await req.json();
 
-    if (!number || !buyerName || !phone || typeof paid !== "boolean" || !raffleId) {
+    if (!number || !buyerName || !phone || typeof paid !== "boolean" || !campaignId) {
       return NextResponse.json(
         { error: "Campos ausentes ou inválidos" },
         { status: 400 }
       );
     }
 
-    // Verifica se a Raffle existe
-    const raffle = await prisma.raffle.findUnique({
-      where: { id: raffleId },
+    // Verifica se a Campanha existe
+    const campaign = await prisma.campaign.findUnique({
+      where: { id: campaignId },
     });
 
-    if (!raffle) {
+    if (!campaign) {
       return NextResponse.json({ error: "Sorteio não encontrado" }, { status: 404 });
     }
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const existingTicket = await prisma.ticket.findFirst({
       where: {
         number,
-        raffleId,
+        campaignId,
       },
     });
 
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
         number,
         paid,
         purchaseDate: purchaseDate ? new Date(purchaseDate) : new Date(),
-        raffleId,
+        campaignId,
         buyerId: buyer.id, // Relaciona ao comprador
       },
     });
@@ -78,7 +78,7 @@ export async function GET() {
     const tickets = await prisma.ticket.findMany({
       include: {
         buyer: true, // Inclui os dados do comprador
-        Raffle: true, // Inclui os dados da rifa
+        Campaign: true, // Inclui os dados da rifa
       },
     });
 

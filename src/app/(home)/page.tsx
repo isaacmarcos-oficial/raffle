@@ -20,7 +20,7 @@ export default function Home() {
               </div>
               <div className="space-x-4">
                 <Button asChild>
-                  <Link href="/create">
+                  <Link href="/dashboard/create">
                     Criar sorteio
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
@@ -46,7 +46,7 @@ export default function Home() {
               </div>
               <div className="space-x-4">
                 <Button asChild>
-                  <Link href="/create">Criar sorteio</Link>
+                  <Link href="/dashboard/create">Criar sorteio</Link>
                 </Button>
                 <Button variant="outline" asChild>
                   <Link href="/sorteios">Ver sorteios</Link>

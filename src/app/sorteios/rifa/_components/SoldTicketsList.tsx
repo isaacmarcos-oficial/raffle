@@ -1,4 +1,4 @@
-import { Ticket } from "@/types/raffle";
+import { Ticket } from "@/types/campaign";
 import { Card } from "../../../../components/ui/card";
 import { Ban, CheckCircle } from "lucide-react";
 import { Button } from "../../../../components/ui/button";
