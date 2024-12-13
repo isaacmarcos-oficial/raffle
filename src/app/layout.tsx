@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Session } from "next-auth";
 import SessionProviderClientComponent from "@/providers/SessionProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 
 export const metadata: Metadata = {
@@ -34,10 +36,15 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <SessionProviderClientComponent session={session}>
-            <Header />
-            {children}
-            <Footer />
-            <Toaster />
+            <SidebarProvider>
+              <AppSidebar/>
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <Header />
+                {children}
+                <Footer />
+                <Toaster />
+              </div>
+            </SidebarProvider>
           </SessionProviderClientComponent>
         </ThemeProvider>
       </body>

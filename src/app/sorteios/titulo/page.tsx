@@ -7,7 +7,7 @@ import { LotteryTicketsSelector } from './_components/lotteryTicketsSelector'
 import { TicketInput } from './_components/ticketInput'
 import { useState } from 'react'
 import { TicketPurchase } from './_components/ticketPurchase'
-import { Campaign } from '@/types/campaign'
+import type { Campaign } from '@/types/campaign'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 

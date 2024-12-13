@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <section>
+    <section className="">
       {children}
     </section>
   )

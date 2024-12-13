@@ -141,7 +141,7 @@ export function CreateRaffleForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 p-4">
+    <form onSubmit={handleSubmit} className="space-y-6 mt-6">
       <div className="flex gap-2 w-full items-center justify-center">
         <RadioGroup
           defaultValue="rifa"
