@@ -10,25 +10,31 @@ declare module "next-auth" {
 }
 
 export interface Ticket {
-	id?: string;
-	number: string;
-	buyer: string;
-	phone: string;
-	purchaseDate: Date;
-	paid: boolean;
+  id?: string;
+  number: string;
+  buyer: string;
+  phone: string;
+  purchaseDate: Date;
+  paid: boolean;
 }
 
 export interface RaffleState {
-	tickets: Ticket[];
-	totalNumbers: number;
+  tickets: Ticket[];
+  totalNumbers: number;
 }
 
 export interface Campaign {
   id?: string;
-  description: string
+  description: string;
   title?: string;
   code?: string;
   type?: "fixed" | "aleatory";
   price: number;
-  drawDate: string;
+  drawDate: string | Date;
+  quote: number;
+  minQuotes: number;
+  digitLength: number;
+  pixCode: string;
+  contactPhone: string;
+  ownerId: string;
 }

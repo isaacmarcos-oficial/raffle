@@ -52,7 +52,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={pathname === '/update-profile'}>
-              <Link href="/update-profile">
+              <Link href="/dashboard/profile">
                 <User className="h-4 w-4 mr-2" />
                 <span>Atualizar Perfil</span>
               </Link>

@@ -7,14 +7,15 @@ interface ticketsProps {
   ticketCount: number,
   onTicketChange: (count: number) => void
   price: number
+  minQuotes: number
 }
 
 export function TicketInput({ ticketCount,
-  onTicketChange, }: ticketsProps) {
+  onTicketChange, minQuotes }: ticketsProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10)
-    onTicketChange(isNaN(value) || value < 1 ? 1 : value)
+    onTicketChange(isNaN(value) || value < minQuotes ? 1 : value)
   }
 
   const increment = () => {
@@ -22,11 +23,11 @@ export function TicketInput({ ticketCount,
   }
 
   const decrement = () => {
-    onTicketChange(ticketCount > 1 ? ticketCount - 1 : 1)
+    onTicketChange(ticketCount > minQuotes ? ticketCount - 1 : minQuotes)
   }
 
   const reset = () => {
-    onTicketChange(1)
+    onTicketChange(minQuotes)
   }
 
   return (
@@ -40,7 +41,7 @@ export function TicketInput({ ticketCount,
       <Input
         id="ticketCount"
         type="number"
-        min="1"
+        min={minQuotes}
         value={ticketCount}
         onChange={handleInputChange}
         className="text-center font-bold h-12"

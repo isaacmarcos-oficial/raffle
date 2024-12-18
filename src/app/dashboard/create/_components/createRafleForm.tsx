@@ -13,14 +13,12 @@ import { DatePicker } from '@/components/ui/date-picker'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 
-
-
 export function CreateRaffleForm() {
   const { data: session } = useSession();
 
   const [raffleType, setRaffleType] = useState<'rifa' | 'loteria'>('rifa')
   const [formData, setFormData] = useState({
-    name: '',
+    title: '',
     description: '',
     quantity: '',
     minQuantity: '',
@@ -88,7 +86,7 @@ export function CreateRaffleForm() {
 
     // Configura os dados conforme o tipo de campanha
     const payload = {
-      name: formData.name,
+      title: formData.title,
       description: formData.description,
       type: raffleType === 'rifa' ? 'FIXED' : 'ALEATORY',
       ...(raffleType === 'rifa' && { quote: parseInt(formData.quantity) }),
@@ -122,7 +120,7 @@ export function CreateRaffleForm() {
 
       // Limpa o formulário após o sucesso
       setFormData({
-        name: '',
+        title: '',
         description: '',
         quantity: '',
         minQuantity: '',
@@ -159,7 +157,7 @@ export function CreateRaffleForm() {
             onClick={() => setRaffleType('rifa')}
             className={cn(
               'flex gap-4 cursor-pointer border transition-all',
-              raffleType === 'rifa' ? 'border-green-500 shadow-lg' : 'border-gray-300'
+              raffleType === 'rifa' ? 'border-green-500 bg-green-500/20 shadow-lg' : 'border-gray-300'
             )}
           >
 
@@ -179,7 +177,7 @@ export function CreateRaffleForm() {
             onClick={() => setRaffleType('loteria')}
             className={cn(
               'flex gap-4 cursor-pointer border transition-all',
-              raffleType === 'loteria' ? 'border-green-500 shadow-lg' : 'border-gray-300'
+              raffleType === 'loteria' ? 'border-green-500 shadow-lg bg-green-500/20' : 'border-gray-300'
             )}
           >
             <div className="flex-1 flex-col gap-2">
@@ -198,8 +196,8 @@ export function CreateRaffleForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="name">Nome da Rifa</Label>
-        <Input id="name" value={formData.name} onChange={handleChange} required />
+        <Label htmlFor="title">Nome da Rifa</Label>
+        <Input id="title" value={formData.title} onChange={handleChange} required />
       </div>
 
       <div className="space-y-2">

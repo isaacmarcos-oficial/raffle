@@ -1,37 +1,83 @@
-import { Badge } from "@/components/ui/badge"
+'use client'
 import { Button } from "@/components/ui/button"
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
-import React from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Minus, X } from "lucide-react";
+import React, { useEffect, useState } from "react"
 
-export default function TicketsDrawer() {
+interface TicketsDrawerProps {
+  selectedNumbers: string[];
+  onFinalize: () => void;
+  onRemove: (number: string) => void;
+}
+
+export default function TicketsDrawer({ selectedNumbers, onFinalize, onRemove }: TicketsDrawerProps) {
+  const [isMinimized, setIsMinimized] = useState(true);
+
+  useEffect(() => {
+    if (selectedNumbers.length === 0) {
+      // Minimiza se não houver números selecionados
+      setIsMinimized(true); 
+    } else {
+      // Reabre ao selecionar um novo número
+      setIsMinimized(false);
+    }
+  }, [selectedNumbers]);
+
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button variant="outline">Open Drawer</Button>
-      </DrawerTrigger>
-      <DrawerContent className="">
-        <div className=" mx-auto w-full max-w-md">
-          <DrawerHeader>
-            <DrawerTitle>Selecione o seus títulos</DrawerTitle>
-            <DrawerDescription>Após selecionar todos os seus números, clique em comprar</DrawerDescription>
-          </DrawerHeader>
-
-          <div className="flex gap-2 px-4">
-            <Badge>01</Badge>
-            <Badge>13</Badge>
-            <Badge>72</Badge>
-          </div>
-
-          <DrawerFooter className="w-full">
-            <div className="flex w-full gap-2">
-              <Button >Comprar</Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancelar</Button>
-              </DrawerClose>
+    <div
+      className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 transition-all ${isMinimized ? "translate-y-full" : "translate-y-5"
+      }`}
+    >
+      <Card className="w-full">
+        <CardContent className="p-0 -mt-12 w-full">
+          <CardHeader className="p-0 flex justify-between items-center">
+            <Button
+              variant="link"
+              size="icon"
+              onClick={() => setIsMinimized(!isMinimized)}
+              className="text-gray-500"
+            >
+              <Minus className="absolute top-0 h-4 w-4" />
+            </Button>
+            <CardTitle className="text-lg font-bold">
+              Números Selecionados
+            </CardTitle>
+          </CardHeader>
+          {!isMinimized && (
+            <div className="mt-4 grid grid-cols-5 flex-wrap gap-2">
+              {selectedNumbers.length > 0 ? (
+                selectedNumbers.map((number) => (
+                  <span
+                    key={number}
+                    className="p-2 -pl-4 py-2 text-xs font-bold bg-green-500/10 text-green-500 rounded-md"
+                  >
+                    <span>{number}</span>
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      onClick={() => onRemove(number)}
+                      className="relative -ml-4 -top-4 -right-5 h-4 w-4 rounded-full hover:text-foreground"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </span>
+                ))
+              ) : (
+                null
+              )}
             </div>
-          </DrawerFooter>
-        </div>
-      </DrawerContent>
-    </Drawer>
+          )}
+          <div className="mt-4">
+            <Button
+              onClick={onFinalize}
+              disabled={selectedNumbers.length === 0}
+              className="w-full"
+            >
+              Finalizar Compra
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

@@ -1,4 +1,4 @@
-import Rifa from "../rifa/page";
+import Rifa from "../rifa/RafflePage";
 import Lottery from "../titulo/page";
 
 export default async function RafflePage({ params }: { params: Promise<{ id?: string }> }) {
@@ -35,6 +35,12 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
         description={campaign.description}
         price={campaign.price}
         drawDate={campaign.drawDate}
+        quote={campaign.quote}
+        digitLength={campaign.digitLength}
+        pixCode={campaign.pixCode}
+        contactPhone={campaign.contactPhone}
+        ownerId={campaign.ownerId}
+        minQuotes={campaign.minQuotes}
       />
     ) : (
       <Lottery
@@ -42,6 +48,12 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
         description={campaign.description}
         price={campaign.price}
         drawDate={campaign.drawDate}
+        quote={campaign.quote}
+        digitLength={campaign.digitLength}
+        pixCode={campaign.pixCode}
+        contactPhone={campaign.contactPhone}
+        ownerId={campaign.ownerId}
+        minQuotes={campaign.minQuotes}
       />
     )
   )

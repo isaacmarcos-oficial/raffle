@@ -7,12 +7,12 @@ import { LotteryTicketsSelector } from './_components/lotteryTicketsSelector'
 import { TicketInput } from './_components/ticketInput'
 import { useState } from 'react'
 import { TicketPurchase } from './_components/ticketPurchase'
-import type { Campaign } from '@/types/campaign'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { Campaign } from '@/types/campaign'
 
-export default function LotteryPage({ title, drawDate, price, description }: Campaign) {
-  const [ticketCount, setTicketCount] = useState(1)
+export default function LotteryPage({ title, drawDate, price, description, minQuotes }: Campaign) {
+  const [ticketCount, setTicketCount] = useState(minQuotes)
 
   const handleTicketsSelect = (price: number) => {
     setTicketCount((prev) => prev + price) // Incrementa o preço
@@ -50,9 +50,7 @@ export default function LotteryPage({ title, drawDate, price, description }: Cam
                   <div className="flex items-center">
                     <Calendar className="text-green-500 h-4 w-4 mr-2" />
                     <p className="text-xs ">
-                      {format(new Date(drawDate), "dd/MM/yyyy", {
-                        locale: ptBR,
-                      })}
+                      {format(new Date(drawDate), "dd/MM/yyyy", {locale: ptBR,})}
                     </p>
                   </div>
                   <div className="flex items-center">
@@ -69,6 +67,7 @@ export default function LotteryPage({ title, drawDate, price, description }: Cam
             <div className="flex w-full gap-4">
               <div className="w-2/3">
                 <TicketInput
+                  minQuotes={minQuotes}
                   price={price}
                   ticketCount={ticketCount}
                   onTicketChange={handleInputChange}
@@ -81,12 +80,12 @@ export default function LotteryPage({ title, drawDate, price, description }: Cam
                 />
               </div>
             </div>
-
             <Card className="">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">Descrição/ Regulamento</h2>
-
+                  <h2 className="text-lg font-semibold">
+                    Descrição/ Regulamento
+                  </h2>
                 </div>
                 <div className="space-y-4">
                   {description}

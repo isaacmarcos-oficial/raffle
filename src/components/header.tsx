@@ -2,15 +2,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { ModeToggle } from './ModeTogle';
-import AuthButton from './authButton';
 import { SidebarTrigger } from './ui/sidebar';
 import Logo from './logo';
 import { useSession } from 'next-auth/react';
+import UserNav from './userNav';
 export default function Header() {
   const { data: session } = useSession();
   
   return (
-    <header className="flex light:bg-transparent bg-green-500 text-white p-4 shadow-lg items-center justify-center w-full ">
+    <header className="flex bg-navBar text-white p-4 shadow-lg items-center justify-center w-full ">
       <div className="w-full flex max-w-[1000px] container mx-auto items-center gap-2">
         <div className="flex items-center gap-2">
           {session && <SidebarTrigger />}
@@ -32,8 +32,8 @@ export default function Header() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-2">
-          <AuthButton />
+        <div className="flex items-center ml-2 gap-4">
+          <UserNav />
           <ModeToggle />
         </div>
       </div>

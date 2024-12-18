@@ -1,25 +1,38 @@
 "use client"
-import { Campaign, type Ticket as TicketType } from '../../../types/campaign';
 import { useState } from "react";
-import { TicketForm } from "@/app/sorteios/rifa/_components/TicketForm";
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Calendar, Users } from 'lucide-react';
 import TicketsDrawer from './_components/TicketDrawer';
 import { TicketGrid } from './_components/TicketGrid';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
+import { Campaign, Ticket as TicketType } from "@/types/campaign";
 
-export default function Rifa({title, drawDate,}: Campaign) {
+export default function Rifa({ title, drawDate, quote }: Campaign) {
   const [tickets, setTickets] = useState<TicketType[]>([]);
-  const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
-  const TOTAL_NUMBERS = 200;
+  const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
 
-  const handleTicketSubmit = async (ticket: Omit<TicketType, "paid">) => {
+  const handleTicketSelect = (number: string) => {
+    if (!selectedNumbers.includes(number)) {
+      setSelectedNumbers((prev) => [...prev, number]);
+    }
+  };
+
+  const handleTicketRemove = (number: string) => {
+    setSelectedNumbers((prev) => prev.filter((n) => n !== number));
+  };
+
+  const handleFinalizePurchase = async () => {
+    toast.success(`Finalizando compra com os números: ${selectedNumbers}.`)
+    setSelectedNumbers([]);
     try {
       const response = await fetch("/api/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(ticket),
+        body: JSON.stringify({ numbers: selectedNumbers }),
       });
 
       if (response.ok) {
@@ -32,6 +45,7 @@ export default function Rifa({title, drawDate,}: Campaign) {
       console.error("Error submitting ticket:", error);
     }
   };
+
 
   return (
     <div className="min-h-screen">
@@ -46,7 +60,9 @@ export default function Rifa({title, drawDate,}: Campaign) {
             <div className="flex items-center justify-center gap-4">
               <div className="flex items-center">
                 <Calendar className="text-green-500 h-4 w-4 mr-2" />
-                <p className="text-xs ">{drawDate}</p>
+                <p className="text-xs">
+                  {format(new Date(drawDate), "dd/MM/yyyy", { locale: ptBR, })}
+                </p>
               </div>
               <div className="flex items-center">
                 <Users className="text-green-500 h-4 w-4 mr-2" />
@@ -57,39 +73,43 @@ export default function Rifa({title, drawDate,}: Campaign) {
           </div>
         </Card>
 
-        <TicketsDrawer/>
-
         <div className="grid grid-cols-3 gap-4">
           <Card className='flex flex-col gap-2'>
             <CardTitle>Total</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>{TOTAL_NUMBERS}</CardDescription>
+            <CardDescription className='font-bold text-2xl lg:text-3xl'>{quote}</CardDescription>
           </Card>
           <Card className='flex flex-col gap-2'>
             <CardTitle>Vendidos</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>{tickets.length }</CardDescription>
+            <CardDescription className='font-bold text-2xl lg:text-3xl'>{tickets.length}</CardDescription>
           </Card>
           <Card className='flex flex-col gap-2'>
             <CardTitle>Disponíveis</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>{TOTAL_NUMBERS - tickets.length }</CardDescription>
+            <CardDescription className='font-bold text-2xl lg:text-3xl'>{quote - tickets.length}</CardDescription>
           </Card>
         </div>
         <div className="flex w-full gap-6">
           <TicketGrid
-            tickets={tickets}
-            totalNumbers={TOTAL_NUMBERS}
-            onTicketSelect={setSelectedNumber}
+            tickets={[]}
+            totalNumbers={quote}
+            onTicketSelect={handleTicketSelect}
           />
 
         </div>
       </main>
 
-      {selectedNumber && (
+      <TicketsDrawer
+        selectedNumbers={selectedNumbers}
+        onFinalize={handleFinalizePurchase}
+        onRemove={handleTicketRemove}
+      />
+
+      {/* {selectedNumbers && (
         <TicketForm
-          selectedNumber={selectedNumber}
-          onSubmit={handleTicketSubmit}
-          onClose={() => setSelectedNumber(null)}
+          selectedNumbers={selectedNumbers}
+          onSubmit={handleFinalizePurchase}
+          onClose={() => setSelectedNumbers(null)}
         />
-      )}
+      )} */}
     </div>
   );
 }
