@@ -38,7 +38,6 @@ export default async function RootLayout({
           <SessionProviderClientComponent session={session}>
             <SidebarProvider>
               <AppSidebar/>
-              {/* {session ? <AppSidebar /> : null} */}
               <div className="flex-1 flex flex-col overflow-hidden">
                 <Header />
                 {children}

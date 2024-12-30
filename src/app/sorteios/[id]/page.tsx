@@ -41,6 +41,7 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
         contactPhone={campaign.contactPhone}
         ownerId={campaign.ownerId}
         minQuotes={campaign.minQuotes}
+        code={campaign.code}
       />
     ) : (
       <Lottery
@@ -54,6 +55,7 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
         contactPhone={campaign.contactPhone}
         ownerId={campaign.ownerId}
         minQuotes={campaign.minQuotes}
+        code={campaign.code}
       />
     )
   )

@@ -11,11 +11,12 @@ declare module "next-auth" {
 
 export interface Ticket {
   id?: string;
-  number: string;
+  numbers: string[];
   buyer: string;
   phone: string;
-  purchaseDate: Date;
+  purchaseDate: string;
   paid: boolean;
+  buyerId: string;
 }
 
 export interface RaffleState {

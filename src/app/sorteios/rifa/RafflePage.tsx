@@ -1,17 +1,55 @@
 "use client"
-import { useState } from "react";
-import { Card, CardDescription, CardTitle } from '@/components/ui/card';
-import { Calendar, Users } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Banknote, Calendar, Users } from 'lucide-react';
 import TicketsDrawer from './_components/TicketDrawer';
 import { TicketGrid } from './_components/TicketGrid';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { Campaign, Ticket as TicketType } from "@/types/campaign";
+import { Button } from "@/components/ui/button";
 
-export default function Rifa({ title, drawDate, quote }: Campaign) {
+export default function Rifa({ title, drawDate, description, quote, code, price }: Campaign) {
   const [tickets, setTickets] = useState<TicketType[]>([]);
   const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
+
+  const handlePurchase = async (buyerName: string, phone: string): Promise<void> => {
+    if (selectedNumbers.length === 0) {
+      toast.error("Nenhum número selecionado!");
+      return;
+    }
+
+    try {
+      console.log("Enviando números:", selectedNumbers); // Debug
+      const response = await fetch(`/api/campaign/${code}/tickets`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          numbers: selectedNumbers,
+          buyerName,
+          phone,
+          paid: false,
+        }),
+      });
+
+      if (response.ok) {
+        const savedTicket = await response.json();
+        setTickets((prevTickets) => [...prevTickets, savedTicket]);
+        setSelectedNumbers([]);
+        toast.success("Compra realizada com sucesso!");
+      } else {
+        const errorMessage = await response.text();
+        console.error("Erro da API:", errorMessage); // Mensagem da API
+        toast.error("Erro ao finalizar a compra!");
+      }
+    } catch (error) {
+      console.error("Erro ao processar a compra:", error);
+      toast.error("Erro ao processar a compra.");
+    }
+  };
 
   const handleTicketSelect = (number: string) => {
     if (!selectedNumbers.includes(number)) {
@@ -23,28 +61,31 @@ export default function Rifa({ title, drawDate, quote }: Campaign) {
     setSelectedNumbers((prev) => prev.filter((n) => n !== number));
   };
 
-  const handleFinalizePurchase = async () => {
-    toast.success(`Finalizando compra com os números: ${selectedNumbers}.`)
-    setSelectedNumbers([]);
-    try {
-      const response = await fetch("/api/tickets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ numbers: selectedNumbers }),
-      });
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch(`/api/campaign/${code}/tickets`);
 
-      if (response.ok) {
-        const savedTicket = await response.json();
-        setTickets((prevTickets) => [...prevTickets, savedTicket]);
-      } else {
-        console.error("Failed to save ticket");
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data, "response");
+
+          // Certifique-se de que `data` é uma matriz antes de defini-lo para o estado `tickets`
+          if (Array.isArray(data.tickets)) {
+            setTickets(data.tickets);
+          } else {
+            console.error("A API retornou dados em formato inesperado:", data);
+          }
+        } else {
+          console.error("Erro ao buscar tickets.");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar tickets:", error);
       }
-    } catch (error) {
-      console.error("Error submitting ticket:", error);
-    }
-  };
+    };
+
+    fetchTickets();
+  }, [code]);
 
 
   return (
@@ -58,6 +99,15 @@ export default function Rifa({ title, drawDate, quote }: Campaign) {
           <div className="flex w-full py-2 px-4 justify-between items-center space-y-2 mt-auto">
             <h1 className="text-lg font-bold">{title}</h1>
             <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center">
+                <Banknote className="text-green-500 h-4 w-4 mr-2" />
+                <p className="text-xs">
+                  {price.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </p>
+              </div>
               <div className="flex items-center">
                 <Calendar className="text-green-500 h-4 w-4 mr-2" />
                 <p className="text-xs">
@@ -80,36 +130,71 @@ export default function Rifa({ title, drawDate, quote }: Campaign) {
           </Card>
           <Card className='flex flex-col gap-2'>
             <CardTitle>Vendidos</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>{tickets.length}</CardDescription>
+            <CardDescription className='font-bold text-2xl lg:text-3xl'>
+              {
+                tickets.reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)
+              }
+            </CardDescription>
           </Card>
           <Card className='flex flex-col gap-2'>
             <CardTitle>Disponíveis</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>{quote - tickets.length}</CardDescription>
+            <CardDescription className='font-bold text-2xl lg:text-3xl'>
+              {
+                quote - tickets.reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)
+              }
+            </CardDescription>
           </Card>
         </div>
+
+        <Card className="p-6">
+          <CardHeader className="p-0 mb-4">
+            <CardTitle className="">
+              Descrição/ Regulamento
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            {description}
+          </CardContent>
+        </Card>
+
         <div className="flex w-full gap-6">
           <TicketGrid
-            tickets={[]}
+            tickets={tickets}
+            selectedNumbers={selectedNumbers}
             totalNumbers={quote}
             onTicketSelect={handleTicketSelect}
           />
-
         </div>
+
+        <Card className='flex flex-col items-center justify-center'>
+          <CardHeader>
+            <CardTitle>
+              Compartilhe:
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='flex gap-2'>
+            <Button className=''>
+              FB
+            </Button>
+            <Button className=''>
+              IG
+            </Button>
+            <Button className=''>
+              TG
+            </Button>
+            <Button className=''>
+              X
+            </Button>
+          </CardContent>
+        </Card>
       </main>
 
       <TicketsDrawer
+        handlePurchase={(buyerName, phone) => handlePurchase(buyerName, phone)}
+        price={price}
         selectedNumbers={selectedNumbers}
-        onFinalize={handleFinalizePurchase}
         onRemove={handleTicketRemove}
       />
-
-      {/* {selectedNumbers && (
-        <TicketForm
-          selectedNumbers={selectedNumbers}
-          onSubmit={handleFinalizePurchase}
-          onClose={() => setSelectedNumbers(null)}
-        />
-      )} */}
     </div>
   );
 }

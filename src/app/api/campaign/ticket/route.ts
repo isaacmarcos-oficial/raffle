@@ -3,88 +3,49 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Handle POST (Criar um ticket)
-export async function POST(req: Request) {
+export async function POST(req: Request, { params }: { params: Promise <{ campaignCode: string }> }) {
   try {
-    const { number, buyerName, phone, paid, purchaseDate, campaignId } = await req.json();
+    const { campaignCode } = await params;
+    const { numbers, buyerName, phone, paid, purchaseDate } = await req.json();
 
-    if (!number || !buyerName || !phone || typeof paid !== "boolean" || !campaignId) {
-      return NextResponse.json(
-        { error: "Campos ausentes ou inválidos" },
-        { status: 400 }
-      );
+    if (!Array.isArray(numbers) || numbers.length === 0 || !buyerName || !phone || typeof paid !== "boolean") {
+      return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
     }
 
-    // Verifica se a Campanha existe
+    // Verificar se a campanha existe
     const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
+      where: { code: campaignCode },
     });
 
     if (!campaign) {
-      return NextResponse.json({ error: "Sorteio não encontrado" }, { status: 404 });
+      return NextResponse.json({ error: "Campanha não encontrada" }, { status: 404 });
     }
 
-    // Verifica se o número já está associado a outro ticket na mesma rifa
-    const existingTicket = await prisma.ticket.findFirst({
-      where: {
-        number,
-        campaignId,
-      },
-    });
-
-    if (existingTicket) {
-      return NextResponse.json(
-        { error: "Número já sorteado para este sorteio" },
-        { status: 409 }
-      );
-    }
-
-    // Verifica se o comprador já existe
+    // Criar ou conectar o comprador
     let buyer = await prisma.buyer.findUnique({
       where: { phone },
     });
 
-    // Se não existir, cria o comprador
     if (!buyer) {
       buyer = await prisma.buyer.create({
-        data: {
-          name: buyerName,
-          phone,
-        },
+        data: { name: buyerName, phone },
       });
     }
 
-    // Cria o ticket associado ao comprador e à rifa
+    // Criar o ticket associado
     const newTicket = await prisma.ticket.create({
       data: {
-        number,
+        numbers, // Array de números selecionados
         paid,
         purchaseDate: purchaseDate ? new Date(purchaseDate) : new Date(),
-        campaignId,
-        buyerId: buyer.id, // Relaciona ao comprador
+        campaignId: campaign.id,
+        buyerId: buyer.id,
       },
     });
 
     return NextResponse.json(newTicket, { status: 201 });
   } catch (error) {
-    console.error("Falha ao gerar bilhete:", error);
-    return NextResponse.json({ error: "Falha ao gerar bilhete" }, { status: 500 });
-  }
-}
-
-// Handle GET (Listar todos os tickets)
-export async function GET() {
-  try {
-    const tickets = await prisma.ticket.findMany({
-      include: {
-        buyer: true, // Inclui os dados do comprador
-        Campaign: true, // Inclui os dados da rifa
-      },
-    });
-
-    return NextResponse.json(tickets, { status: 200 });
-  } catch (error) {
-    console.error("Falha ao buscar bilhetes:", error);
-    return NextResponse.json({ error: "Falha ao buscar bilhetes" }, { status: 500 });
+    console.error("Erro ao criar tickets:", error);
+    return NextResponse.json({ error: "Erro interno ao criar tickets" }, { status: 500 });
   }
 }

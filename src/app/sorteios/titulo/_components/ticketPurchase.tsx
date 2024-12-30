@@ -1,23 +1,18 @@
 "use client"
 import { Button } from '@/components/ui/button'
 import { ShoppingCart } from 'lucide-react'
-import { toast } from 'sonner'
 
 interface TicketPurchaseProps {
   price: number
   ticketCount: number
+  selectedNumbers: string[]
+  handlePurchase: () => void
 }
 
-export function TicketPurchase({ ticketCount, price }: TicketPurchaseProps) {
-  const totalPrice = ticketCount * price
 
-  const handlePurchase = () => {
-    // Here you would implement the actual purchase logic
-    toast.success(`Compra de ${ticketCount} bilhetes no valor de ${new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(totalPrice)} realizada com sucesso!`)
-  }
+export function TicketPurchase({ ticketCount, price, handlePurchase }: TicketPurchaseProps) {
+  
+  const totalPrice = ticketCount * price
 
   return (
     <div className="w-full">

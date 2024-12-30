@@ -75,6 +75,8 @@ export default function LotteryPage({ title, drawDate, price, description, minQu
               </div>
               <div className="w-1/3">
                 <TicketPurchase
+                  handlePurchase={() => null}
+                  selectedNumbers={[]}
                   price={price}
                   ticketCount={ticketCount}
                 />
