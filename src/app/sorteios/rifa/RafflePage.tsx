@@ -92,12 +92,11 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
     <div className="min-h-screen">
       <main className="flex flex-col max-w-[1000px] container mx-auto p-4 gap-4">
         <Card className='w-full p-0 h-[200px] flex flex-col items-center justify-center overflow-hidden'>
-          <div className=" w-full h-full flex items-center justify-center">
-            IMAGEM EM BREVE
+          <div className="bg-gradient-to-t from-green-500 to-green-600 w-full h-full flex items-center justify-center">
+            {title && <h1 className="text-4xl font-bold uppercase text-white">{title}</h1>}
           </div>
 
-          <div className="flex w-full py-2 px-4 justify-between items-center space-y-2 mt-auto">
-            <h1 className="text-lg font-bold">{title}</h1>
+          <div className="flex w-full py-2 px-4 justify-center items-center space-y-2 mt-auto">
             <div className="flex items-center justify-center gap-4">
               <div className="flex items-center">
                 <Banknote className="text-green-500 h-4 w-4 mr-2" />
@@ -116,7 +115,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
               </div>
               <div className="flex items-center">
                 <Users className="text-green-500 h-4 w-4 mr-2" />
-                <p className="text-xs">200</p>
+                <p className="text-xs">{tickets.length}</p>
               </div>
             </div>
 

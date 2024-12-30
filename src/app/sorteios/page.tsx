@@ -13,7 +13,6 @@ import { useEffect, useState } from "react"
 
 export default function Raffles() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCampaigns() {
@@ -24,17 +23,11 @@ export default function Raffles() {
       } catch (error) {
         console.error("Erro ao carregar Campanhas:", error);
       } finally {
-        setLoading(false);
       }
     }
 
     fetchCampaigns();
   }, []);
-
-
-  if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Carregando rifas...</div>;
-  }
 
   return (
     <div className="flex w-full items-center justify-center">
