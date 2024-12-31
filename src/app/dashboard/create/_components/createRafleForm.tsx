@@ -97,7 +97,6 @@ export function CreateRaffleForm() {
       contactPhone: formData.phone,
       ownerId: session?.user?.id
     };
-    console.log(payload)
 
     try {
       const response = await fetch('/api/campaign', {

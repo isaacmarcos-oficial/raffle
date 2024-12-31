@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   ColumnDef,
   flexRender,
@@ -17,9 +17,9 @@ import {
   getPaginationRowModel,
   SortingState,
   getSortedRowModel,
-} from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,101 +27,54 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Raffle = {
-  id: string
-  name: string
-  type: "Rifa" | "Loteria"
-  totalTickets: number
-  soldTickets: number
-  price: number
-  drawDate: Date
-  status: "Ativa" | "Encerrada" | "Sorteada"
-}
-
-const data: Raffle[] = [
-  {
-    id: "1",
-    name: "Rifa de Ano Novo",
-    type: "Rifa",
-    totalTickets: 1000,
-    soldTickets: 750,
-    price: 10,
-    drawDate: new Date("2024-01-01"),
-    status: "Ativa",
-  },
-  {
-    id: "2",
-    name: "Loteria Beneficente",
-    type: "Loteria",
-    totalTickets: 5000,
-    soldTickets: 3200,
-    price: 5,
-    drawDate: new Date("2023-12-25"),
-    status: "Ativa",
-  },
-  {
-    id: "3",
-    name: "Rifa do Dia das Mães",
-    type: "Rifa",
-    totalTickets: 500,
-    soldTickets: 500,
-    price: 20,
-    drawDate: new Date("2023-05-14"),
-    status: "Sorteada",
-  },
-]
+  id: string;
+  name: string;
+  type: "Rifa" | "Loteria";
+  totalTickets: number;
+  soldTickets: number;
+  price: number;
+  drawDate: Date;
+  status: "Ativa" | "Encerrada" | "Sorteada";
+  code: string;
+};
 
 export const columns: ColumnDef<Raffle>[] = [
   {
-    accessorKey: "name",
-    header: "Nome",
+    accessorKey: "title",
+    header: "Título",
   },
   {
     accessorKey: "type",
     header: "Tipo",
   },
   {
-    accessorKey: "totalTickets",
-    header: "Total de Bilhetes",
-  },
-  {
-    accessorKey: "soldTickets",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Bilhetes Vendidos
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-  {
     accessorKey: "price",
     header: "Preço",
     cell: ({ row }) => {
-      const price = parseFloat(row.getValue("price"))
+      const price = parseFloat(row.getValue("price"));
       const formatted = new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL",
-      }).format(price)
-      return <div>{formatted}</div>
+      }).format(price);
+      return <div>{formatted}</div>;
     },
   },
   {
     accessorKey: "drawDate",
     header: "Data do Sorteio",
     cell: ({ row }) => {
-      const date = row.getValue("drawDate") as Date
-      const formatted = new Intl.DateTimeFormat("pt-BR").format(date)
-      return <div>{formatted}</div>
+      const dateValue = row.getValue("drawDate") as string; // Informe explicitamente que é uma string
+      const date = new Date(dateValue); // Converter para Date
+      if (isNaN(date.getTime())) {
+        return <div>Data inválida</div>;
+      }
+      const formatted = new Intl.DateTimeFormat("pt-BR").format(date);
+      return <div>{formatted}</div>;
     },
   },
   {
@@ -131,7 +84,7 @@ export const columns: ColumnDef<Raffle>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const raffle = row.original
+      const raffle = row.original;
 
       return (
         <DropdownMenu>
@@ -144,23 +97,43 @@ export const columns: ColumnDef<Raffle>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(raffle.id)}
+              onClick={() => navigator.clipboard.writeText(raffle.code)}
             >
-              Copiar ID da rifa
+              Copiar CÓDIGO da rifa
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
-            <DropdownMenuItem>Editar rifa</DropdownMenuItem>
+            <Link href={`/dashboard/meus-sorteios/${raffle.code}`} >
+              <DropdownMenuItem>
+                Ver detalhes
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 export function RaffleTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [globalFilter, setGlobalFilter] = React.useState('')
+  const [data, setData] = React.useState<Raffle[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState("");
+
+  React.useEffect(() => {
+    async function fetchRaffles() {
+      try {
+        const response = await fetch("/api/campaign/owner?ownerId=676ff3b641446969524af528");
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error("Erro ao carregar rifas:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRaffles();
+  }, []);
 
   const table = useReactTable({
     data,
@@ -174,7 +147,11 @@ export function RaffleTable() {
       globalFilter,
     },
     onGlobalFilterChange: setGlobalFilter,
-  })
+  });
+
+  if (loading) {
+    return <p>Carregando rifas...</p>;
+  }
 
   return (
     <div>
@@ -201,7 +178,7 @@ export function RaffleTable() {
                           header.getContext()
                         )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -255,6 +232,5 @@ export function RaffleTable() {
         </Button>
       </div>
     </div>
-  )
+  );
 }
-

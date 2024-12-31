@@ -7,10 +7,11 @@ import Logo from './logo';
 import { useSession } from 'next-auth/react';
 import UserNav from './userNav';
 export default function Header() {
+  
   const { data: session } = useSession();
   
   return (
-    <header className="flex fixed bg-navBar text-white p-4 shadow-lg items-center justify-center w-full ">
+    <header className="flex  bg-navBar text-white p-4 shadow-lg items-center justify-center w-full ">
       <div className="w-full flex max-w-[1000px] justify-between container mx-auto items-center gap-2">
         {session && <SidebarTrigger />}
         

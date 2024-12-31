@@ -62,7 +62,7 @@ export default function Raffles() {
             </Select>
           </div>
 
-          <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-6 grid-cols-2 md:grid-cols-3">
             {campaigns.map((campaign) => (
               <Card key={campaign.id} className="gap-1 p-4">
                 <CardHeader className="items-start gap-2 p-0">

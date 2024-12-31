@@ -13,9 +13,16 @@ import {
   SidebarMenuButton,
 } from '@/components/ui/sidebar'
 import Logo from './logo'
+import { useSession } from 'next-auth/react'
 
 export function AppSidebar() {
   const pathname = usePathname()
+
+  const { data: session } = useSession();
+
+  if (!session) {
+    return null
+  }
 
   return (
     <Sidebar>
@@ -26,7 +33,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          <SidebarMenuItem>
+          <SidebarMenuItem key="dashboard">
             <SidebarMenuButton asChild isActive={pathname === '/dashboard'}>
               <Link href="/dashboard">
                 <Home className="h-4 w-4 mr-2" />
@@ -34,7 +41,7 @@ export function AppSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
+          <SidebarMenuItem key="create">
             <SidebarMenuButton asChild isActive={pathname === '/dashboard/create'}>
               <Link href="/dashboard/create">
                 <PlusCircle className="h-4 w-4 mr-2" />
@@ -42,7 +49,7 @@ export function AppSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
+          <SidebarMenuItem key="sorteios">
             <SidebarMenuButton asChild isActive={pathname === '/sorteios'}>
               <Link href="/sorteios">
                 <List className="h-4 w-4 mr-2" />
@@ -50,7 +57,7 @@ export function AppSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
+          <SidebarMenuItem key="profile">
             <SidebarMenuButton asChild isActive={pathname === '/update-profile'}>
               <Link href="/dashboard/profile">
                 <User className="h-4 w-4 mr-2" />

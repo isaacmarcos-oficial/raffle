@@ -21,7 +21,6 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
     }
 
     try {
-      console.log("Enviando números:", selectedNumbers); // Debug
       const response = await fetch(`/api/campaign/${code}/tickets`, {
         method: "POST",
         headers: {
@@ -68,7 +67,6 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data, "response");
 
           // Certifique-se de que `data` é uma matriz antes de defini-lo para o estado `tickets`
           if (Array.isArray(data.tickets)) {

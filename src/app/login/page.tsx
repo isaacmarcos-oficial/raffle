@@ -17,7 +17,7 @@ import { redirect } from 'next/navigation'
 export default function Auth() {
   const form = useForm()
 
-  const session = useSession()
+  const { data: session } = useSession();
 
   if (session) {
     redirect('/dashboard')

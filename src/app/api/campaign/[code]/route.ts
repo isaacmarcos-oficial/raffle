@@ -9,7 +9,6 @@ export async function GET(
 ) {
   try {
     const code = await params;
-    console.log(code)
 
     if (!code) {
       return NextResponse.json(

@@ -51,10 +51,9 @@ export function ProfileForm() {
     },
   })
   
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit() {
     setIsLoading(true)
     // Aqui você normalmente enviaria os dados para o seu backend
-    console.log(values)
     // Simulando uma chamada de API
     await new Promise(resolve => setTimeout(resolve, 2000))
     setIsLoading(false)

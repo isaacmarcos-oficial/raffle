@@ -3,7 +3,6 @@ import Lottery from "../titulo/page";
 
 export default async function RafflePage({ params }: { params: Promise<{ id?: string }> }) {
   const resolvedParams = await params;
-  console.log("Parâmetros resolvidos:", resolvedParams);
 
   const code = resolvedParams.id;
   console.info("verificação do código:", code)
