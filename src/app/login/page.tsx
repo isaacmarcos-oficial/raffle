@@ -9,12 +9,19 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 import { LogIn } from 'lucide-react'
+import { redirect } from 'next/navigation'
 
 export default function Auth() {
   const form = useForm()
+
+  const session = useSession()
+
+  if (session) {
+    redirect('/dashboard')
+  }
 
   const handleSubmit = form.handleSubmit(async (data) => {
     try {

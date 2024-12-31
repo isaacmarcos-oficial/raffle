@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { RaffleTable } from "./_components/rafflesTable";
@@ -17,11 +16,9 @@ export default function Dashboard() {
               </Link>
             </Button>
           </div>
-          <Card>
-            <CardContent>
-              <RaffleTable />
-            </CardContent>
-          </Card>
+          <div>
+            <RaffleTable />
+          </div>
         </div>
       </main>
     </div>

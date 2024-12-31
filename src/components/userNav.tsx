@@ -38,12 +38,16 @@ export default function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Meu perfil
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Minhas Rifas
-            </DropdownMenuItem>
+            <Link href="/dashboard/profile">
+              <DropdownMenuItem>
+                Meu perfil
+              </DropdownMenuItem>
+            </Link>
+            <Link href="/dashboard">
+              <DropdownMenuItem>
+                Minhas Rifas
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>
