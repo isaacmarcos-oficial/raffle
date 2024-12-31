@@ -13,6 +13,8 @@ import { signIn, useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 import { LogIn } from 'lucide-react'
 import { redirect } from 'next/navigation'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
 export default function Auth() {
   const form = useForm()
@@ -65,33 +67,33 @@ export default function Auth() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {/* <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                placeholder="m@example.com"
-                required
-                type="email"
-                {...form.register('email')}
-              />
-            </div> */}
-              {/* <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                placeholder="********"
-                required
-                type="password"
-                {...form.register('password')}
-              />
-            </div> */}
-              {/* <Button
-              className="w-full"
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
-            </Button> */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  placeholder="m@example.com"
+                  required
+                  type="email"
+                  {...form.register('email')}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input
+                  id="password"
+                  placeholder="********"
+                  required
+                  type="password"
+                  {...form.register('password')}
+                />
+              </div>
+              <Button
+                className="w-full"
+                type="submit"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
+              </Button>
               <Button
                 className="w-full bg-red-600 text-white hover:bg-red-700"
                 type="button"

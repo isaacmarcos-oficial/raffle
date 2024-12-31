@@ -3,13 +3,6 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 
-const testUser = {
-	id: "1",
-	name: "John Doe",
-	email: "admin@test.com",
-	password: "qwe123",
-};
-
 export const authOptions: NextAuthOptions = {
 	providers: [
 		Credentials({
@@ -19,22 +12,22 @@ export const authOptions: NextAuthOptions = {
 				password: { label: "Password", type: "password" },
 			},
 			authorize: async (credentials) => {
-				if (
-					credentials?.email === testUser.email &&
-					credentials.password === testUser.password
-				) {
-					return testUser;
-				}
+				if (!credentials?.email || !credentials.password) {
+          throw new Error("Email e senha são obrigatórios.");
+        }
 
-				const res = await fetch("/api/login", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(credentials),
-				});
-				const user = await res.json();
-				if (res.ok && user) {
-					return user;
-				}
+				const user = await prisma.owner.findUnique({
+          where: { email: credentials.email },
+        });
+
+				if (user && user.password === credentials.password) {
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          };
+        }
+
 				return null;
 			},
 		}),
@@ -49,6 +42,8 @@ export const authOptions: NextAuthOptions = {
 		 * - Cria um novo `Owner` se o e-mail não existir no banco.
 		 * - Caso o e-mail já exista, utiliza a conta existente.
 		 */
+
+	
 		async signIn({ user, account }) {
 			if (account?.provider === "google") {
 				try {
@@ -64,15 +59,15 @@ export const authOptions: NextAuthOptions = {
 
 					// Se não encontrar, cria um novo Owner
 					if (!owner) {
-						owner = await prisma.owner.create({
-							data: {
-								email: user.email ?? "",
-								name: user.name ?? "Usuário sem nome",
-								password: "", // Opcional, pois será um login social
-								phone: "", // Placeholder (pode ser atualizado posteriormente)
-							},
-						});
-					}
+            owner = await prisma.owner.create({
+              data: {
+                email,
+                name: user.name || "Usuário sem nome",
+                password: "", // Deixe em branco para login social
+                phone: "", // Pode ser preenchido mais tarde
+              },
+            });
+          }
 
 					return true; // Autoriza o login
 				} catch (error) {
@@ -89,6 +84,7 @@ export const authOptions: NextAuthOptions = {
 		 * - Inclui o ID e outras informações do `Owner` na sessão.
 		 */
 		async session({ session }) {
+		
 			if (session.user?.email) {
 				const owner = await prisma.owner.findUnique({
 					where: { email: session.user.email },
@@ -97,10 +93,20 @@ export const authOptions: NextAuthOptions = {
 				if (owner) {
 					session.user.id = owner.id;
 					session.user.name = owner.name;
+					session.user.email = owner.email;
 				}
 			}
 			return session;
 		},
+
+		async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+      }
+      return token;
+    },
 	},
 	session: {
 		strategy: "jwt", // Usamos JWT para persistir a sessão
@@ -108,4 +114,5 @@ export const authOptions: NextAuthOptions = {
 	pages: {
 		signIn: "/login",
 	},
+	secret: process.env.NEXTAUTH_SECRET,
 };

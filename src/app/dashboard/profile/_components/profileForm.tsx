@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { useToast } from '@/components/hooks/use-toast'
+import { useSession } from 'next-auth/react'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -40,12 +41,14 @@ export function ProfileForm() {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
+  const session = useSession()
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      email: '',
+      name: session.data?.user?.name || '',
+      email: session.data?.user?.email || '',
       password: '',
       confirmPassword: '',
     },
@@ -87,6 +90,19 @@ export function ProfileForm() {
               <FormLabel>E-mail</FormLabel>
               <FormControl>
                 <Input placeholder="seu@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>WhatsApp</FormLabel>
+              <FormControl>
+                <Input type="phone" placeholder="(00) 00000-0000" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
