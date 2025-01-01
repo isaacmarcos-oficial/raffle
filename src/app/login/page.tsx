@@ -28,7 +28,7 @@ export default function Auth() {
   const handleSubmit = form.handleSubmit(async (data) => {
     try {
       const result = await signIn('credentials', {
-        email: data.email,
+        emailOrPhone: data.emailOrPhone,
         password: data.password,
         redirect: false,
       });
@@ -68,13 +68,13 @@ export default function Auth() {
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="emailOrPhone">Email ou Telefone</Label>
                 <Input
-                  id="email"
+                  id="emailOrPhone"
                   placeholder="m@example.com"
                   required
-                  type="email"
-                  {...form.register('email')}
+                  type="text"
+                  {...form.register('emailOrPhone')}
                 />
               </div>
               <div className="space-y-2">

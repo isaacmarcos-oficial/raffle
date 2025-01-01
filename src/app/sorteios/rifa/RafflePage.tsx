@@ -8,11 +8,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { Campaign, Ticket as TicketType } from "@/types/campaign";
-import { Button } from "@/components/ui/button";
+import { FacebookIcon, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from 'next-share'
+import TicketModal from "./_components/TicketModal";
 
 export default function Rifa({ title, drawDate, description, quote, code, price }: Campaign) {
   const [tickets, setTickets] = useState<TicketType[]>([]);
   const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handlePurchase = async (buyerName: string, phone: string): Promise<void> => {
     if (selectedNumbers.length === 0) {
@@ -37,8 +39,9 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
       if (response.ok) {
         const savedTicket = await response.json();
         setTickets((prevTickets) => [...prevTickets, savedTicket]);
-        setSelectedNumbers([]);
+        setIsModalOpen(true);
         toast.success("Compra realizada com sucesso!");
+        setSelectedNumbers([]);
       } else {
         const errorMessage = await response.text();
         console.error("Erro da API:", errorMessage); // Mensagem da API
@@ -170,18 +173,18 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
             </CardTitle>
           </CardHeader>
           <CardContent className='flex gap-2'>
-            <Button className=''>
-              FB
-            </Button>
-            <Button className=''>
-              IG
-            </Button>
-            <Button className=''>
-              TG
-            </Button>
-            <Button className=''>
-              X
-            </Button>
+            <WhatsappShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+              <WhatsappIcon size={32} round />
+            </WhatsappShareButton>
+            <FacebookShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+              <FacebookIcon size={32} round />
+            </FacebookShareButton>
+            <TelegramShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+              <TelegramIcon size={32} round />
+            </TelegramShareButton>
+            <TwitterShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+              <TwitterIcon size={32} round />
+            </TwitterShareButton>
           </CardContent>
         </Card>
       </main>
@@ -191,6 +194,11 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
         price={price}
         selectedNumbers={selectedNumbers}
         onRemove={handleTicketRemove}
+      />
+
+      <TicketModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );

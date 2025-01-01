@@ -18,7 +18,6 @@ export function TicketForm({ selectedNumbers, price, onClose, handlePurchase }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     handlePurchase(buyer, phone);
-    onClose();
   };
 
   return (
@@ -52,9 +51,12 @@ export function TicketForm({ selectedNumbers, price, onClose, handlePurchase }: 
           />
         </div>
 
-        <div className="mt-4">
-          <Button type="submit" className="w-full">
-            Finalizar Compra por R${(price * selectedNumbers.length).toFixed(2)}
+        <div className="flex justify-between mt-4">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Voltar
+          </Button>
+          <Button type="submit" className="">
+            Finalizar R${(price * selectedNumbers.length).toFixed(2)}
           </Button>
         </div>
       </form>

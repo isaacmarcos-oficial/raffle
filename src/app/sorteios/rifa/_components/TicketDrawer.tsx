@@ -79,7 +79,7 @@ export default function TicketsDrawer({ selectedNumbers, handlePurchase, onRemov
                       disabled={selectedNumbers.length === 0}
                       className="w-full"
                     >
-                      Prosseguir
+                      Prosseguir com R${(price * selectedNumbers.length).toFixed(2)}
                     </Button>
                   </div>
                 </>

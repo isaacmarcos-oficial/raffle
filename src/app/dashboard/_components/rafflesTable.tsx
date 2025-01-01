@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export type Raffle = {
   id: string;
@@ -115,6 +116,7 @@ export const columns: ColumnDef<Raffle>[] = [
 ];
 
 export function RaffleTable() {
+  const { data: session } = useSession();
   const [data, setData] = React.useState<Raffle[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -123,7 +125,7 @@ export function RaffleTable() {
   React.useEffect(() => {
     async function fetchRaffles() {
       try {
-        const response = await fetch("/api/campaign/owner?ownerId=676ff3b641446969524af528");
+        const response = await fetch(`/api/campaign/owner?ownerId=${session?.user.id}`);
         const result = await response.json();
         setData(result);
       } catch (error) {
@@ -133,7 +135,7 @@ export function RaffleTable() {
       }
     }
     fetchRaffles();
-  }, []);
+  }, [session?.user.id]);
 
   const table = useReactTable({
     data,

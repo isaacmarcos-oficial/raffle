@@ -5,14 +5,15 @@ import TabsTickets from "./_components/tabsTickets";
 import ModalTickets from "./_components/modalTickets";
 import TicketsCard from "./_components/ticketsCard";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 export default function SorteioPage() {
+  const params = useParams<{ code: string }>()
   const [tickets, setTickets] = useState<TicketType[]>([]);
   const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const code = "A2RYPH"
-
+  const code = params.code
+  
   useEffect(() => {
     const fetchTickets = async () => {
       try {

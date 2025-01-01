@@ -11,8 +11,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 
 
 export const metadata: Metadata = {
-  title: "IGNIS HUB | Transformando ideias em realidade digital",
-  description: "Desenvolvemos sistemas e sites web personalizados para impulsionar seu negócio",
+  title: "RAFFLE | O seu sorteio facilitado com o Raffle",
+  description: "Crie e participe de rifas e sorteio emocionantes. Sua chance de ganhar muito espera!",
 };
 
 
@@ -26,7 +26,7 @@ export default async function RootLayout({
   return (
     <html lang="pt-br">
       <head>
-        <link rel="icon" href="/ignishub.png" sizes="any" />
+        <link rel="icon" href="/logo.png" sizes="any" />
       </head>
       <body className="antialiased">
         <ThemeProvider

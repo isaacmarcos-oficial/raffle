@@ -8,16 +8,21 @@ export const authOptions: NextAuthOptions = {
 		Credentials({
 			name: "Credentials",
 			credentials: {
-				email: { label: "Email", type: "email" },
+        emailOrPhone: { label: "E-mail ou Telefone", type: "text" },
 				password: { label: "Password", type: "password" },
 			},
 			authorize: async (credentials) => {
-				if (!credentials?.email || !credentials.password) {
-          throw new Error("Email e senha são obrigatórios.");
+				if (!credentials?.emailOrPhone  || !credentials.password) {
+          throw new Error("Email/telefone e senha são obrigatórios.");
         }
 
-				const user = await prisma.owner.findUnique({
-          where: { email: credentials.email },
+				const emailOrPhone = credentials.emailOrPhone;
+        const isEmail = emailOrPhone.includes("@");
+
+				const user = await prisma.owner.findFirst({
+          where: isEmail
+            ? { email: emailOrPhone }
+            : { phone: emailOrPhone },
         });
 
 				if (user && user.password === credentials.password) {
@@ -28,7 +33,7 @@ export const authOptions: NextAuthOptions = {
           };
         }
 
-				return null;
+				throw new Error("Credenciais inválidas.");
 			},
 		}),
 		Google({
