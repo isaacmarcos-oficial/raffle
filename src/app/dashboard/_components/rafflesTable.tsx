@@ -28,23 +28,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { Copy, Eye, MoreHorizontal, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { CampaignType } from "@/types/campaign";
 
-export type Raffle = {
-  id: string;
-  name: string;
-  type: "Rifa" | "Loteria";
-  totalTickets: number;
-  soldTickets: number;
-  price: number;
-  drawDate: Date;
-  status: "Ativa" | "Encerrada" | "Sorteada";
-  code: string;
-};
-
-export const columns: ColumnDef<Raffle>[] = [
+export const columns: ColumnDef<CampaignType>[] = [
   {
     accessorKey: "title",
     header: "Título",
@@ -79,10 +68,6 @@ export const columns: ColumnDef<Raffle>[] = [
     },
   },
   {
-    accessorKey: "status",
-    header: "Status",
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
       const raffle = row.original;
@@ -98,14 +83,22 @@ export const columns: ColumnDef<Raffle>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(raffle.code)}
+              onClick={() => navigator.clipboard.writeText(`https://raffle.ignishub.com.br/sorteios/${raffle.code}`)}
             >
-              Copiar CÓDIGO da rifa
+              <Copy className="mr-2 h-4 w-4" />
+              Copiar link
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <Link href={`/dashboard/meus-sorteios/${raffle.code}`} >
               <DropdownMenuItem>
-                Ver detalhes
+                <Pencil className="mr-2 h-4 w-4" />
+                Gerenciar
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`/sorteios/${raffle.code}`} >
+              <DropdownMenuItem>
+                <Eye className="mr-2 h-4 w-4" />
+                Visualizar
               </DropdownMenuItem>
             </Link>
           </DropdownMenuContent>
@@ -117,8 +110,7 @@ export const columns: ColumnDef<Raffle>[] = [
 
 export function RaffleTable() {
   const { data: session } = useSession();
-  const [data, setData] = React.useState<Raffle[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [data, setData] = React.useState<CampaignType[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
@@ -131,7 +123,6 @@ export function RaffleTable() {
       } catch (error) {
         console.error("Erro ao carregar rifas:", error);
       } finally {
-        setLoading(false);
       }
     }
     fetchRaffles();
@@ -150,10 +141,6 @@ export function RaffleTable() {
     },
     onGlobalFilterChange: setGlobalFilter,
   });
-
-  if (loading) {
-    return <p>Carregando rifas...</p>;
-  }
 
   return (
     <div>

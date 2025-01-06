@@ -1,57 +1,90 @@
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { Ticket as TicketType } from "@/types/campaign";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
+import { CampaignType } from "@/types/campaign";
 
 export interface TabsTicketsProps {
-  tickets: TicketType[];
+  campaign: CampaignType;
 }
 
-export default function TicketsCard({ tickets }: TabsTicketsProps) {
-  const totalTickets = tickets.length
+export default function TicketsCard({ campaign }: TabsTicketsProps) {
+  const totalTickets = campaign.tickets?.length;
 
-  const totalPaidValue = tickets.reduce((total, ticket) => {
+  const totalPaidValue = campaign.tickets?.reduce((total, ticket) => {
     if (ticket.paid) {
-      return total + (ticket.numbers?.length || 0) * ticket.Campaign.price;
+      return total + (ticket.numbers?.length || 0) * campaign.price;
+    }
+    return total;
+  }, 0);
+
+  const totalUnPaidValue = campaign.tickets?.reduce((total, ticket) => {
+    if (!ticket.paid) {
+      return total + (ticket.numbers?.length || 0) * campaign.price;
     }
     return total;
   }, 0);
 
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <Card className='flex flex-col gap-2'>
-        <CardTitle>Compradores</CardTitle>
-        <CardDescription className='font-bold text-2xl lg:text-3xl'>{totalTickets}</CardDescription>
-      </Card>
-      <Card className='flex flex-col gap-2'>
-        <CardTitle>Pagamento confirmado</CardTitle>
-        <CardDescription className='font-bold text-2xl lg:text-3xl'>
-          {tickets.filter((ticket) => ticket.paid).length}
-        </CardDescription>
-      </Card>
-      <Card>
-        <CardTitle>Números Escolhidos</CardTitle>
-        <CardDescription className='font-bold text-2xl lg:text-3xl'>
-          {tickets.reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)}
-        </CardDescription>
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle>Compras</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl">
+            {totalTickets}
+          </CardDescription>
+        </CardContent>
       </Card>
 
-      <Card>
-        <CardTitle>Números Confirmados</CardTitle>
-        <CardDescription className='font-bold text-2xl lg:text-3xl'>
-          {tickets
-            .filter((ticket) => ticket.paid) // Filtrar apenas os tickets pagos
-            .reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)}
-        </CardDescription>
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle>Compras confirmadas</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl">
+            {campaign.tickets?.filter((ticket) => ticket.paid).length}
+          </CardDescription>
+        </CardContent>
       </Card>
 
-      <Card className='flex flex-col gap-2'>
-        <CardTitle>Valor Pago</CardTitle>
-        <CardDescription className='font-bold text-2xl lg:text-3xl'>
-          {totalPaidValue.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })}
-        </CardDescription>
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle>Números Escolhidos</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl">
+            {campaign.tickets?.reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)}
+          </CardDescription>
+        </CardContent>
+      </Card>
+
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle>Números Confirmados</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl">
+            {campaign.tickets
+              ?.filter((ticket) => ticket.paid)
+              .reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)}
+          </CardDescription>
+        </CardContent>
+      </Card>
+
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle>Pagamentos confirmados</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl text-green-500">
+            {totalPaidValue?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </CardDescription>
+        </CardContent>
+      </Card>
+
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle>Pagamentos pendentes</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl text-yellow-500">
+            {totalUnPaidValue?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </CardDescription>
+        </CardContent>
       </Card>
     </div>
-  )
+  );
 }

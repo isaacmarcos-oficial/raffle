@@ -1,17 +1,21 @@
 "use client"
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Banknote, Calendar, Users } from 'lucide-react';
 import TicketsDrawer from './_components/TicketDrawer';
 import { TicketGrid } from './_components/TicketGrid';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { Campaign, Ticket as TicketType } from "@/types/campaign";
+import { CampaignType, TicketType } from "@/types/campaign";
 import { FacebookIcon, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from 'next-share'
 import TicketModal from "./_components/TicketModal";
 
-export default function Rifa({ title, drawDate, description, quote, code, price }: Campaign) {
+export interface CampaignProps {
+  campaign: CampaignType;
+}
+
+export default function Rifa({ campaign }: CampaignProps) {
   const [tickets, setTickets] = useState<TicketType[]>([]);
   const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +27,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
     }
 
     try {
-      const response = await fetch(`/api/campaign/${code}/tickets`, {
+      const response = await fetch(`/api/campaign/${campaign.code}/tickets`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +70,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await fetch(`/api/campaign/${code}/tickets`);
+        const response = await fetch(`/api/campaign/${campaign.code}/tickets`);
 
         if (response.ok) {
           const data = await response.json();
@@ -86,7 +90,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
     };
 
     fetchTickets();
-  }, [code]);
+  }, [campaign.code]);
 
 
   return (
@@ -94,7 +98,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
       <main className="flex flex-col max-w-[1000px] container mx-auto p-4 gap-4">
         <Card className='w-full p-0 h-[200px] flex flex-col items-center justify-center overflow-hidden'>
           <div className="bg-gradient-to-t from-green-500 to-green-600 w-full h-full flex items-center justify-center">
-            {title && <h1 className="text-4xl font-bold uppercase text-white">{title}</h1>}
+            {campaign.title && <h1 className="text-4xl font-bold uppercase text-white">{campaign.title}</h1>}
           </div>
 
           <div className="flex w-full py-2 px-4 justify-center items-center space-y-2 mt-auto">
@@ -102,7 +106,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
               <div className="flex items-center">
                 <Banknote className="text-green-500 h-4 w-4 mr-2" />
                 <p className="text-xs">
-                  {price.toLocaleString("pt-BR", {
+                  {campaign.price.toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   })}
@@ -111,7 +115,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
               <div className="flex items-center">
                 <Calendar className="text-green-500 h-4 w-4 mr-2" />
                 <p className="text-xs">
-                  {format(new Date(drawDate), "dd/MM/yyyy", { locale: ptBR, })}
+                  {format(new Date(campaign.drawDate), "dd/MM/yyyy", { locale: ptBR, })}
                 </p>
               </div>
               <div className="flex items-center">
@@ -123,29 +127,6 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
           </div>
         </Card>
 
-        <div className="grid grid-cols-3 gap-4">
-          <Card className='flex flex-col gap-2'>
-            <CardTitle>Total</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>{quote}</CardDescription>
-          </Card>
-          <Card className='flex flex-col gap-2'>
-            <CardTitle>Vendidos</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>
-              {
-                tickets.reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)
-              }
-            </CardDescription>
-          </Card>
-          <Card className='flex flex-col gap-2'>
-            <CardTitle>Disponíveis</CardTitle>
-            <CardDescription className='font-bold text-2xl lg:text-3xl'>
-              {
-                quote - tickets.reduce((total, ticket) => total + (ticket.numbers?.length || 0), 0)
-              }
-            </CardDescription>
-          </Card>
-        </div>
-
         <Card className="p-6">
           <CardHeader className="p-0 mb-4">
             <CardTitle className="">
@@ -153,7 +134,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {description}
+            {campaign.description}
           </CardContent>
         </Card>
 
@@ -161,7 +142,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
           <TicketGrid
             tickets={tickets}
             selectedNumbers={selectedNumbers}
-            totalNumbers={quote}
+            totalNumbers={campaign.quote}
             onTicketSelect={handleTicketSelect}
           />
         </div>
@@ -173,16 +154,16 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
             </CardTitle>
           </CardHeader>
           <CardContent className='flex gap-2'>
-            <WhatsappShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+            <WhatsappShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
               <WhatsappIcon size={32} round />
             </WhatsappShareButton>
-            <FacebookShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+            <FacebookShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
               <FacebookIcon size={32} round />
             </FacebookShareButton>
-            <TelegramShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+            <TelegramShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
               <TelegramIcon size={32} round />
             </TelegramShareButton>
-            <TwitterShareButton url={`https://raffle.ignishub.com.br/sorteios/${code}`}>
+            <TwitterShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
               <TwitterIcon size={32} round />
             </TwitterShareButton>
           </CardContent>
@@ -191,7 +172,7 @@ export default function Rifa({ title, drawDate, description, quote, code, price 
 
       <TicketsDrawer
         handlePurchase={(buyerName, phone) => handlePurchase(buyerName, phone)}
-        price={price}
+        price={campaign.price}
         selectedNumbers={selectedNumbers}
         onRemove={handleTicketRemove}
       />

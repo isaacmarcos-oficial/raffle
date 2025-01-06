@@ -20,6 +20,19 @@ export async function GET(
     // Busca a campanha pelo código
     const campaign = await prisma.campaign.findUnique({
       where: code,
+      include: {
+        tickets: {
+          include: {
+            buyer: true,
+            Campaign: {
+              select: {
+                price: true
+              }
+            }
+          }
+        },
+        Owner: true
+      }
     });
 
     // Verifica se a campanha foi encontrada

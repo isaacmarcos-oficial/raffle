@@ -7,7 +7,11 @@ export async function GET() {
   try {
     // Busca todas as campanhas no banco de dados
     const campaigns = await prisma.campaign.findMany({
-      orderBy: { drawDate: "asc" }, // Ordena por data de sorteio (opcional)
+      orderBy: { drawDate: "asc" },
+      include: {
+        Owner: true,
+        tickets: true
+      }
     });
 
     // Retorna as campanhas no formato JSON

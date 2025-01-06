@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Campaign } from "@/types/campaign"
+import { CampaignType } from "@/types/campaign"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Calendar, Gift, LogIn, Ticket, Users } from "lucide-react"
@@ -12,7 +12,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 
 export default function Raffles() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
   useEffect(() => {
     async function fetchCampaigns() {
@@ -28,6 +28,7 @@ export default function Raffles() {
 
     fetchCampaigns();
   }, []);
+  console.log(campaigns)
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -68,7 +69,7 @@ export default function Raffles() {
                 <CardHeader className="items-start gap-2 p-0">
                   <div className="flex w-full justify-between items-center">
                     <Badge className="border gap-1 items-center">
-                      {campaign.type === "fixed" ? (<Ticket className=" h-3 w-3" />) : campaign.type === "aleatory" ? (<Gift className=" h-3 w-3" />) : null}
+                      {campaign.type === "FIXED" ? (<Ticket className=" h-3 w-3" />) : campaign.type === "ALEATORY" ? (<Gift className=" h-3 w-3" />) : null}
                       {campaign.type}
                     </Badge>
                     <Badge className="bg-green-200 text-green-800 text-xs">
@@ -95,7 +96,7 @@ export default function Raffles() {
                     </div>
                     <div className="flex items-center mt-2">
                       <Users className="h-4 w-4 mr-2" />
-                      <p className="text-xs">-</p>
+                      <p className="text-xs">{campaign.tickets?.length}</p>
                     </div>
                   </div>
                   <Link href={`/sorteios/${campaign.code}`}>

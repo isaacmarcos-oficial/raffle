@@ -9,12 +9,35 @@ declare module "next-auth" {
   }
 }
 
-export interface Campaign {
+export interface TicketType {
+  id: string;
+  numbers: string[];
+  buyer: {
+    id?: string;
+    name: string;
+    phone: string
+  };
+  phone: string;
+  purchaseDate: string;
+  paid: boolean;
+  buyerId: string;
+  Campaign: {
+    price: number
+  }
+}
+
+export interface BuyerType {
+  id: string;
+  name: string;
+  phone: string;
+}
+
+export interface CampaignType {
   id?: string;
   description: string;
   title?: string;
   code?: string;
-  type?: "fixed" | "aleatory";
+  type?: "FIXED" | "ALEATORY";
   price: number;
   drawDate: string | Date;
   quote: number;
@@ -23,22 +46,11 @@ export interface Campaign {
   pixCode: string;
   contactPhone: string;
   ownerId: string;
-}
-
-export interface Ticket {
-  id: string;
-  numbers: string[];
-  buyer: {
-    name: string
-  };
-  phone: string;
-  purchaseDate: string;
-  paid: boolean;
-  buyerId: string;
-  Campaign: Campaign;
+  tickets?: TicketType[];
+  buyer?: BuyerType[]
 }
 
 export interface RaffleState {
-  tickets: Ticket[];
+  tickets: CampaignType[];
   totalNumbers: number;
 }

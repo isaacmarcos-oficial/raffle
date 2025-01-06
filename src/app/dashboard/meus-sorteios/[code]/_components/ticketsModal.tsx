@@ -7,15 +7,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Ticket } from "@/types/campaign";
+import { TicketType } from "@/types/campaign";
 
 type ModalTicketsProps = {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  selectedTicket: Ticket | null;
+  selectedTicket: TicketType | null;
 };
 
-export default function ModalTickets({
+export default function ticketsModal({
   modalOpen,
   setModalOpen,
   selectedTicket,

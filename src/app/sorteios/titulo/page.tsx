@@ -9,10 +9,14 @@ import { useState } from 'react'
 import { TicketPurchase } from './_components/ticketPurchase'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Campaign } from '@/types/campaign'
+import { CampaignType } from '@/types/campaign'
 
-export default function LotteryPage({ title, drawDate, price, description, minQuotes }: Campaign) {
-  const [ticketCount, setTicketCount] = useState(minQuotes)
+export interface CampaignProps {
+  campaign: CampaignType;
+}
+
+export default function LotteryPage({ campaign }: CampaignProps) {
+  const [ticketCount, setTicketCount] = useState(campaign.minQuotes)
 
   const handleTicketsSelect = (price: number) => {
     setTicketCount((prev) => prev + price) // Incrementa o preço
@@ -45,12 +49,12 @@ export default function LotteryPage({ title, drawDate, price, description, minQu
               </div>
 
               <div className="flex w-full py-2 px-4 justify-between items-center space-y-2 mt-auto">
-                <h1 className="text-lg font-bold">{title}</h1>
+                <h1 className="text-lg font-bold">{campaign.title}</h1>
                 <div className="flex items-center justify-center gap-4">
                   <div className="flex items-center">
                     <Calendar className="text-green-500 h-4 w-4 mr-2" />
                     <p className="text-xs ">
-                      {format(new Date(drawDate), "dd/MM/yyyy", {locale: ptBR,})}
+                      {format(new Date(campaign.drawDate), "dd/MM/yyyy", {locale: ptBR,})}
                     </p>
                   </div>
                   <div className="flex items-center">
@@ -67,8 +71,8 @@ export default function LotteryPage({ title, drawDate, price, description, minQu
             <div className="flex w-full gap-4">
               <div className="w-2/3">
                 <TicketInput
-                  minQuotes={minQuotes}
-                  price={price}
+                  minQuotes={campaign.minQuotes}
+                  price={campaign.price}
                   ticketCount={ticketCount}
                   onTicketChange={handleInputChange}
                 />
@@ -77,7 +81,7 @@ export default function LotteryPage({ title, drawDate, price, description, minQu
                 <TicketPurchase
                   handlePurchase={() => null}
                   selectedNumbers={[]}
-                  price={price}
+                  price={campaign.price}
                   ticketCount={ticketCount}
                 />
               </div>
@@ -90,7 +94,7 @@ export default function LotteryPage({ title, drawDate, price, description, minQu
                   </h2>
                 </div>
                 <div className="space-y-4">
-                  {description}
+                  {campaign.description}
                 </div>
               </div>
             </Card>
