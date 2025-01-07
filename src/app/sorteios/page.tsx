@@ -105,7 +105,6 @@ export default function Raffles() {
                     </Button>
                   </Link>
                 </CardContent>
-
               </Card>
             ))}
           </div>

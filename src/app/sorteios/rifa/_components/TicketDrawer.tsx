@@ -31,9 +31,8 @@ export default function TicketsDrawer({ selectedNumbers, handlePurchase, onRemov
 
   return (
     <div
-      className={`fixed w-full md:w-80 bottom-4 left-1/2 transform -translate-x-1/2 z-50 transition-all ${
-        isMinimized ? "translate-y-full" : "translate-y-5"
-      }`}
+      className={`fixed w-full md:w-80 bottom-4 left-1/2 transform -translate-x-1/2 z-50 transition-all ${isMinimized ? "translate-y-full" : "translate-y-5"
+        }`}
     >
       <Card className="w-full">
         <CardContent className="p-0 -mt-12 w-full">
@@ -79,7 +78,7 @@ export default function TicketsDrawer({ selectedNumbers, handlePurchase, onRemov
                       disabled={selectedNumbers.length === 0}
                       className="w-full"
                     >
-                      Prosseguir com R${(price * selectedNumbers.length).toFixed(2)}
+                      Prosseguir com {(price * selectedNumbers.length).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                     </Button>
                   </div>
                 </>

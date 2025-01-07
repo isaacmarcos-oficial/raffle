@@ -12,6 +12,13 @@ enum CampaignType {
   ALEATORY
 }
 
+enum PaymentType {
+  PIX_MANUAL
+  PIX_AUTOMATIC
+  CARD
+  CASH
+}
+
 model Campaign {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   code         String       @unique // Código de identificação (ex.: ABC123)
@@ -35,6 +42,7 @@ model Ticket {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   numbers       String[] // Número escolhido ou atribuído
   paid         Boolean // Se o pagamento foi aprovado
+  PaymentType PaymentType
   purchaseDate DateTime // Data da compra
   campaignId   String?   @db.ObjectId
   Campaign     Campaign? @relation(fields: [campaignId], references: [id])

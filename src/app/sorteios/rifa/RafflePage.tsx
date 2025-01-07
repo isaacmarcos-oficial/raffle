@@ -37,6 +37,7 @@ export default function Rifa({ campaign }: CampaignProps) {
           buyerName,
           phone,
           paid: false,
+          PaymentType: "PIX_MANUAL"
         }),
       });
 
@@ -178,6 +179,8 @@ export default function Rifa({ campaign }: CampaignProps) {
       />
 
       <TicketModal
+        contactPhone={campaign.contactPhone}
+        pixKey={campaign.pixCode}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { PhoneInput } from '@/components/ui/phone-input';
 
 interface TicketFormProps {
   selectedNumbers: string[];
@@ -25,7 +26,7 @@ export function TicketForm({ selectedNumbers, price, onClose, handlePurchase }: 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="buyer" className="block text-sm font-medium">
-            Nome do Comprador
+            Seu nome
           </Label>
           <Input
             type="text"
@@ -39,13 +40,13 @@ export function TicketForm({ selectedNumbers, price, onClose, handlePurchase }: 
 
         <div>
           <Label htmlFor="phone" className="block text-sm font-medium">
-            Telefone
+            Seu telefone Whatsapp
           </Label>
-          <Input
-            type="tel"
+          <PhoneInput
             id="phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
+            defaultCountry='BR'
             required
             className="mt-1"
           />
@@ -56,7 +57,7 @@ export function TicketForm({ selectedNumbers, price, onClose, handlePurchase }: 
             Voltar
           </Button>
           <Button type="submit" className="">
-            Finalizar R${(price * selectedNumbers.length).toFixed(2)}
+            Finalizar {(price * selectedNumbers.length).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </Button>
         </div>
       </form>

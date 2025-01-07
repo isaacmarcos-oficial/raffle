@@ -34,6 +34,7 @@
     "react-day-picker": "^9.4.1",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-hook-form": "^7.53.2",
+    "react-phone-number-input": "^3.4.10",
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.14.1",
     "shadcn": "^2.1.7",

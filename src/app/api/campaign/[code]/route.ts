@@ -28,7 +28,7 @@ export async function GET(
               select: {
                 price: true
               }
-            }
+            },
           }
         },
         Owner: true

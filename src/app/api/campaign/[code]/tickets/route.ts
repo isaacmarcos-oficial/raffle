@@ -7,7 +7,7 @@ export async function POST(req: Request, { params }: { params: Promise <{ code: 
   try {
     const {code: campaignCode} = await params;
 
-    const { numbers, buyerName, phone, paid, purchaseDate } = await req.json();
+    const { numbers, buyerName, phone, paid, purchaseDate, PaymentType } = await req.json();
 
     // Validação dos dados recebidos
     if (!Array.isArray(numbers) || numbers.length === 0 || !buyerName || !phone || typeof paid !== "boolean") {
@@ -54,6 +54,7 @@ export async function POST(req: Request, { params }: { params: Promise <{ code: 
     // Criar o ticket associado
     const newTicket = await prisma.ticket.create({
       data: {
+        PaymentType,
         numbers, // Array de números selecionados
         paid,
         purchaseDate: purchaseDate ? new Date(purchaseDate) : new Date(),
