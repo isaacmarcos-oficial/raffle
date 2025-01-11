@@ -6,6 +6,7 @@ export interface TabsTicketsProps {
 }
 
 export default function TicketsCard({ campaign }: TabsTicketsProps) {
+  console.log(campaign)
   const totalTickets = campaign.tickets?.length;
 
   const totalPaidValue = campaign.tickets?.reduce((total, ticket) => {
@@ -22,8 +23,22 @@ export default function TicketsCard({ campaign }: TabsTicketsProps) {
     return total;
   }, 0);
 
+  const pixManualTotal = campaign.tickets?.reduce((total, ticket) => {
+    if (ticket.paid && ticket.PaymentType === "PIX_MANUAL") {
+      return total + (ticket.numbers?.length || 0) * campaign.price;
+    }
+    return total;
+  }, 0);
+
+  const cashTotal = campaign.tickets?.reduce((total, ticket) => {
+    if (ticket.paid && ticket.PaymentType === "CASH") {
+      return total + (ticket.numbers?.length || 0) * campaign.price;
+    }
+    return total;
+  }, 0);
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       <Card className="flex md:flex-col gap-2 p-4">
         <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
           <CardTitle>Compras</CardTitle>
@@ -63,8 +78,8 @@ export default function TicketsCard({ campaign }: TabsTicketsProps) {
       </Card>
 
       <Card className="flex md:flex-col gap-2 p-4">
-        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
-          <CardTitle>Pagamentos confirmados</CardTitle>
+        <CardContent className="flex flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle className="text-center">Total confirmados</CardTitle>
           <CardDescription className="font-bold text-lg md:text-xl text-green-500">
             {totalPaidValue?.toLocaleString("pt-BR", {
               style: "currency",
@@ -75,10 +90,34 @@ export default function TicketsCard({ campaign }: TabsTicketsProps) {
       </Card>
 
       <Card className="flex md:flex-col gap-2 p-4">
-        <CardContent className="flex md:flex-col gap-2 p-0 w-full justify-between items-center">
-          <CardTitle>Pagamentos pendentes</CardTitle>
+        <CardContent className="flex flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle className="text-center">Total pendentes</CardTitle>
           <CardDescription className="font-bold text-lg md:text-xl text-yellow-500">
             {totalUnPaidValue?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </CardDescription>
+        </CardContent>
+      </Card>
+
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex flex-col gap-2 p-0 w-full justify-between items-center">
+          <CardTitle className="text-center">PIX</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl text-green-500">
+            {pixManualTotal?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </CardDescription>
+        </CardContent>
+      </Card>
+
+      <Card className="flex md:flex-col gap-2 p-4">
+        <CardContent className="flex flex-col gap-2  p-0 w-full justify-between items-center">
+          <CardTitle className="text-center">Dinheiro</CardTitle>
+          <CardDescription className="font-bold text-lg md:text-xl text-green-500">
+            {cashTotal?.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             })}

@@ -39,18 +39,18 @@ export default function UserNav() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <Link href="/dashboard/profile">
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
                 Meu perfil
               </DropdownMenuItem>
             </Link>
             <Link href="/dashboard">
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
                 Minhas Rifas
               </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
             Sair
           </DropdownMenuItem>
         </DropdownMenuContent>

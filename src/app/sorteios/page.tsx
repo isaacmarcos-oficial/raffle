@@ -28,7 +28,6 @@ export default function Raffles() {
 
     fetchCampaigns();
   }, []);
-  console.log(campaigns)
 
   return (
     <div className="flex w-full items-center justify-center">

@@ -1,20 +1,18 @@
 'use client'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Minus, X } from "lucide-react";
+import { Minus, ShoppingCart, X } from "lucide-react";
 import React, { useEffect, useState } from "react"
-import { TicketForm } from "./TicketForm";
 
 interface TicketsDrawerProps {
-  handlePurchase: (buyerName: string, phone: string) => void;
   selectedNumbers: string[];
+  handleModalOpen: () => void;
   onRemove: (number: string) => void;
   price: number;
 }
 
-export default function TicketsDrawer({ selectedNumbers, handlePurchase, onRemove, price }: TicketsDrawerProps) {
+export default function TicketsDrawer({ selectedNumbers, onRemove, price, handleModalOpen }: TicketsDrawerProps) {
   const [isMinimized, setIsMinimized] = useState(true);
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1)
 
   useEffect(() => {
     if (selectedNumbers.length === 0) {
@@ -25,9 +23,6 @@ export default function TicketsDrawer({ selectedNumbers, handlePurchase, onRemov
       setIsMinimized(false);
     }
   }, [selectedNumbers]);
-
-  const handleNextStep = () => setCurrentStep(2);
-  const handlePreviousStep = () => setCurrentStep(1);
 
   return (
     <div
@@ -46,53 +41,37 @@ export default function TicketsDrawer({ selectedNumbers, handlePurchase, onRemov
               <Minus className="absolute top-0 h-4 w-4" />
             </Button>
             <CardTitle className="text-lg font-bold">
-              {currentStep === 1 ? "Números Selecionados" : "Finalizar Compra"}
+              Números Selecionados
             </CardTitle>
           </CardHeader>
           {!isMinimized && (
             <div className="mt-4">
-              {currentStep === 1 ? (
-                <>
-                  {/* Etapa 1: Exibir números selecionados */}
-                  <div className="grid grid-cols-5 flex-wrap gap-2">
-                    {selectedNumbers.map((number) => (
-                      <span
-                        key={number}
-                        className="p-2 flex items-center -pl-4 py-2 text-xs font-bold bg-green-500/10 text-green-500 rounded-md"
-                      >
-                        <span>{number}</span>
-                        <Button
-                          size="icon"
-                          variant="destructive"
-                          onClick={() => onRemove(number)}
-                          className="relative -ml-4 -top-4 -right-4 h-4 w-4 rounded-full hover:text-foreground"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-4">
+              <div className="grid grid-cols-5 flex-wrap gap-2">
+                {selectedNumbers.map((number) => (
+                  <span
+                    key={number}
+                    className="p-2 flex items-center -pl-4 py-2 text-xs font-bold bg-green-500/10 text-green-500 rounded-md"
+                  >
+                    <span>{number}</span>
                     <Button
-                      onClick={handleNextStep}
-                      disabled={selectedNumbers.length === 0}
-                      className="w-full"
+                      size="icon"
+                      variant="destructive"
+                      onClick={() => onRemove(number)}
+                      className="relative -ml-4 -top-4 -right-4 h-4 w-4 rounded-full hover:text-foreground"
                     >
-                      Prosseguir com {(price * selectedNumbers.length).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      <X className="h-3 w-3" />
                     </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* Etapa 2: Exibir formulário */}
-                  <TicketForm
-                    selectedNumbers={selectedNumbers}
-                    price={price}
-                    handlePurchase={handlePurchase}
-                    onClose={handlePreviousStep}
-                  />
-                </>
-              )}
+                  </span>
+                ))}
+              </div>
+              <Button
+                onClick={handleModalOpen}
+                disabled={selectedNumbers.length === 0}
+                className="w-full mt-4 gap-4 p-6 text-white bg-green-500 hover:bg-green-500/80 text-sm font-bold"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                {(price * selectedNumbers.length).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+              </Button>
             </div>
           )}
         </CardContent>

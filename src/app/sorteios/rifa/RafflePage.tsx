@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Banknote, Calendar, Users } from 'lucide-react';
+import { Banknote, Bookmark, Calendar, Users } from 'lucide-react';
 import TicketsDrawer from './_components/TicketDrawer';
 import { TicketGrid } from './_components/TicketGrid';
 import { format } from 'date-fns';
@@ -20,7 +20,12 @@ export default function Rifa({ campaign }: CampaignProps) {
   const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handlePurchase = async (buyerName: string, phone: string): Promise<void> => {
+  const handlePurchase = async (
+    buyerName: string,
+    phone: string,
+    PaymentType: "PIX_MANUAL" | "CASH",
+    selectedNumbers: string[]
+  ): Promise<void> => {
     if (selectedNumbers.length === 0) {
       toast.error("Nenhum número selecionado!");
       return;
@@ -37,14 +42,14 @@ export default function Rifa({ campaign }: CampaignProps) {
           buyerName,
           phone,
           paid: false,
-          PaymentType: "PIX_MANUAL"
+          PaymentType,
         }),
       });
 
       if (response.ok) {
         const savedTicket = await response.json();
         setTickets((prevTickets) => [...prevTickets, savedTicket]);
-        setIsModalOpen(true);
+        setIsModalOpen(false);
         toast.success("Compra realizada com sucesso!");
         setSelectedNumbers([]);
       } else {
@@ -56,6 +61,10 @@ export default function Rifa({ campaign }: CampaignProps) {
       console.error("Erro ao processar a compra:", error);
       toast.error("Erro ao processar a compra.");
     }
+  };
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
   };
 
   const handleTicketSelect = (number: string) => {
@@ -105,6 +114,10 @@ export default function Rifa({ campaign }: CampaignProps) {
           <div className="flex w-full py-2 px-4 justify-center items-center space-y-2 mt-auto">
             <div className="flex items-center justify-center gap-4">
               <div className="flex items-center">
+                <Bookmark className="text-green-500 h-4 w-4 mr-2" />
+                <p className="text-xs">{campaign.code}</p>
+              </div>
+              <div className="flex items-center">
                 <Banknote className="text-green-500 h-4 w-4 mr-2" />
                 <p className="text-xs">
                   {campaign.price.toLocaleString("pt-BR", {
@@ -141,6 +154,7 @@ export default function Rifa({ campaign }: CampaignProps) {
 
         <div className="flex w-full gap-6">
           <TicketGrid
+            onTicketDeselect={handleTicketRemove}
             tickets={tickets}
             selectedNumbers={selectedNumbers}
             totalNumbers={campaign.quote}
@@ -155,16 +169,28 @@ export default function Rifa({ campaign }: CampaignProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className='flex gap-2'>
-            <WhatsappShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
+            <WhatsappShareButton
+              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
+              title={`*${campaign.title}*\n\n${campaign.description}`}
+            >
               <WhatsappIcon size={32} round />
             </WhatsappShareButton>
-            <FacebookShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
+            <FacebookShareButton
+              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
+              title={`${campaign.title}\n\n${campaign.description}`}
+            >
               <FacebookIcon size={32} round />
             </FacebookShareButton>
-            <TelegramShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
+            <TelegramShareButton
+              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
+              title={`${campaign.title}\n\n${campaign.description}`}
+            >
               <TelegramIcon size={32} round />
             </TelegramShareButton>
-            <TwitterShareButton url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}>
+            <TwitterShareButton
+              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
+              title={`${campaign.title}\n\n${campaign.description}`}
+            >
               <TwitterIcon size={32} round />
             </TwitterShareButton>
           </CardContent>
@@ -172,13 +198,17 @@ export default function Rifa({ campaign }: CampaignProps) {
       </main>
 
       <TicketsDrawer
-        handlePurchase={(buyerName, phone) => handlePurchase(buyerName, phone)}
+        handleModalOpen={handleModalOpen}
         price={campaign.price}
         selectedNumbers={selectedNumbers}
         onRemove={handleTicketRemove}
       />
 
       <TicketModal
+        handlePurchase={(buyerName, phone, paymentType, selectedNumbers) => handlePurchase(buyerName, phone, paymentType, selectedNumbers)}
+        handleClose={() => setIsModalOpen(false)}
+        price={campaign.price}
+        selectedNumbers={selectedNumbers}
         contactPhone={campaign.contactPhone}
         pixKey={campaign.pixCode}
         isOpen={isModalOpen}

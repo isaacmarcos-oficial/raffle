@@ -2,13 +2,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, Eye, Undo, X } from "lucide-react";
+import { Eye, Undo, X } from "lucide-react";
 import { TicketType } from "@/types/campaign";
 import { Badge } from "@/components/ui/badge";
+import TicketPaymentConfirmation from "./ticketPaymentConfirmation";
+
 
 type TabsTicketsProps = {
   tickets: TicketType[];
-  handleApprove: (id: string) => void;
+  handleApprove: (id: string, paymentType: TicketType["PaymentType"]) => void;
   handleReject: (id: string) => void;
   handleUndo: (id: string) => void;
   handleViewNumbers: (ticket: TicketType) => void;
@@ -28,89 +30,58 @@ export default function TicketsTable({
   handleViewNumbers,
 }: TabsTicketsProps) {
 
+  const renderTicketCard = (ticket: TicketType, isApproved: boolean) => (
+    <Card key={ticket.id} className="mb-4">
+      <CardContent className="flex w-full justify-between p-0">
+        <div>
+          <div className={`${isApproved ? "text-green-500" : "text-yellow-500"} font-semibold`}>
+            {ticket.buyer?.name || "Sem comprador"}
+          </div>
+          <div className="text-sm text-zinc-600">
+            {ticket.buyer?.phone || "Sem telefone"}
+          </div>
+          <div className="flex text-xs gap-1 mt-2">
+            <Badge>{ticket.numbers.length} Bilhetes</Badge>
+            <Badge>{formatBRL(ticket.numbers.length * ticket.Campaign.price)}</Badge>
+            <Badge>{ticket.PaymentType === "CASH" ? "DINHEIRO" : "PIX"}</Badge>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button size="icon" variant="ghost" onClick={() => handleViewNumbers(ticket)}>
+            <Eye className="h-4 w-4 text-gray-300" />
+          </Button>
+          {isApproved ? (
+            <Button size="icon" variant="ghost" onClick={() => handleUndo(ticket.id)}>
+              <Undo className="h-4 w-4 text-yellow-500" />
+            </Button>
+          ) : (
+            <TicketPaymentConfirmation
+              ticketId={ticket.id}
+              initialPaymentType={ticket.PaymentType}
+              onConfirm={handleApprove}
+            />
+          )}
+          {!isApproved && (
+            <Button size="icon" variant="ghost" onClick={() => handleReject(ticket.id)}>
+              <X className="h-4 w-4 text-red-500" />
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <Tabs defaultValue="pending" className="w-full">
       <TabsList className="w-full grid grid-cols-2">
         <TabsTrigger value="pending">Pendentes</TabsTrigger>
         <TabsTrigger value="approved">Aprovados</TabsTrigger>
       </TabsList>
-
-      <TabsContent value="pending" >
-        {tickets
-          .filter((ticket) => ticket.paid === false)
-          .sort((a, b) => (a.buyer?.name || "").localeCompare(b.buyer?.name || ""))
-          .map((ticket) => (
-            <Card key={ticket.id} className="mb-4">
-              <CardContent className="flex w-full justify-between p-0">
-                <div >
-                  <div className="">
-                    <p className="text-indigo-500 font-semibold">
-                      {ticket.buyer?.name || "Sem comprador"}
-                    </p>
-                    <p className="text-foreground text-sm">
-                      <strong>Contato:</strong> {ticket.buyer?.phone || "Sem Telefone"}
-                    </p>
-                  </div>
-                  <div className="flex text-xs gap-1 mt-1">
-                    <Badge>{ticket.numbers.length} Bilhetes</Badge>
-                    <Badge>
-                      {formatBRL(ticket.numbers.length * ticket.Campaign.price)}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => handleViewNumbers(ticket)}
-                  >
-                    <Eye className="h-4 w-4 text-gray-300" />
-                  </Button>
-                  <Button size="icon" variant="ghost" onClick={() => handleApprove(ticket.id)}>
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  </Button>
-                  <Button size="icon" variant="ghost" onClick={() => handleReject(ticket.id)}>
-                    <X className="h-4 w-4 text-red-500" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+      <TabsContent value="pending">
+        {tickets.filter((ticket) => !ticket.paid).map((ticket) => renderTicketCard(ticket, false))}
       </TabsContent>
-
       <TabsContent value="approved">
-        {tickets
-          .filter((ticket) => ticket.paid === true)
-          .sort((a, b) => (a.buyer.name || "").localeCompare(b.buyer.name || ""))
-          .map((ticket) => (
-            <Card key={ticket.id} className="mb-4">
-              <CardContent className="flex w-full justify-between p-0">
-                <div>
-                  <p className="text-indigo-500 font-semibold">
-                    {ticket.buyer.name || "Sem comprador"}
-                  </p>
-                  <div className="flex text-xs gap-1">
-                    <Badge>{ticket.numbers.length} Bilhetes</Badge>
-                    <Badge>
-                      {formatBRL(ticket.numbers.length * ticket.Campaign.price)}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => handleViewNumbers(ticket)}
-                  >
-                    <Eye className="h-4 w-4 text-gray-300" />
-                  </Button>
-                  <Button size="icon" variant="ghost" onClick={() => handleUndo(ticket.id)}>
-                    <Undo className="h-4 w-4 text-yellow-500" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        {tickets.filter((ticket) => ticket.paid).map((ticket) => renderTicketCard(ticket, true))}
       </TabsContent>
     </Tabs>
   );

@@ -10,8 +10,6 @@ import TicketsSearch from "./_components/ticketsSearch";
 import CampaignSetting from "./_components/campaignSetting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-
-
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
   const [campaign, setCampaign] = useState<CampaignType>();
@@ -46,13 +44,12 @@ export default function SorteioPage() {
   const handleSearchNumber = (number: string) => setSearchNumber(number);
   const handleSearchPhone = (phone: string) => setSearchPhone(phone);
 
-  const filteredTickets = campaign?.tickets?.filter((ticket) => {
-    const buyer = campaign.buyer?.find((b) => b.id === ticket.buyerId);
 
-    const buyerName = buyer?.name?.toLowerCase() || "";
-    const ticketNumbers = ticket?.numbers.join(",").toLowerCase();
-    const buyerPhone = buyer?.phone || "";
-  
+  const filteredTickets = campaign?.tickets?.filter((ticket) => {
+    const buyerName = ticket.buyer?.name?.toLowerCase() || "";
+    const ticketNumbers = ticket.numbers.join(",").toLowerCase();
+    const buyerPhone = ticket.buyer?.phone || "";
+
     return (
       buyerName.includes(searchName.toLowerCase()) &&
       (searchNumber === "" || ticketNumbers.includes(searchNumber)) &&
@@ -60,105 +57,90 @@ export default function SorteioPage() {
     );
   }) || [];
 
-  const handleApprove = async (id: string) => {
+  const handleTicketUpdate = async (
+    id: string,
+    paid: boolean | null,
+    paymentType: TicketType["PaymentType"] | null = null
+  ) => {
     try {
       const response = await fetch(`/api/campaign/${code}/tickets`, {
-        method: "PATCH",
+        method: paid === null ? "DELETE" : "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: id,
-          paid: true,
+          id,
+          paid,
+          PaymentType: paymentType
         }),
       });
-  
+
       if (response.ok) {
         const updatedTicket = await response.json();
-  
+
         setCampaign((prevCampaign) => {
           if (!prevCampaign || !prevCampaign.tickets) return prevCampaign;
-  
-          const updatedTickets = prevCampaign.tickets.map((ticket) =>
-            ticket.id === id ? { ...ticket, paid: updatedTicket.paid } : ticket
-          );
-  
+
+          const updatedTickets = paid === null
+            ? prevCampaign.tickets.filter((ticket) => ticket.id !== id)
+            : prevCampaign.tickets.map((ticket) =>
+              ticket.id === id
+                ? {
+                  ...ticket,
+                  paid: updatedTicket.paid,
+                  PaymentType: paymentType || ticket.PaymentType
+                }
+                : ticket
+            );
+
           return { ...prevCampaign, tickets: updatedTickets };
         });
-  
-        toast.success("Bilhete aprovado com sucesso!");
+
+        toast.success(
+          paid === null
+            ? "Bilhete rejeitado com sucesso!"
+            : paid
+              ? "Bilhete aprovado com sucesso!"
+              : "Aprovação desfeita com sucesso!"
+        );
+        console.log(updatedTicket)
       } else {
-        console.error("Erro ao aprovar o ticket.");
+        console.error("Erro ao atualizar o ticket.");
       }
     } catch (error) {
-      console.error("Erro ao aprovar o ticket:", error);
+      console.error("Erro ao atualizar o ticket:", error);
     }
   };
 
-  const handleUndo = async (id: string) => {
+  const handleUpdateCampaign = async (updatedCampaign: Partial<CampaignType>) => {
     try {
-      const response = await fetch(`/api/campaign/${code}/tickets`, {
+      const response = await fetch(`/api/campaign/${code}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id: id,
-          paid: false,
-        }),
+        body: JSON.stringify(updatedCampaign),
       });
   
       if (response.ok) {
-        const updatedTicket = await response.json();
+        const updatedData = await response.json();
+        setCampaign((prev) => ({ ...prev, ...updatedData }));
+        toast.success("Campanha atualizada com sucesso!");
+      } else {
+        console.error("Erro ao atualizar a campanha.");
+        toast.error("Erro ao atualizar a campanha.");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar a campanha:", error);
+      toast.error("Erro ao atualizar a campanha.");
+    }
+  };
   
-        setCampaign((prevCampaign) => {
-          if (!prevCampaign || !prevCampaign.tickets) return prevCampaign;
 
-  
-          const updatedTickets = prevCampaign.tickets.map((ticket) =>
-            ticket.id === id ? { ...ticket, paid: updatedTicket.paid } : ticket
-          );
-  
-          return { ...prevCampaign, tickets: updatedTickets };
-        });
-  
-        toast.success("Aprovação desfeita com sucesso!");
-      } else {
-        console.error("Erro ao desfazer a aprovação do ticket.");
-      }
-    } catch (error) {
-      console.error("Erro ao desfazer a aprovação do ticket:", error);
-    }
-  };
-  
-  const handleReject = async (id: string) => {
-    try {
-      const response = await fetch(`/api/campaign/${code}/tickets/`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: id }),
-      });
-  
-      if (response.ok) {
-        setCampaign((prevCampaign) => {
-          if (!prevCampaign || !prevCampaign.tickets) return prevCampaign;
-  
-          const updatedTickets = prevCampaign.tickets.filter((ticket) => ticket.id !== id);
-  
-          return { ...prevCampaign, tickets: updatedTickets };
-        });
-  
-        toast.success("Bilhete rejeitado com sucesso!");
-      } else {
-        console.error("Erro ao rejeitar o ticket.");
-      }
-    } catch (error) {
-      console.error("Erro ao rejeitar o ticket:", error);
-    }
-  };
-  
+  const handleApprove = (id: string, PaymentType: TicketType["PaymentType"]) =>
+    handleTicketUpdate(id, true, PaymentType);
+  const handleUndo = (id: string) => handleTicketUpdate(id, false);
+  const handleReject = (id: string) => handleTicketUpdate(id, null);
 
   const handleViewNumbers = (ticket: TicketType) => {
     setSelectedTicket(ticket);
@@ -173,15 +155,15 @@ export default function SorteioPage() {
             <h1 className="text-2xl font-bold">Sorteio</h1>
           </div>
 
-          <Tabs defaultValue="Data">
+          <Tabs defaultValue="Insight">
             <TabsList className="w-full mb-4" >
-              <TabsTrigger value="Data" className="w-full">Dados</TabsTrigger>
+              <TabsTrigger value="Insight" className="w-full">Insight</TabsTrigger>
               <TabsTrigger value="Bilhetes" className="w-full">Bilhetes</TabsTrigger>
+              <TabsTrigger value="Setting" className="w-full">Configurações</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="Data">
+            <TabsContent value="Insight">
               {campaign && <TicketsCard campaign={campaign} />}
-              {campaign && <CampaignSetting campaign={campaign} />}
             </TabsContent>
 
             <TabsContent value="Bilhetes">
@@ -198,6 +180,10 @@ export default function SorteioPage() {
                 handleUndo={handleUndo}
                 handleViewNumbers={handleViewNumbers}
               />
+            </TabsContent>
+
+            <TabsContent value="Setting">
+              {campaign && <CampaignSetting onUpdateCampaign={handleUpdateCampaign} campaign={campaign} />}
             </TabsContent>
           </Tabs>
 

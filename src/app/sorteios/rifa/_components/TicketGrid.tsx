@@ -7,9 +7,10 @@ interface TicketGridProps {
   totalNumbers: number;
   selectedNumbers: string[];
   onTicketSelect: (number: string) => void;
+  onTicketDeselect: (number: string) => void;
 }
 
-export function TicketGrid({ tickets, totalNumbers, selectedNumbers, onTicketSelect }: TicketGridProps) {
+export function TicketGrid({ tickets, totalNumbers, selectedNumbers, onTicketSelect, onTicketDeselect }: TicketGridProps) {
   const getTicketStatus = (number: string) => {
     const ticket = tickets.find((ticket) => ticket.numbers.includes(number));
     if (ticket) {
@@ -24,7 +25,7 @@ export function TicketGrid({ tickets, totalNumbers, selectedNumbers, onTicketSel
         Escolha seu Número
       </CardTitle>
       <CardContent className='p-0'>
-        <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
+        <div className="flex flex-wrap  gap-2">
           {[...Array(totalNumbers)].map((_, index) => {
             const number = (index + 1).toString().padStart(3, '0');
             const status = getTicketStatus(number);
@@ -33,7 +34,13 @@ export function TicketGrid({ tickets, totalNumbers, selectedNumbers, onTicketSel
             return (
               <button
                 key={number}
-                onClick={() => status === "available" && onTicketSelect(number)}
+                onClick={() =>
+                  status === 'available'
+                    ? isSelected
+                      ? onTicketDeselect(number) // Desmarcar se já estiver selecionado
+                      : onTicketSelect(number) // Marcar se não estiver selecionado
+                    : undefined // Não faz nada se não estiver disponível
+                }
                 className={`flex 
               p-4 rounded-lg justify-center items-center text-center font-medium transition-colors
               ${status === "paid"

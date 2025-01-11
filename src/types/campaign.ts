@@ -20,6 +20,7 @@ export interface TicketType {
   phone: string;
   purchaseDate: string;
   paid: boolean;
+  PaymentType: "CASH" | "PIX_MANUAL";
   buyerId: string;
   Campaign: {
     price: number

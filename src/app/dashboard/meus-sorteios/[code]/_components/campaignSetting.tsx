@@ -6,14 +6,16 @@ import { Label } from "@/components/ui/label";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem, Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { CampaignType } from "@/types/campaign";
+import { Check, Pencil } from "lucide-react";
 import { useState } from "react";
 
 export interface CampaignProps {
   campaign: CampaignType;
+  onUpdateCampaign: (updatedCampaign: Partial<CampaignType>) => Promise<void>; // Callback para salvar as alterações
 }
 
-export default function CampaignSetting({campaign}: CampaignProps) {
-  
+export default function CampaignSetting({ campaign, onUpdateCampaign }: CampaignProps) {
+
   const [formData, setFormData] = useState({
     title: campaign.title || "",
     description: campaign.description || "",
@@ -26,8 +28,23 @@ export default function CampaignSetting({campaign}: CampaignProps) {
     phone: campaign.contactPhone || "",
   });
 
+  const [editMode, setEditMode] = useState({
+    title: false,
+    description: false,
+    raffleType: false,
+    quantity: false,
+    minQuantity: false,
+    price: false,
+    drawDate: false,
+    pixKey: false,
+    phone: false,
+  });
 
   const [loading, setLoading] = useState(false);
+
+  const toggleEditMode = (field: keyof typeof editMode) => {
+    setEditMode((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -45,28 +62,52 @@ export default function CampaignSetting({campaign}: CampaignProps) {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Implementar lógica de envio aqui
-    console.log("Dados enviados:", formData);
-    setLoading(false);
+    try {
+      await onUpdateCampaign(formData); // Chama o callback para atualizar a campanha
+    } catch (error) {
+      console.error("Erro ao atualizar a campanha:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
-
       <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+        {/* NOME DA RIFA */}
         <div className="space-y-2">
           <Label htmlFor="title">Nome da Rifa</Label>
-          <Input id="title" value={formData.title} onChange={handleChange}/>
+          <div className="flex gap-2">
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={handleChange}
+              disabled={!editMode.title}
+            />
+            <Button type="button" onClick={() => toggleEditMode("title")}>
+              {editMode.title ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
 
+        {/* DESCRICAO DA RIFA */}
         <div className="space-y-2">
           <Label htmlFor="description">Descrição da Rifa</Label>
-          <Textarea id="description" value={formData.description} onChange={handleChange}/>
+          <div className="flex gap-2">
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={handleChange}
+              disabled={!editMode.description}
+            />
+            <Button type="button" onClick={() => toggleEditMode("description")}>
+              {editMode.description ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
-
 
         <div className="flex flex-col md:flex-row gap-4 w-full items-center">
           {formData.raffleType === 'fixed' && (
@@ -76,7 +117,7 @@ export default function CampaignSetting({campaign}: CampaignProps) {
                 onValueChange={(value) => handleSelectChange(value, 'quantity')}
               >
                 <SelectTrigger>
-                  <SelectValue defaultValue={formData.quantity}/>
+                  <SelectValue defaultValue={formData.quantity} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -105,38 +146,60 @@ export default function CampaignSetting({campaign}: CampaignProps) {
           )}
 
           <div className="space-y-2 w-full">
-            <Label htmlFor="price">Preço do número</Label>
-            <Input
-              id="price"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.price}
-              onChange={handleChange}
-              required
-            />
+            <Label htmlFor="price">Preço do Bilhete</Label>
+            <div className="flex gap-2">
+              <Input
+                id="price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.price}
+                onChange={handleChange}
+                disabled={!editMode.price}
+              />
+              <Button type="button" onClick={() => toggleEditMode("price")}>
+                {editMode.price ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2 w-full">
             <Label htmlFor="drawDate">Data do sorteio</Label>
-            <DatePicker
-              id="drawDate"
-              value={formData.drawDate ? new Date(formData.drawDate).toISOString().split('T')[0] : ''} // Converte para string no formato correto
-              onChange={() => handleDateChange} // Atualiza o estado
-              required
-            />
+            <div className="flex gap-2">
+              <DatePicker
+                id="drawDate"
+                value={formData.drawDate ? new Date(formData.drawDate).toISOString().split('T')[0] : ''} // Converte para string no formato correto
+                onChange={() => handleDateChange} // Atualiza o estado
+                required
+                disabled={!editMode.drawDate}
+              />
+              <Button type="button" onClick={() => toggleEditMode("drawDate")}>
+                {editMode.drawDate ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </div>
 
         <div className="w-full flex gap-4 flex-col md:flex-row">
           <div className="space-y-2 w-full">
             <Label htmlFor="pixKey">Chave Pix para pagamento</Label>
-            <Input id="pixKey" value={formData.pixKey} onChange={handleChange} required />
+            <div className="flex gap-2">
+              <Input id="pixKey" value={formData.pixKey} onChange={handleChange} disabled={!editMode.pixKey} required />
+              <Button type="button" onClick={() => toggleEditMode("pixKey")}>
+                {editMode.pixKey ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2 w-full">
             <Label htmlFor="phone">Telefone para envio do comprovante</Label>
-            <Input id="phone" type="tel" value={formData.phone} onChange={handleChange} required />
+            <div className="flex gap-2">
+              <Input id="phone" type="phone" value={formData.phone} onChange={handleChange} disabled={!editMode.phone} required />
+              <Button type="button" onClick={() => toggleEditMode("phone")}>
+                {editMode.phone ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+              </Button>
+            </div>
+
           </div>
         </div>
 
