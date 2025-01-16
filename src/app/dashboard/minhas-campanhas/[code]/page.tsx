@@ -9,6 +9,9 @@ import { useParams } from "next/navigation";
 import TicketsSearch from "./_components/ticketsSearch";
 import CampaignSetting from "./_components/campaignSetting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Eye } from "lucide-react";
 
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
@@ -153,6 +156,11 @@ export default function SorteioPage() {
         <div className="container mx-auto space-y-8">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Sorteio</h1>
+            <Button asChild>
+              <Link href={`/sorteio/${code}`}>
+                <Eye className="mr-2 h-4 w-4" /> Ver campanha
+              </Link>
+            </Button>
           </div>
 
           <Tabs defaultValue="Insight">

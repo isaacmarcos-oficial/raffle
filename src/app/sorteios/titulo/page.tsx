@@ -1,15 +1,13 @@
 "use client"
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Calendar, Share2, Users } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 import { LotteryTicketsSelector } from './_components/lotteryTicketsSelector'
 import { TicketInput } from './_components/ticketInput'
 import { useState } from 'react'
 import { TicketPurchase } from './_components/ticketPurchase'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 import { CampaignType } from '@/types/campaign'
+import BannerCampaign from '../_components/bannerCampaign'
+import ShareCampaign from '../_components/shareCampaign'
+import HeaderCampaign from '../_components/headerCampaign'
 
 export interface CampaignProps {
   campaign: CampaignType;
@@ -29,63 +27,35 @@ export default function LotteryPage({ campaign }: CampaignProps) {
   return (
     <div className="flex w-full items-center justify-center">
       <div className="flex flex-col min-h-screen w-full max-w-[1000px] items-center justify-center">
-        <div className="flex justify-center border-b border-border w-full">
-          <div className="container px-4 h-14 flex items-center justify-between">
-            <Badge variant="outline" className="text-green-400 border-green-400">
-              BET SKY AUTORIZADO
-            </Badge>
-            <Button variant="outline" size="sm">
-              <Share2 className="h-4 w-4 mr-2" />
-              Compartilhar
-            </Button>
-          </div>
-        </div>
+        <HeaderCampaign campaign={campaign} />
 
         <div className="flex-1 py-6 w-full">
           <div className="px-4 space-y-8">
-            <Card className='w-full p-0 h-[200px] flex flex-col items-center justify-center overflow-hidden'>
-              <div className=" w-full h-full flex items-center justify-center">
-                IMAGEM EM BREVE
-              </div>
+            <BannerCampaign campaign={campaign} />
 
-              <div className="flex w-full py-2 px-4 justify-between items-center space-y-2 mt-auto">
-                <h1 className="text-lg font-bold">{campaign.title}</h1>
-                <div className="flex items-center justify-center gap-4">
-                  <div className="flex items-center">
-                    <Calendar className="text-green-500 h-4 w-4 mr-2" />
-                    <p className="text-xs ">
-                      {format(new Date(campaign.drawDate), "dd/MM/yyyy", {locale: ptBR,})}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <Users className="text-green-500 h-4 w-4 mr-2" />
-                    <p className="text-xs">BREVE</p>
-                  </div>
+            <Card className='flex flex-col gap-4'>
+              <LotteryTicketsSelector onTicketsSelect={handleTicketsSelect} />
+
+              <div className="flex w-full gap-4">
+                <div className="w-2/3">
+                  <TicketInput
+                    minQuotes={campaign.minQuotes}
+                    price={campaign.price}
+                    ticketCount={ticketCount}
+                    onTicketChange={handleInputChange}
+                  />
                 </div>
-
+                <div className="w-1/3">
+                  <TicketPurchase
+                    handlePurchase={() => null}
+                    selectedNumbers={[]}
+                    price={campaign.price}
+                    ticketCount={ticketCount}
+                  />
+                </div>
               </div>
             </Card>
 
-            <LotteryTicketsSelector onTicketsSelect={handleTicketsSelect} />
-
-            <div className="flex w-full gap-4">
-              <div className="w-2/3">
-                <TicketInput
-                  minQuotes={campaign.minQuotes}
-                  price={campaign.price}
-                  ticketCount={ticketCount}
-                  onTicketChange={handleInputChange}
-                />
-              </div>
-              <div className="w-1/3">
-                <TicketPurchase
-                  handlePurchase={() => null}
-                  selectedNumbers={[]}
-                  price={campaign.price}
-                  ticketCount={ticketCount}
-                />
-              </div>
-            </div>
             <Card className="">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
@@ -99,25 +69,7 @@ export default function LotteryPage({ campaign }: CampaignProps) {
               </div>
             </Card>
 
-            <Card className='flex flex-col items-center justify-center'>
-              <CardHeader className=''>
-                Compartilhe:
-              </CardHeader>
-              <CardContent className='flex gap-2'>
-                <Button className=''>
-                  FB
-                </Button>
-                <Button className=''>
-                  IG
-                </Button>
-                <Button className=''>
-                  TG
-                </Button>
-                <Button className=''>
-                  X
-                </Button>
-              </CardContent>
-            </Card>
+            <ShareCampaign campaign={campaign} />
           </div>
         </div>
       </div>

@@ -48,6 +48,9 @@ export interface CampaignType {
   ownerId: string;
   tickets?: TicketType[];
   buyer?: BuyerType[]
+  owner: {
+    name: string
+  }
 }
 
 export interface RaffleState {

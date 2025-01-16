@@ -1,27 +1,26 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 
 const priceOptions = [
+  { value: 1, label: '1' },
+  { value: 5, label: '5' },
+  { value: 10, label: '10' },
   { value: 100, label: '100' },
-  { value: 200, label: '200' },
-  { value: 300, label: '300' },
-  { value: 400, label: '400' },
-  { value: 500, label: '500' },
-  { value: 600, label: '600' },
+  { value: 1000, label: '1000' },
+  { value: 5000, label: '5000' },
+  { value: 10000, label: '10000' },
+  { value: 20000, label: '20000' },
 ]
 
 export function LotteryTicketsSelector({ onTicketsSelect }: { onTicketsSelect: (price: number) => void }) {
   return (
-    <div className="flex flex-col gap-2">
-      <Card className="flex items-center justify-center p-2 w-full rounded">
-        <p className='font-bold antialiased '>
-          Quanto mais títulos, mais chances de ganhar!
-        </p>
-      </Card>
-      <div className="grid grid-cols-3 gap-2">
+    <div className="flex flex-col gap-4">
+      <div className='flex items-center justify-center font-bold antialiased'>
+        Selecione a quantidade de cotas
+      </div>
+      <div className="grid grid-cols-4 gap-2">
         {priceOptions.map((option) => (
           <Button
             key={option.value}

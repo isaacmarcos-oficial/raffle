@@ -8,8 +8,9 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { CampaignType, TicketType } from "@/types/campaign";
-import { FacebookIcon, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from 'next-share'
 import TicketModal from "./_components/TicketModal";
+import ShareCampaign from "../_components/shareCampaign";
+import HeaderCampaign from "../_components/headerCampaign";
 
 export interface CampaignProps {
   campaign: CampaignType;
@@ -107,6 +108,8 @@ export default function Rifa({ campaign }: CampaignProps) {
   return (
     <div className="min-h-screen">
       <main className="flex flex-col max-w-[1000px] container mx-auto p-4 gap-4">
+        <HeaderCampaign campaign={campaign} />
+        
         <Card className='w-full p-0 h-[200px] flex flex-col items-center justify-center overflow-hidden'>
           <div className="bg-gradient-to-t from-green-500 to-green-600 w-full h-full flex items-center justify-center">
             {campaign.title && <h1 className="text-4xl font-bold uppercase text-white">{campaign.title}</h1>}
@@ -138,7 +141,6 @@ export default function Rifa({ campaign }: CampaignProps) {
                 <p className="text-xs">{tickets.length}</p>
               </div>
             </div>
-
           </div>
         </Card>
 
@@ -163,39 +165,7 @@ export default function Rifa({ campaign }: CampaignProps) {
           />
         </div>
 
-        <Card className='flex flex-col items-center justify-center'>
-          <CardHeader>
-            <CardTitle>
-              Compartilhe:
-            </CardTitle>
-          </CardHeader>
-          <CardContent className='flex gap-2'>
-            <WhatsappShareButton
-              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
-              title={`*${campaign.title}*\n\n${campaign.description}`}
-            >
-              <WhatsappIcon size={32} round />
-            </WhatsappShareButton>
-            <FacebookShareButton
-              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
-              title={`${campaign.title}\n\n${campaign.description}`}
-            >
-              <FacebookIcon size={32} round />
-            </FacebookShareButton>
-            <TelegramShareButton
-              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
-              title={`${campaign.title}\n\n${campaign.description}`}
-            >
-              <TelegramIcon size={32} round />
-            </TelegramShareButton>
-            <TwitterShareButton
-              url={`https://raffle.ignishub.com.br/sorteios/${campaign.code}`}
-              title={`${campaign.title}\n\n${campaign.description}`}
-            >
-              <TwitterIcon size={32} round />
-            </TwitterShareButton>
-          </CardContent>
-        </Card>
+        <ShareCampaign campaign={campaign}/>
       </main>
 
       <TicketsDrawer
