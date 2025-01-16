@@ -34,7 +34,7 @@ model Campaign {
   minQuotes    Int? // Quantidade mínima (aplicável apenas para rifas aleatórias)
   digitLength  Int? // Número de dígitos para rifas aleatórias
   ownerId      String       @db.ObjectId
-  Owner        Owner        @relation(fields: [ownerId], references: [id])
+  owner        Owner        @relation(fields: [ownerId], references: [id])
   tickets      Ticket[] // Tickets vinculados à rifa
 }
 
@@ -42,10 +42,10 @@ model Ticket {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   numbers       String[] // Número escolhido ou atribuído
   paid         Boolean // Se o pagamento foi aprovado
-  PaymentType PaymentType
+  paymentType PaymentType
   purchaseDate DateTime // Data da compra
   campaignId   String?   @db.ObjectId
-  Campaign     Campaign? @relation(fields: [campaignId], references: [id])
+  campaign     Campaign? @relation(fields: [campaignId], references: [id])
   buyerId      String?   @db.ObjectId
   buyer        Buyer?    @relation(fields: [buyerId], references: [id]) // Relacionamento com o comprador
 }

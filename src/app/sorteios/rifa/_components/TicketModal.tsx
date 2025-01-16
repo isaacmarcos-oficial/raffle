@@ -20,7 +20,7 @@ interface TicketModalProps {
   handlePurchase: (
     buyerName: string,
     phone: string,
-    paymentType: TicketType["PaymentType"],
+    paymentType: TicketType["paymentType"],
     // tickets: TicketType[],
     selectedNumbers: string[]
   ) => void
@@ -44,7 +44,7 @@ export default function TicketModal({ isOpen, onClose, pixKey, contactPhone, sel
   const [currentStep, setCurrentStep] = useState(1);
   const [buyerName, setBuyerName] = useState("");
   const [phone, setPhone] = useState("");
-  const [paymentType, setPaymentType] = useState<TicketType['PaymentType']>();
+  const [paymentType, setPaymentType] = useState<TicketType['paymentType']>();
 
   const isCompleted = (step: number) => step < currentStep;
   const isActive = (step: number) => step === currentStep;

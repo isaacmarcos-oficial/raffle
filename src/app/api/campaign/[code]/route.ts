@@ -24,14 +24,14 @@ export async function GET(
         tickets: {
           include: {
             buyer: true,
-            Campaign: {
+            campaign: {
               select: {
                 price: true
               }
             },
           }
         },
-        Owner: true
+        owner: true
       }
     });
 

@@ -10,7 +10,7 @@ import TicketPaymentConfirmation from "./ticketPaymentConfirmation";
 
 type TabsTicketsProps = {
   tickets: TicketType[];
-  handleApprove: (id: string, paymentType: TicketType["PaymentType"]) => void;
+  handleApprove: (id: string, paymentType: TicketType["paymentType"]) => void;
   handleReject: (id: string) => void;
   handleUndo: (id: string) => void;
   handleViewNumbers: (ticket: TicketType) => void;
@@ -42,8 +42,8 @@ export default function TicketsTable({
           </div>
           <div className="flex text-xs gap-1 mt-2">
             <Badge>{ticket.numbers.length} Bilhetes</Badge>
-            <Badge>{formatBRL(ticket.numbers.length * ticket.Campaign.price)}</Badge>
-            <Badge>{ticket.PaymentType === "CASH" ? "DINHEIRO" : "PIX"}</Badge>
+            <Badge>{formatBRL(ticket.numbers.length * ticket.campaign.price)}</Badge>
+            <Badge>{ticket.paymentType === "CASH" ? "DINHEIRO" : "PIX"}</Badge>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function TicketsTable({
           ) : (
             <TicketPaymentConfirmation
               ticketId={ticket.id}
-              initialPaymentType={ticket.PaymentType}
+              initialPaymentType={ticket.paymentType}
               onConfirm={handleApprove}
             />
           )}

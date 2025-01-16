@@ -4,17 +4,13 @@ import Link from 'next/link';
 import { ModeToggle } from './ModeTogle';
 import { SidebarTrigger } from './ui/sidebar';
 import Logo from './logo';
-import { useSession } from 'next-auth/react';
 import UserNav from './userNav';
 export default function Header() {
-
-  const { data: session } = useSession();
-
   return (
     <header className="flex bg-navBar text-white p-4 shadow-lg items-center justify-center w-full ">
       <div className="w-full grid grid-cols-3 max-w-[1000px] items-center">
         <div className="">
-          {session && <SidebarTrigger />}
+          <SidebarTrigger />
         </div>
 
         <div className="flex items-center justify-center gap-2">

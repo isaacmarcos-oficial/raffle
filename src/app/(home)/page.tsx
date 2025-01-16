@@ -26,7 +26,7 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="/sorteios">Ver sorteios</Link>
+                  <Link href="/campanhas">Ver campanhas</Link>
                 </Button>
               </div>
             </div>
@@ -46,10 +46,10 @@ export default function Home() {
               </div>
               <div className="space-x-4">
                 <Button asChild>
-                  <Link href="/dashboard/create">Criar sorteio</Link>
+                  <Link href="/dashboard/create">Criar campanha</Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="/sorteios">Ver sorteios</Link>
+                  <Link href="/campanhas">Ver Campanhas</Link>
                 </Button>
               </div>
             </div>

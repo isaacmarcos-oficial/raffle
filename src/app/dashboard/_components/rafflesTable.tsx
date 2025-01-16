@@ -41,6 +41,10 @@ export const columns: ColumnDef<CampaignType>[] = [
   {
     accessorKey: "type",
     header: "Tipo",
+    cell: ({ row }) => {
+      const type = row.getValue("type");
+      return <div>{type === "fixed" ? "Aleatória" : "Fixa"}</div>;
+    },
   },
   {
     accessorKey: "price",
@@ -89,7 +93,7 @@ export const columns: ColumnDef<CampaignType>[] = [
               Copiar link
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <Link href={`/dashboard/meus-sorteios/${raffle.code}`} >
+            <Link href={`/dashboard/minhas-campanhas/${raffle.code}`} >
               <DropdownMenuItem>
                 <Pencil className="mr-2 h-4 w-4" />
                 Gerenciar

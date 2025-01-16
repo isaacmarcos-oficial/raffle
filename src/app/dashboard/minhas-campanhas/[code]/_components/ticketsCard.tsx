@@ -24,14 +24,14 @@ export default function TicketsCard({ campaign }: TabsTicketsProps) {
   }, 0);
 
   const pixManualTotal = campaign.tickets?.reduce((total, ticket) => {
-    if (ticket.paid && ticket.PaymentType === "PIX_MANUAL") {
+    if (ticket.paid && ticket.paymentType === "PIX_MANUAL") {
       return total + (ticket.numbers?.length || 0) * campaign.price;
     }
     return total;
   }, 0);
 
   const cashTotal = campaign.tickets?.reduce((total, ticket) => {
-    if (ticket.paid && ticket.PaymentType === "CASH") {
+    if (ticket.paid && ticket.paymentType === "CASH") {
       return total + (ticket.numbers?.length || 0) * campaign.price;
     }
     return total;

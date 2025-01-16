@@ -16,8 +16,16 @@ export async function GET(req: Request) {
     }
 
     // Busca o comprador pelo telefone
+    const phoneNormalized = phone.replace(/\D/g, '')
     const buyer = await prisma.buyer.findUnique({
-      where: { phone },
+      where: { phone: phoneNormalized },
+      include: {
+        tickets: {
+          include: {
+            campaign: true
+          }
+        },
+      },
     });
 
     if (!buyer) {
@@ -56,6 +64,7 @@ export async function POST(req: Request) {
     if (existingBuyer) {
       return NextResponse.json(existingBuyer, { status: 200 });
     }
+
 
     // Cria um novo comprador
     const newBuyer = await prisma.buyer.create({

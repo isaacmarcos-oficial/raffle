@@ -60,7 +60,7 @@ export default function SorteioPage() {
   const handleTicketUpdate = async (
     id: string,
     paid: boolean | null,
-    paymentType: TicketType["PaymentType"] | null = null
+    paymentType: TicketType["paymentType"] | null = null
   ) => {
     try {
       const response = await fetch(`/api/campaign/${code}/tickets`, {
@@ -71,7 +71,7 @@ export default function SorteioPage() {
         body: JSON.stringify({
           id,
           paid,
-          PaymentType: paymentType
+          paymentType: paymentType
         }),
       });
 
@@ -88,7 +88,7 @@ export default function SorteioPage() {
                 ? {
                   ...ticket,
                   paid: updatedTicket.paid,
-                  PaymentType: paymentType || ticket.PaymentType
+                  paymentType: paymentType || ticket.paymentType
                 }
                 : ticket
             );
@@ -137,8 +137,8 @@ export default function SorteioPage() {
   };
   
 
-  const handleApprove = (id: string, PaymentType: TicketType["PaymentType"]) =>
-    handleTicketUpdate(id, true, PaymentType);
+  const handleApprove = (id: string, paymentType: TicketType["paymentType"]) =>
+    handleTicketUpdate(id, true, paymentType);
   const handleUndo = (id: string) => handleTicketUpdate(id, false);
   const handleReject = (id: string) => handleTicketUpdate(id, null);
 

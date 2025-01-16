@@ -23,7 +23,7 @@ export default function Rifa({ campaign }: CampaignProps) {
   const handlePurchase = async (
     buyerName: string,
     phone: string,
-    PaymentType: "PIX_MANUAL" | "CASH",
+    paymentType: TicketType["paymentType"],
     selectedNumbers: string[]
   ): Promise<void> => {
     if (selectedNumbers.length === 0) {
@@ -32,6 +32,7 @@ export default function Rifa({ campaign }: CampaignProps) {
     }
 
     try {
+      const normalizedPhone = phone.replace(/\D/g, '');
       const response = await fetch(`/api/campaign/${campaign.code}/tickets`, {
         method: "POST",
         headers: {
@@ -40,9 +41,9 @@ export default function Rifa({ campaign }: CampaignProps) {
         body: JSON.stringify({
           numbers: selectedNumbers,
           buyerName,
-          phone,
+          phone: normalizedPhone,
           paid: false,
-          PaymentType,
+          paymentType,
         }),
       });
 

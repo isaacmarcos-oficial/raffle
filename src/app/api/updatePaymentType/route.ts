@@ -5,7 +5,7 @@ export async function POST() {
   try {
     const updatedTickets = await prisma.ticket.updateMany({
       data: {
-        PaymentType: "PIX_MANUAL",
+        paymentType: "PIX_MANUAL",
       },
     });
 

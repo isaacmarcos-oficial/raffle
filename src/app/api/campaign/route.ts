@@ -9,7 +9,7 @@ export async function GET() {
     const campaigns = await prisma.campaign.findMany({
       orderBy: { drawDate: "asc" },
       include: {
-        Owner: true,
+        owner: true,
         tickets: true
       }
     });

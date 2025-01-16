@@ -10,8 +10,8 @@ import { toast } from "sonner";
 // PaymentConfirmationDialog.tsx
 type PaymentConfirmationDialogProps = {
   ticketId: string;
-  initialPaymentType: TicketType["PaymentType"];
-  onConfirm: (ticketId: string, paymentType: TicketType["PaymentType"]) => void;
+  initialPaymentType: TicketType["paymentType"];
+  onConfirm: (ticketId: string, paymentType: TicketType["paymentType"]) => void;
 };
 
 export default function TicketPaymentConfirmation({
@@ -19,7 +19,7 @@ export default function TicketPaymentConfirmation({
   initialPaymentType,
   onConfirm
 }: PaymentConfirmationDialogProps) {
-  const [selectedPayment, setSelectedPayment] = useState<TicketType["PaymentType"]>(initialPaymentType);
+  const [selectedPayment, setSelectedPayment] = useState<TicketType["paymentType"]>(initialPaymentType);
 
   const handleConfirm = () => {
     if (!selectedPayment) {
@@ -41,7 +41,7 @@ export default function TicketPaymentConfirmation({
         <RadioGroup
           defaultValue={initialPaymentType}
           value={selectedPayment}
-          onValueChange={(value) => setSelectedPayment(value as TicketType["PaymentType"])}
+          onValueChange={(value) => setSelectedPayment(value as TicketType["paymentType"])}
           className="grid grid-cols-2 gap-2"
         >
           {[
@@ -56,7 +56,7 @@ export default function TicketPaymentConfirmation({
                 }`}
             >
               <CardContent
-                onClick={() => setSelectedPayment(value as TicketType["PaymentType"])}
+                onClick={() => setSelectedPayment(value as TicketType["paymentType"])}
                 className="flex p-0 items-center justify-center">
                 {label}
               </CardContent>

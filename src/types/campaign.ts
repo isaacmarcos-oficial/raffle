@@ -20,23 +20,22 @@ export interface TicketType {
   phone: string;
   purchaseDate: string;
   paid: boolean;
-  PaymentType: "CASH" | "PIX_MANUAL";
+  paymentType: "CASH" | "PIX_MANUAL";
   buyerId: string;
-  Campaign: {
-    price: number
-  }
+  campaign: CampaignType
 }
 
 export interface BuyerType {
   id: string;
   name: string;
   phone: string;
+  tickets: TicketType[]
 }
 
 export interface CampaignType {
   id?: string;
   description: string;
-  title?: string;
+  title: string;
   code?: string;
   type?: "FIXED" | "ALEATORY";
   price: number;
