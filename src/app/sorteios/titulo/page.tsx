@@ -4,16 +4,19 @@ import { LotteryTicketsSelector } from './_components/lotteryTicketsSelector'
 import { TicketInput } from './_components/ticketInput'
 import { useState } from 'react'
 import { TicketPurchase } from './_components/ticketPurchase'
-import { CampaignType } from '@/types/campaign'
+import { CampaignType, TicketType } from '@/types/campaign'
 import BannerCampaign from '../_components/bannerCampaign'
 import ShareCampaign from '../_components/shareCampaign'
 import HeaderCampaign from '../_components/headerCampaign'
+import { toast } from 'sonner'
+import TicketModal from '../rifa/_components/TicketModal'
 
 export interface CampaignProps {
   campaign: CampaignType;
 }
 
 export default function LotteryPage({ campaign }: CampaignProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [ticketCount, setTicketCount] = useState(campaign.minQuotes)
 
   const handleTicketsSelect = (price: number) => {
@@ -23,6 +26,54 @@ export default function LotteryPage({ campaign }: CampaignProps) {
   const handleInputChange = (count: number) => {
     setTicketCount(count)
   }
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const aleatoryNumbers = Array.from({ length: ticketCount }, () =>
+    Math.floor(1000000 + Math.random() * 9000000).toString() // Gera um número entre 1000000 e 9999999
+  )
+
+  const handlePurchase = async (
+    buyerName: string,
+    phone: string,
+    paymentType: TicketType["paymentType"],
+    selectedNumbers: string[]
+  ): Promise<void> => {
+    try {
+      const normalizedPhone = phone.replace(/\D/g, '');
+      const response = await fetch(`/api/campaign/${campaign.code}/tickets`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          numbers: selectedNumbers,
+          buyerName,
+          phone: normalizedPhone,
+          paid: false,
+          paymentType,
+        }),
+      });
+      if (response.ok) {
+        setIsModalOpen(false);
+        toast.success("Compra realizada com sucesso!",{
+          description: selectedNumbers.join(", "),
+          duration: 10000
+        },
+      );
+      } else {
+        const errorMessage = await response.text();
+        console.error("Erro da API:", errorMessage); // Mensagem da API
+        toast.error("Erro ao finalizar a compra!");
+      }
+    } catch (error) {
+      console.error("Erro ao processar a compra:", error);
+      toast.error("Erro ao processar a compra.");
+    }
+  }
+  
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -47,7 +98,7 @@ export default function LotteryPage({ campaign }: CampaignProps) {
                 </div>
                 <div className="w-1/3">
                   <TicketPurchase
-                    handlePurchase={() => null}
+                    handlePurchase={handleModalOpen}
                     selectedNumbers={[]}
                     price={campaign.price}
                     ticketCount={ticketCount}
@@ -73,6 +124,17 @@ export default function LotteryPage({ campaign }: CampaignProps) {
           </div>
         </div>
       </div>
+
+      <TicketModal
+        handlePurchase={(buyerName, phone, paymentType, selectedNumbers) => handlePurchase(buyerName, phone, paymentType, selectedNumbers)}
+        handleClose={() => setIsModalOpen(false)}
+        price={campaign.price}
+        selectedNumbers={aleatoryNumbers}
+        contactPhone={campaign.contactPhone}
+        pixKey={campaign.pixCode}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   )
 }

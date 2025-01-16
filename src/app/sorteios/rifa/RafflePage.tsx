@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Banknote, Bookmark, Calendar, Users } from 'lucide-react';
 import TicketsDrawer from './_components/TicketDrawer';
-import { TicketGrid } from './_components/TicketGrid';
+import { TicketGrid } from '../_components/TicketGrid';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';

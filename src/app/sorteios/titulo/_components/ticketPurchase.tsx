@@ -9,7 +9,6 @@ interface TicketPurchaseProps {
   handlePurchase: () => void
 }
 
-
 export function TicketPurchase({ ticketCount, price, handlePurchase }: TicketPurchaseProps) {
   
   const totalPrice = ticketCount * price
