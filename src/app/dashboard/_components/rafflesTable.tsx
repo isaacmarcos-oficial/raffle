@@ -28,7 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Copy, Eye, MoreHorizontal, Pencil } from "lucide-react";
+import { Copy, Eye, MoreHorizontal, PackageOpen, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { CampaignType } from "@/types/campaign";
@@ -42,8 +42,12 @@ export const columns: ColumnDef<CampaignType>[] = [
     accessorKey: "type",
     header: "Tipo",
     cell: ({ row }) => {
-      const type = row.getValue("type");
-      return <div>{type === "fixed" ? "Aleatória" : "Fixa"}</div>;
+      const type = row.getValue("type") as string;
+      const campaignTypeLabels: Record<string, string> = {
+        FIXED: "Fixo",
+        ALEATORY: "Aleatório",
+      };
+      return <div>{campaignTypeLabels[type] || "Desconhecido"}</div>;
     },
   },
   {
@@ -103,6 +107,12 @@ export const columns: ColumnDef<CampaignType>[] = [
               <DropdownMenuItem>
                 <Eye className="mr-2 h-4 w-4" />
                 Visualizar
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`/dashboard/minhas-campanhas/${raffle.code}/sorteio`} >
+              <DropdownMenuItem>
+                <PackageOpen className="mr-2 h-4 w-4" />
+                Ir para sorteio
               </DropdownMenuItem>
             </Link>
           </DropdownMenuContent>
