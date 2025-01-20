@@ -7,5 +7,5 @@ export function middleware(req: NextRequest) {
 
 // Configurar os matchers para as rotas protegidas
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
+  matcher: ["/dashboard/:path*"],
 };

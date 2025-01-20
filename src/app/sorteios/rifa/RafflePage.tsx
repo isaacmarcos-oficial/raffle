@@ -150,7 +150,7 @@ export default function Rifa({ campaign }: CampaignProps) {
               Descrição/ Regulamento
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="p-0 whitespace-pre-line">
             {campaign.description}
           </CardContent>
         </Card>
