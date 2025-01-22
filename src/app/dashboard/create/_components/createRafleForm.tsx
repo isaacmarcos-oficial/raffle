@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { DatePicker } from '@/components/ui/date-picker'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
+import { PhoneInput } from '@/components/ui/phone-input'
 
 export function CreateRaffleForm() {
   const { data: session } = useSession();
@@ -35,6 +36,13 @@ export function CreateRaffleForm() {
     setFormData((prevData) => ({
       ...prevData,
       [id]: id === 'price' ? parseFloat(value) || 0 : value,
+    }));
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      phone: value || '',
     }));
   };
 
@@ -276,7 +284,12 @@ export function CreateRaffleForm() {
 
         <div className="space-y-2 w-full">
           <Label htmlFor="phone">Telefone para envio do comprovante</Label>
-          <Input id="phone" type="tel" value={formData.phone} onChange={handleChange} required />
+          <PhoneInput
+            id="phone"
+            defaultCountry='BR'
+            type="tel"
+            value={formData.phone}
+            onChange={handlePhoneChange} required />
         </div>
       </div>
 

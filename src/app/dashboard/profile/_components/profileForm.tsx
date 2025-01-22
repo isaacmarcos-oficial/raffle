@@ -46,20 +46,30 @@ export function ProfileForm() {
   const session = useSession()
   console.log(session)
 
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: session.data?.user?.name || '',
       email: session.data?.user?.email || '',
-      phone: session.data?.user?.phone || '',
+      phone: session.data?.user?.phone ? `+${session.data.user.phone}` : '', // Adiciona o "+" no formato E.164
       password: '',
       confirmPassword: '',
     },
   })
 
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
+
+    const normalizedPhone = data.phone ? data.phone.replace(/\D/g, '') : '';
+
+    const payload = {
+      id: session.data?.user?.id,
+      name: data.name,
+      email: data.email,
+      phone: normalizedPhone,
+      password: data.password || undefined, // Enviar apenas se houver uma nova senha
+    };
 
     try {
       console.log("Dados enviados:", {
@@ -73,10 +83,7 @@ export function ProfileForm() {
           "Content-Type": "application/json",
           "x-api-key": process.env.NEXT_PUBLIC_API_KEY || ""
         },
-        body: JSON.stringify({
-          id: session.data?.user?.id,
-          ...data,
-        }),
+        body: JSON.stringify(payload),
       });
 
       console.log("Resposta do servidor:", response);
@@ -160,7 +167,7 @@ export function ProfileForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nova Senha (opcional)</FormLabel>
+              <FormLabel>Confirme ou insira uma Nova Senha</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="********" {...field} />
               </FormControl>
@@ -173,7 +180,7 @@ export function ProfileForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirmar Nova Senha</FormLabel>
+              <FormLabel>Repita a Senha</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="********" {...field} />
               </FormControl>
