@@ -101,7 +101,10 @@ export function CreateRaffleForm() {
     try {
       const response = await fetch('/api/campaign', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
+        },
         body: JSON.stringify(payload),
       });
 

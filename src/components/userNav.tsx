@@ -58,7 +58,7 @@ export default function UserNav() {
     );
   }
   return (
-    <Link href="/login">
+    <Link href="/auth">
       <Button size="sm">
         Entrar
       </Button>

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form'
 import { useToast } from '@/components/hooks/use-toast'
 import { useSession } from 'next-auth/react'
+import { PhoneInput } from '@/components/ui/phone-input'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -23,6 +24,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: 'Digite um endereço de e-mail válido.',
   }),
+  phone: z.string().optional(),
   password: z.string().min(8, {
     message: 'A senha deve ter pelo menos 8 caracteres.',
   }).optional(),
@@ -42,6 +44,7 @@ export function ProfileForm() {
   const { toast } = useToast()
 
   const session = useSession()
+  console.log(session)
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,21 +52,60 @@ export function ProfileForm() {
     defaultValues: {
       name: session.data?.user?.name || '',
       email: session.data?.user?.email || '',
+      phone: session.data?.user?.phone || '',
       password: '',
       confirmPassword: '',
     },
   })
-  
-  async function onSubmit() {
-    setIsLoading(true)
-    // Aqui você normalmente enviaria os dados para o seu backend
-    // Simulando uma chamada de API
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    setIsLoading(false)
-    toast({
-      title: "Perfil atualizado",
-      description: "Suas informações foram atualizadas com sucesso.",
-    })
+
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+
+    try {
+      console.log("Dados enviados:", {
+        id: session.data?.user?.id,
+        ...data,
+      });
+
+      const response = await fetch(`/api/campaign/owner`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || ""
+        },
+        body: JSON.stringify({
+          id: session.data?.user?.id,
+          ...data,
+        }),
+      });
+
+      console.log("Resposta do servidor:", response);
+
+      if (response.ok) {
+        toast({
+          title: "Perfil atualizado",
+          description: "Suas informações foram atualizadas com sucesso.",
+        });
+        // Atualiza a sessão para refletir os novos dados
+        await session.update();
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: "Erro ao atualizar perfil",
+          description: errorData.error || "Tente novamente mais tarde.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar perfil:", error);
+      toast({
+        title: "Erro interno",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -97,12 +139,17 @@ export function ProfileForm() {
         />
         <FormField
           control={form.control}
-          name="password"
+          name="phone"
           render={({ field }) => (
             <FormItem>
               <FormLabel>WhatsApp</FormLabel>
               <FormControl>
-                <Input type="phone" placeholder="(00) 00000-0000" {...field} />
+                <PhoneInput
+                  type="phone"
+                  defaultCountry='BR'
+                  placeholder="(00) 00000-0000"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

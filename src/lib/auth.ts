@@ -30,6 +30,7 @@ export const authOptions: NextAuthOptions = {
             id: user.id,
             name: user.name,
             email: user.email,
+						phone: user.phone
           };
         }
 
@@ -99,6 +100,7 @@ export const authOptions: NextAuthOptions = {
 					session.user.id = owner.id;
 					session.user.name = owner.name;
 					session.user.email = owner.email;
+					session.user.phone = owner.phone;
 				}
 			}
 			return session;
@@ -117,7 +119,7 @@ export const authOptions: NextAuthOptions = {
 		strategy: "jwt", // Usamos JWT para persistir a sessão
 	},
 	pages: {
-		signIn: "/login",
+		signIn: "/auth",
 	},
 	secret: process.env.NEXTAUTH_SECRET,
 };

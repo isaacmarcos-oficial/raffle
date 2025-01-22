@@ -8,7 +8,7 @@ export async function authMiddleware(req: NextRequest) {
 
   // Permitir acesso público a rotas específicas
   if (
-    pathname.startsWith("/login") || 
+    pathname.startsWith("/auth") || 
     pathname.startsWith("/api/auth") ||
     pathname === "/"
   ) {
@@ -18,7 +18,7 @@ export async function authMiddleware(req: NextRequest) {
   // Redirecionar se o usuário não estiver autenticado
   if (!token) {
     const url = req.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/auth";
     url.searchParams.set("callbackUrl", req.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
