@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { validateApiKey } from "@/middleware/validateApiKey";
 
-export async function POST() {
+export async function POST(req: Request) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+
   try {
     const updatedTickets = await prisma.ticket.updateMany({
       data: {

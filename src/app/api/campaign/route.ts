@@ -1,9 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { validateApiKey } from "@/middleware/validateApiKey";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(req: Request) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+
   try {
     // Busca todas as campanhas no banco de dados
     const campaigns = await prisma.campaign.findMany({
@@ -28,6 +33,10 @@ export async function GET() {
 
 // Rota POST para criar campanhas
 export async function POST(req: Request) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+
   try {
     const body = await req.json();
 
@@ -83,7 +92,7 @@ export async function POST(req: Request) {
         quote: type === "FIXED" ? quote : 7,
         minQuotes: type === "ALEATORY" ? minQuotes : 5,
         price,
-        digitLength : type === "ALEATORY" ? digitLength : 7,
+        digitLength: type === "ALEATORY" ? digitLength : 7,
         startDate: new Date(), // Data de início atual
         drawDate: parsedDrawDate, // Certifique-se de passar uma data válida
         pixCode,

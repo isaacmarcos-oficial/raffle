@@ -19,9 +19,9 @@ interface TicketModalProps {
   price: number;
   handlePurchase: (
     buyerName: string,
+    recipientName: string,
     phone: string,
     paymentType: TicketType["paymentType"],
-    // tickets: TicketType[],
     selectedNumbers: string[]
   ) => void
   handleClose: () => void
@@ -44,6 +44,7 @@ export default function TicketModal({ isOpen, onClose, pixKey, contactPhone, sel
   const [currentStep, setCurrentStep] = useState(1);
   const [buyerName, setBuyerName] = useState("");
   const [phone, setPhone] = useState("");
+  const [recipientName, setRecipientName] = useState("");
   const [paymentType, setPaymentType] = useState<TicketType['paymentType']>();
 
   const isCompleted = (step: number) => step < currentStep;
@@ -54,7 +55,7 @@ export default function TicketModal({ isOpen, onClose, pixKey, contactPhone, sel
       toast.error("Todos os campos devem ser preenchidos!");
       return
     }
-    handlePurchase(buyerName, phone, paymentType, selectedNumbers);
+    handlePurchase(buyerName, recipientName, phone, paymentType, selectedNumbers);
     onClose(); // Fecha o modal após finalizar
   };
 
@@ -89,8 +90,10 @@ export default function TicketModal({ isOpen, onClose, pixKey, contactPhone, sel
 
         {currentStep === 1 ? (
           <TicketForm
+            recipientName={recipientName}
             buyer={buyerName}
             phone={phone}
+            setRecipientName={setRecipientName}
             setBuyer={setBuyerName}
             setPhone={setPhone}
           />

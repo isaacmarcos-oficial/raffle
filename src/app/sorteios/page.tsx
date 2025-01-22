@@ -17,7 +17,12 @@ export default function Raffles() {
   useEffect(() => {
     async function fetchCampaigns() {
       try {
-        const response = await fetch("/api/campaign");
+        const response = await fetch("/api/campaign", {
+          method: 'GET',
+          headers: {
+            'x-api-key': process.env.NEXT_PUBLIC_API_KEY || ""
+          },
+        });
         const data = await response.json();
         setCampaigns(data);
       } catch (error) {

@@ -12,7 +12,7 @@ type TabsTicketsProps = {
   tickets: TicketType[];
   handleApprove: (id: string, paymentType: TicketType["paymentType"]) => void;
   handleReject: (id: string) => void;
-  handleUndo: (id: string) => void;
+  handleUndo: (id: string, paymentType: TicketType["paymentType"]) => void;
   handleViewNumbers: (ticket: TicketType) => void;
 };
 
@@ -36,6 +36,7 @@ export default function TicketsTable({
         <div>
           <div className={`${isApproved ? "text-green-500" : "text-yellow-500"} font-semibold`}>
             {ticket.buyer?.name || "Sem comprador"}
+            {ticket.recipientName && ` (${ticket.recipientName})`}
           </div>
           <div className="text-sm text-zinc-600">
             {ticket.buyer?.phone || "Sem telefone"}
@@ -51,7 +52,7 @@ export default function TicketsTable({
             <Eye className="h-4 w-4 text-gray-300" />
           </Button>
           {isApproved ? (
-            <Button size="icon" variant="ghost" onClick={() => handleUndo(ticket.id)}>
+            <Button size="icon" variant="ghost" onClick={() => handleUndo(ticket.id, ticket.paymentType)}>
               <Undo className="h-4 w-4 text-yellow-500" />
             </Button>
           ) : (

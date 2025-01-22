@@ -37,6 +37,7 @@ export default function LotteryPage({ campaign }: CampaignProps) {
 
   const handlePurchase = async (
     buyerName: string,
+    recipientName: string,
     phone: string,
     paymentType: TicketType["paymentType"],
     selectedNumbers: string[]
@@ -47,10 +48,12 @@ export default function LotteryPage({ campaign }: CampaignProps) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
         },
         body: JSON.stringify({
           numbers: selectedNumbers,
           buyerName,
+          recipientName,
           phone: normalizedPhone,
           paid: false,
           paymentType,
@@ -126,7 +129,7 @@ export default function LotteryPage({ campaign }: CampaignProps) {
       </div>
 
       <TicketModal
-        handlePurchase={(buyerName, phone, paymentType, selectedNumbers) => handlePurchase(buyerName, phone, paymentType, selectedNumbers)}
+        handlePurchase={(buyerName, recipientName, phone, paymentType, selectedNumbers) => handlePurchase(buyerName, recipientName, phone, paymentType, selectedNumbers)}
         handleClose={() => setIsModalOpen(false)}
         price={campaign.price}
         selectedNumbers={aleatoryNumbers}

@@ -48,6 +48,7 @@ model Ticket {
   campaign     Campaign? @relation(fields: [campaignId], references: [id])
   buyerId      String?   @db.ObjectId
   buyer        Buyer?    @relation(fields: [buyerId], references: [id]) // Relacionamento com o comprador
+  recipientName String?
 }
 
 model Owner {

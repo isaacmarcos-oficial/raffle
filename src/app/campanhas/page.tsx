@@ -3,8 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { CampaignType } from '@/types/campaign';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Gift, Calendar, Users, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -13,6 +11,7 @@ import { useState } from "react";
 import { toast } from 'sonner';
 
 export default function Campanhas() {
+
   const [code, setCode] = useState('');
   const [campaign, setCampaign] = useState<CampaignType | null>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -25,7 +24,12 @@ export default function Campanhas() {
     setCampaign(null);
 
     try {
-      const response = await fetch(`/api/campaign/${code}`)
+      const response = await fetch(`/api/campaign/${code}`, {
+        method: 'GET',
+        headers: {
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || ""
+        },
+      })
       if (!response.ok) {
         toast.error('Campanha não encontrada. Verifique o código e tente novamente.');
       }
@@ -44,6 +48,17 @@ export default function Campanhas() {
     }
   };
 
+  const formatDate = (date: string | Date): string => {
+    const parsedDate = new Date(date);
+
+    // Verifica se a data é válida
+    if (isNaN(parsedDate.getTime())) {
+      return "Data inválida";
+    }
+
+    return new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(parsedDate);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-xl w-full">
@@ -55,8 +70,8 @@ export default function Campanhas() {
           <Card className="text-center mb-8">
             <motion.div
               className="inline-block mb-6"
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              animate={{ y: [0, 10, 0], }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear", out: "linear" }}
             >
               <Gift className="w-12 h-12 text-green-500" />
             </motion.div>
@@ -112,7 +127,7 @@ export default function Campanhas() {
                   <div className="grid grid-cols-2 gap-4 mb-6 w-full">
                     <div className="flex items-center gap-2 ">
                       <Calendar className="w-5 h-5" />
-                      <span>Até {format(new Date(campaign.drawDate), "dd/MM/yyyy", { locale: ptBR, })}</span>
+                      <span>Até {formatDate(campaign.drawDate)}</span>
                     </div>
                     <div className="flex items-center gap-2 ">
                       <Users className="w-5 h-5" />

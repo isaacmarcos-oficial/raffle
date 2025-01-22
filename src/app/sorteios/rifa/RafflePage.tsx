@@ -23,6 +23,7 @@ export default function Rifa({ campaign }: CampaignProps) {
 
   const handlePurchase = async (
     buyerName: string,
+    recipientName: string,
     phone: string,
     paymentType: TicketType["paymentType"],
     selectedNumbers: string[]
@@ -38,10 +39,12 @@ export default function Rifa({ campaign }: CampaignProps) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
         },
         body: JSON.stringify({
           numbers: selectedNumbers,
           buyerName,
+          recipientName,
           phone: normalizedPhone,
           paid: false,
           paymentType,
@@ -82,7 +85,12 @@ export default function Rifa({ campaign }: CampaignProps) {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await fetch(`/api/campaign/${campaign.code}/tickets`);
+        const response = await fetch(`/api/campaign/${campaign.code}/tickets`, {
+          method: 'GET',
+          headers: {
+            'x-api-key': process.env.NEXT_PUBLIC_API_KEY || ""
+          },
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -103,7 +111,6 @@ export default function Rifa({ campaign }: CampaignProps) {
 
     fetchTickets();
   }, [campaign.code]);
-
 
   return (
     <div className="min-h-screen">
@@ -176,7 +183,7 @@ export default function Rifa({ campaign }: CampaignProps) {
       />
 
       <TicketModal
-        handlePurchase={(buyerName, phone, paymentType, selectedNumbers) => handlePurchase(buyerName, phone, paymentType, selectedNumbers)}
+        handlePurchase={(buyerName, phone, paymentType, selectedNumbers, recipientName) => handlePurchase(buyerName, phone, paymentType, selectedNumbers, recipientName )}
         handleClose={() => setIsModalOpen(false)}
         price={campaign.price}
         selectedNumbers={selectedNumbers}

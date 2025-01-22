@@ -1,13 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { validateApiKey } from "@/middleware/validateApiKey";
 
 const prisma = new PrismaClient();
 
-export async function POST(req: Request, { params }: { params: Promise <{ code: string }> }) {
-  try {
-    const {code: campaignCode} = await params;
+export async function POST(req: Request, { params }: { params: Promise<{ code: string }> }) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
 
-    const { numbers, buyerName, phone, paid, purchaseDate, paymentType } = await req.json();
+  try {
+    const { code: campaignCode } = await params;
+
+    const { numbers, buyerName, phone, paid, purchaseDate, paymentType, recipientName } = await req.json();
 
     // Validação dos dados recebidos
     if (!Array.isArray(numbers) || numbers.length === 0 || !buyerName || !phone || typeof paid !== "boolean") {
@@ -16,7 +21,7 @@ export async function POST(req: Request, { params }: { params: Promise <{ code: 
 
     // Verificar se a campanha existe
     const campaign = await prisma.campaign.findUnique({
-      where: { code: campaignCode},
+      where: { code: campaignCode },
     });
 
     if (!campaign) {
@@ -60,6 +65,7 @@ export async function POST(req: Request, { params }: { params: Promise <{ code: 
         purchaseDate: purchaseDate ? new Date(purchaseDate) : new Date(),
         campaignId: campaign.id,
         buyerId: buyer.id,
+        recipientName
       },
     });
 
@@ -70,7 +76,11 @@ export async function POST(req: Request, { params }: { params: Promise <{ code: 
   }
 }
 
-export async function GET(req: Request, { params }: { params: Promise <{ code: string }> }) {
+export async function GET(req: Request, { params }: { params: Promise<{ code: string }> }) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+
   try {
     const { code: campaignCode } = await params;
 
@@ -99,10 +109,14 @@ export async function GET(req: Request, { params }: { params: Promise <{ code: s
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: Promise <{ code: string }> }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ code: string }> }) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+
   try {
     const { code: campaignCode } = await params;
-    const { id: ticketId, paid } = await req.json();
+    const { id: ticketId, paid, paymentType } = await req.json();
 
     if (!ticketId || typeof paid !== "boolean") {
       return NextResponse.json(
@@ -135,7 +149,7 @@ export async function PATCH(req: Request, { params }: { params: Promise <{ code:
     // Atualizar o estado de pago
     const updatedTicket = await prisma.ticket.update({
       where: { id: ticketId },
-      data: { paid },
+      data: { paid, paymentType },
     });
 
     return NextResponse.json(updatedTicket, { status: 200 });
@@ -145,7 +159,11 @@ export async function PATCH(req: Request, { params }: { params: Promise <{ code:
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: Promise <{ code: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ code: string }> }) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+  
   try {
     const { code: campaignCode } = await params;
     const { id: ticketId } = await req.json();

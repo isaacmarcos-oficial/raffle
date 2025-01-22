@@ -27,7 +27,12 @@ export default function SorteioPage() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await fetch(`/api/campaign/${code}`);
+        const response = await fetch(`/api/campaign/${code}`, {
+          method: 'GET',
+          headers: {
+            'x-api-key': process.env.NEXT_PUBLIC_API_KEY || ""
+          },
+        });
         if (response.ok) {
           const data = await response.json();
 
@@ -70,6 +75,7 @@ export default function SorteioPage() {
         method: paid === null ? "DELETE" : "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || ""
         },
         body: JSON.stringify({
           id,
@@ -121,6 +127,7 @@ export default function SorteioPage() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || ""
         },
         body: JSON.stringify(updatedCampaign),
       });
@@ -142,7 +149,7 @@ export default function SorteioPage() {
 
   const handleApprove = (id: string, paymentType: TicketType["paymentType"]) =>
     handleTicketUpdate(id, true, paymentType);
-  const handleUndo = (id: string) => handleTicketUpdate(id, false);
+  const handleUndo = (id: string, paymentType: TicketType["paymentType"]) => handleTicketUpdate(id, false, paymentType);
   const handleReject = (id: string) => handleTicketUpdate(id, null);
 
   const handleViewNumbers = (ticket: TicketType) => {

@@ -7,11 +7,13 @@ import { PhoneInput } from '@/components/ui/phone-input';
 interface TicketFormProps {
   buyer: string;
   phone: string;
+  recipientName: string
   setBuyer: React.Dispatch<React.SetStateAction<string>>;
   setPhone: React.Dispatch<React.SetStateAction<string>>;
+  setRecipientName: React.Dispatch<React.SetStateAction<string>>
 }
 
-export function TicketForm({ buyer, phone, setBuyer, setPhone }: TicketFormProps) {
+export function TicketForm({ buyer, phone, recipientName, setBuyer, setPhone, setRecipientName }: TicketFormProps) {
 
   return (
     <div className="rounded-lg w-full max-w-md">
@@ -26,6 +28,19 @@ export function TicketForm({ buyer, phone, setBuyer, setPhone }: TicketFormProps
             value={buyer}
             onChange={(e) => setBuyer(e.target.value)}
             required
+            className="mt-1 capitalize"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="recipientName" className="block text-sm font-medium">
+            Se for para outra pessoa insira também o nome dela
+          </Label>
+          <Input
+            type="text"
+            id="recipientName"
+            value={recipientName}
+            onChange={(e) => setRecipientName(e.target.value)}
             className="mt-1 capitalize"
           />
         </div>

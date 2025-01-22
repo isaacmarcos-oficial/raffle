@@ -26,7 +26,12 @@ export default function MeusBilhetes() {
     try {
       const normalizedPhone = phone.replace(/\D/g, '');
 
-      const response = await fetch(`/api/campaign/buyer?phone=${normalizedPhone}`)
+      const response = await fetch(`/api/campaign/buyer?phone=${normalizedPhone}`, {
+        method: 'GET',
+        headers: {
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || ""
+        },
+      })
 
       if (!response.ok) {
         toast.error(`Campanha não encontrada para ${normalizedPhone}. Verifique o código e tente novamente.`);

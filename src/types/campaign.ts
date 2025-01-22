@@ -22,7 +22,8 @@ export interface TicketType {
   paid: boolean;
   paymentType: "CASH" | "PIX_MANUAL";
   buyerId: string;
-  campaign: CampaignType
+  campaign: CampaignType;
+  recipientName ?: string
 }
 
 export interface BuyerType {

@@ -1,12 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { validateApiKey } from "@/middleware/validateApiKey";
 
 const prisma = new PrismaClient();
 
 export async function GET(
-  request: Request,
+  req: Request,
   { params }: { params: Promise<{ code: string }> }
 ) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+
   try {
     const code = await params;
 

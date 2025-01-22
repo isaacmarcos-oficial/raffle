@@ -1,12 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { validateApiKey } from "@/middleware/validateApiKey";
 
 const prisma = new PrismaClient();
 
 // Rota GET para buscar campanhas por owner
-export async function GET(request: Request) {
+export async function GET(req: Request) {
+  const nextReq = req as unknown as NextRequest;
+  const validationError = validateApiKey(nextReq);
+  if (validationError) return validationError;
+
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const ownerId = searchParams.get("ownerId");
 
     // Verifica se o `ownerId` foi fornecido
