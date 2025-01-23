@@ -11,7 +11,7 @@ import CampaignSetting from "./_components/campaignSetting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Eye } from "lucide-react";
+import { ArrowLeft, Box, Eye } from "lucide-react";
 
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
@@ -131,7 +131,7 @@ export default function SorteioPage() {
         },
         body: JSON.stringify(updatedCampaign),
       });
-  
+
       if (response.ok) {
         const updatedData = await response.json();
         setCampaign((prev) => ({ ...prev, ...updatedData }));
@@ -145,7 +145,7 @@ export default function SorteioPage() {
       toast.error("Erro ao atualizar a campanha.");
     }
   };
-  
+
 
   const handleApprove = (id: string, paymentType: TicketType["paymentType"]) =>
     handleTicketUpdate(id, true, paymentType);
@@ -163,11 +163,23 @@ export default function SorteioPage() {
         <div className="container mx-auto space-y-8">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Sorteio</h1>
-            <Button asChild>
-              <Link href={`/sorteio/${code}`}>
-                <Eye className="mr-2 h-4 w-4" /> Ver campanha
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild size="icon">
+                <Link href={`/dashboard/minhas-campanhas/`}>
+                  <ArrowLeft className=" h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild>
+                <Link href={`/dashboard/minhas-campanhas/${code}/sorteio`}>
+                  <Box className="mr-2 h-4 w-4" /> Sortear
+                </Link>
+              </Button>
+              <Button asChild>
+                <Link href={`/sorteios/${code}`}>
+                  <Eye className="mr-2 h-4 w-4" /> Ver campanha
+                </Link>
+              </Button>
+            </div>
           </div>
 
           <Tabs defaultValue="Insight">

@@ -11,6 +11,7 @@ import { CampaignType, TicketType } from "@/types/campaign";
 import TicketModal from "./_components/TicketModal";
 import ShareCampaign from "../_components/shareCampaign";
 import HeaderCampaign from "../_components/headerCampaign";
+import ProgressCampaign from "../_components/progressCampaign";
 
 export interface CampaignProps {
   campaign: CampaignType;
@@ -150,6 +151,8 @@ export default function Rifa({ campaign }: CampaignProps) {
             </div>
           </div>
         </Card>
+
+        <ProgressCampaign campaign={campaign} />
 
         <Card className="p-6">
           <CardHeader className="p-0 mb-4">

@@ -3,10 +3,8 @@
 import {
   Card,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { signIn } from 'next-auth/react'
 import { toast } from 'sonner'
-import { LogIn } from 'lucide-react'
 import { useState } from 'react'
 import SignUp from './_components/signUp'
 import SignIn from './_components/signIn'
@@ -23,22 +21,19 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex mx-auto my-auto justify-center items-center h-[100vh]">
-      <Card className="flex flex-col mx-auto w-full max-w-xl">
+    <div className="flex mx-auto my-auto justify-center items-center h-screen w-full">
+      <Card className="flex flex-col mx-auto w-full max-w-md ">
         {isSignUp ? (
-          <SignUp onToggle={() => setIsSignUp(false)} />
+          <SignUp
+            onToggle={() => setIsSignUp(false)}
+            handleGoogleSignIn={handleGoogleSignIn}
+          />
         ) : (
-          <SignIn onToggle={() => setIsSignUp(true)} />
+          <SignIn
+            onToggle={() => setIsSignUp(true)}
+            handleGoogleSignIn={handleGoogleSignIn}  
+          />
         )}
-
-        <Button
-          className="p-6 bg-red-600 text-white hover:bg-red-700"
-          type="button"
-          onClick={handleGoogleSignIn}
-        >
-          <LogIn className="h-4 w-4 mr-2" />
-          Entrar com Google
-        </Button>
       </Card>
 
     </div>

@@ -1,16 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/passwordInput";
 import { signIn } from "next-auth/react";
+import { FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 interface SignInProps {
   onToggle: () => void;
+  handleGoogleSignIn: () => void;
 }
 
-export default function SignIn({ onToggle }: SignInProps) {
+export default function SignIn({ onToggle, handleGoogleSignIn }: SignInProps) {
+
   const form = useForm()
 
   const handleSubmit = form.handleSubmit(async (data) => {
@@ -40,6 +44,9 @@ export default function SignIn({ onToggle }: SignInProps) {
         <CardTitle className="text-2xl font-bold text-center">
           Entre com a sua conta
         </CardTitle>
+        <CardDescription className="">
+          Insira suas informações abaixo ou acesse com o Google para entrar na sua conta
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
@@ -48,7 +55,7 @@ export default function SignIn({ onToggle }: SignInProps) {
               <Label htmlFor="emailOrPhone">Email ou Telefone</Label>
               <Input
                 id="emailOrPhone"
-                placeholder="m@example.com"
+                placeholder="Digite seu e-mail ou telefone"
                 required
                 type="text"
                 {...form.register('emailOrPhone')}
@@ -56,7 +63,7 @@ export default function SignIn({ onToggle }: SignInProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input
+              <PasswordInput
                 id="password"
                 placeholder="********"
                 required
@@ -65,17 +72,26 @@ export default function SignIn({ onToggle }: SignInProps) {
               />
             </div>
             <Button
-              className="w-full"
+              className="w-full bg-green-600 hover:bg-green-700 font-bold"
               type="submit"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
             </Button>
 
+            <Button
+              className="w-full bg-red-600 hover:bg-red-700"
+              type="button"
+              onClick={handleGoogleSignIn}
+            >
+              <FaGoogle className="h-4 w-4 mr-2" />
+              Entrar com Google
+            </Button>
+
           </div>
         </form>
       </CardContent>
-      <CardFooter className="text-center">
+      <CardFooter className=" flex flex-col text-muted-foreground text-center w-ful">
         <p className="text-sm text-center">
           Não tem uma conta?{" "}
           <button

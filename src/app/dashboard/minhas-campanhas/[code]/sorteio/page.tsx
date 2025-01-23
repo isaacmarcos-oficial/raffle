@@ -3,19 +3,23 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { PackageOpen } from "lucide-react"
+import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { FaWhatsapp } from "react-icons/fa"
 
 interface Ticket {
   number: string;
   name: string;
   recipientName?: string;
+  phone: string;
 }
 
 interface APIResponseTicket {
   numbers: string[];
   buyer?: {
     name: string;
+    phone: string;
   };
   recipientName?: string;
 }
@@ -23,7 +27,7 @@ interface APIResponseTicket {
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
   const [shuffledTickets, setShuffledTickets] = useState<Ticket[]>([]);
-  const [currentNumber, setCurrentNumber] = useState("Boa Sorte!");
+  const [currentNumber, setCurrentNumber] = useState("10");
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isCounting, setIsCounting] = useState(false);
   const [selectedCards, setSelectedCards] = useState<Ticket[]>([]);
@@ -59,6 +63,7 @@ export default function SorteioPage() {
               number,
               name: ticket.buyer?.name || "",
               recipientName: ticket.recipientName || "",
+              phone: ticket.buyer?.phone || "",
             }))
           );
 
@@ -115,10 +120,10 @@ export default function SorteioPage() {
         <Card className="flex flex-col items-center w-full">
           <CardHeader className="flex flex-col items-center gap-2">
             <PackageOpen className="w-12 h-12 text-green-500" />
-            <CardTitle className="text-2xl">Sorteio</CardTitle>
+            <CardTitle className="text-2xl">Boa sorte!</CardTitle>
           </CardHeader>
           <CardContent className="w-full">
-            <Card className="w-full my-4 flex items-center justify-center p-8 bg-black">
+            <Card className="w-full my-4 flex items-center justify-center p-8 bg-foreground">
               <motion.div
                 key={currentNumber}
                 initial={{ opacity: 0, y: -20 }}
@@ -135,38 +140,50 @@ export default function SorteioPage() {
               onClick={startCountdown}
               disabled={isCounting || shuffledTickets.length === 0}
             >
-              {isCounting  ? "Sorteando!" : "Sortear"}
+              {isCounting ? "Sorteando!" : "Sortear"}
             </Button>
           </CardContent>
         </Card>
 
         {/* Selected Numbers Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col w-full gap-4">
           {selectedCards.map((ticket, index) => (
             <Card
               key={index}
               onClick={() => setShowName(ticket.number)}
-              className="cursor-pointer transform hover:scale-105 transition-transform"
+              className="w-full items-center cursor-pointer transform hover:scale-105 transition-transform"
             >
-              <CardContent className="flex flex-col justify-between items-center p-0 text-lg text-center text-green-600 font-semibold">
-                <p>{ticket.number}</p>
-                {showName === ticket.number && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-white"
-                  >
-                    {ticket.recipientName ? ticket.recipientName : ticket.name}
+              <CardContent className="flex w-full items-center justify-between p-0">
+                <div className="font-semibold">
+                  {index + 1}º Prêmio
+                </div>
+                <div className="flex gap-4 justify-between items-center p-0 text-lg text-center text-green-600 font-semibold">
+                  <div className="flex flex-col">
+                    <p>{ticket.number}</p>
+                    {showName === ticket.number && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-primary"
+                      >
+                        {ticket.recipientName ? ticket.recipientName : ticket.name}
 
-                    {ticket.recipientName ?
-                      (
-                        <p className="text-xs text-primary/50 font-thin">
-                          {ticket.name}
-                        </p>
-                      ) : null
-                    }
-                  </motion.div>
-                )}
+                        {ticket.recipientName ?
+                          (
+                            <p className="text-xs text-primary/50 font-thin">
+                              {ticket.name}
+                            </p>
+                          ) : null
+                        }
+                      </motion.div>
+                    )}
+                  </div>
+                  <Link href={`https://wa.me/${ticket.phone}`}  target="_blank">
+                    <Button size="icon" className="p-2 hover:scale-110 transition-all">
+                      <FaWhatsapp className="w-8 h-8 text-green-600" />
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           ))}

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { RaffleTable } from "../_components/rafflesTable";
+import CampaignsCard from "./_components/campaignsCard";
 
 export default function MeusSorteios() {
   return (
@@ -17,7 +17,8 @@ export default function MeusSorteios() {
             </Button>
           </div>
           <div>
-            <RaffleTable />
+            <CampaignsCard/>
+            {/* <RaffleTable /> */}
           </div>
         </div>
       </main>
