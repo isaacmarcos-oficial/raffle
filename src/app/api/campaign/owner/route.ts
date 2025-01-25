@@ -27,6 +27,9 @@ export async function GET(req: Request) {
     // Busca as campanhas associadas ao ownerId
     const campaigns = await prisma.campaign.findMany({
       where: { ownerId },
+      include: {
+        tickets: true
+      }
     });
 
     // Verifica se há campanhas encontradas
