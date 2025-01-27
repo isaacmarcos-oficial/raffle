@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem, Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { CampaignType } from "@/types/campaign";
@@ -15,7 +16,6 @@ export interface CampaignProps {
 }
 
 export default function CampaignSetting({ campaign, onUpdateCampaign }: CampaignProps) {
-
   const [formData, setFormData] = useState({
     title: campaign.title || "",
     description: campaign.description || "",
@@ -25,7 +25,9 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
     price: campaign.price || 0,
     drawDate: campaign.drawDate || "",
     pixKey: campaign.pixCode || "",
-    phone: campaign.contactPhone || "",
+    phone: campaign.contactPhone.startsWith("+") // Adiciona "+" se necessário
+      ? campaign.contactPhone
+      : `+${campaign.contactPhone}`,
   });
 
   const [editMode, setEditMode] = useState({
@@ -49,6 +51,14 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const normalizedPhone = value.startsWith("+") ? value : `+${value}`;
+    setFormData((prevData) => ({
+      ...prevData,
+      phone: normalizedPhone,
+    }));
   };
 
   const handleSelectChange = (value: string, key: keyof typeof formData) => {
@@ -194,7 +204,14 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
           <div className="space-y-2 w-full">
             <Label htmlFor="phone">Telefone para envio do comprovante</Label>
             <div className="flex gap-2">
-              <Input id="phone" type="phone" value={formData.phone} onChange={handleChange} disabled={!editMode.phone} required />
+              <PhoneInput
+                id="phone"
+                type="phone"
+                value={formData.phone}
+                onChange={handlePhoneChange}
+                disabled={!editMode.phone}
+                required
+              />
               <Button type="button" onClick={() => toggleEditMode("phone")}>
                 {editMode.phone ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
               </Button>

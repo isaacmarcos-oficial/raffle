@@ -47,7 +47,7 @@ export default function CampaignsCard() {
               <h3 className="text-lg font-bold">{campaign.title}</h3>
               <div className="flex justify-between">
                 <p className="text-primary/50 text-xs">
-                  /{campaign.code} | {campaign.quote} | {totalNumbersSold} |
+                  /{campaign.code}
                 </p>
                 <p className="text-base text-green-500 font-bold">
                   {(progressPercentage).toFixed(2)}%

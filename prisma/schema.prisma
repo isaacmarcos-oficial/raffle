@@ -19,6 +19,8 @@ enum PaymentType {
   CASH
 }
 
+
+
 model Campaign {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   code         String       @unique // Código de identificação (ex.: ABC123)
@@ -36,6 +38,7 @@ model Campaign {
   ownerId      String       @db.ObjectId
   owner        Owner        @relation(fields: [ownerId], references: [id])
   tickets      Ticket[] // Tickets vinculados à rifa
+  prizes Prize[]
 }
 
 model Ticket {
@@ -49,6 +52,8 @@ model Ticket {
   buyerId      String?   @db.ObjectId
   buyer        Buyer?    @relation(fields: [buyerId], references: [id]) // Relacionamento com o comprador
   recipientName String?
+  prizeId       String?   @db.ObjectId // Relacionamento com o prêmio (opcional)
+  prize         Prize[]
 }
 
 model Owner {
@@ -65,4 +70,15 @@ model Buyer {
   name    String // Nome do comprador
   phone   String   @unique // Telefone como identificador único
   tickets Ticket[] // Tickets adquiridos pelo comprador
+}
+
+model Prize {
+   id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String? // Descrição do prêmio
+  value       Float? // Valor estimado ou monetário do prêmio
+  campaignId  String    @db.ObjectId
+  campaign    Campaign  @relation(fields: [campaignId], references: [id])
+  ticketId    String?   @db.ObjectId
+  ticket      Ticket?   @relation(fields: [ticketId], references: [id]) // Relacionamento opcional com o ticket
 }

@@ -31,12 +31,14 @@ export async function GET(
             buyer: true,
             campaign: {
               select: {
-                price: true
-              }
+                price: true,
+                prizes: true
+              },
             },
           }
         },
-        owner: true
+        owner: true,
+        prizes: true
       }
     });
 
@@ -88,6 +90,7 @@ export async function PATCH(
       drawDate,
       pixCode,
       contactPhone,
+      prizes
     } = body;
 
     // Atualiza os dados da campanha no banco de dados
@@ -103,6 +106,11 @@ export async function PATCH(
         drawDate: drawDate ? new Date(drawDate) : undefined, // Converte drawDate para Date
         pixCode,
         contactPhone,
+        prizes: prizes
+          ? {
+            set: prizes.map((prizeId: string) => ({ id: prizeId })), // Atualiza os prêmios associados
+          }
+          : undefined,
       },
     });
 

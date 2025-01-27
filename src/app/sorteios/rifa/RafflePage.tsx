@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Banknote, Bookmark, Calendar, Users } from 'lucide-react';
+import { Banknote, Bookmark, Calendar, Trophy, Users } from 'lucide-react';
 import TicketsDrawer from './_components/TicketDrawer';
 import { TicketGrid } from '../_components/TicketGrid';
 import { format } from 'date-fns';
@@ -117,7 +117,7 @@ export default function Rifa({ campaign }: CampaignProps) {
     <div className="min-h-screen">
       <main className="flex flex-col max-w-[1000px] container mx-auto p-4 gap-4">
         <HeaderCampaign campaign={campaign} />
-        
+
         <Card className='w-full p-0 h-[200px] flex flex-col items-center justify-center overflow-hidden'>
           <div className="bg-gradient-to-t from-green-500 to-green-600 w-full h-full flex items-center justify-center">
             {campaign.title && <h1 className="text-4xl font-bold uppercase text-white">{campaign.title}</h1>}
@@ -154,16 +154,40 @@ export default function Rifa({ campaign }: CampaignProps) {
 
         <ProgressCampaign campaign={campaign} />
 
-        <Card className="p-6">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="">
-              Descrição/ Regulamento
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 whitespace-pre-line">
-            {campaign.description}
-          </CardContent>
-        </Card>
+        <div className="flex w-full gap-6">
+          <Card className="p-6 w-2/3">
+            <CardHeader className="p-0 mb-4">
+              <CardTitle className="">
+                Descrição/ Regulamento
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 whitespace-pre-line">
+              {campaign.description}
+            </CardContent>
+          </Card>
+          <Card className="w-1/3">
+            <CardHeader className="p-0 mb-4">
+              <CardTitle className="">
+                Prêmios
+              </CardTitle>
+            </CardHeader>
+
+            <CardHeader className="flex flex-col p-0 mb-4 gap-2">
+              <CardTitle className="flex flex-col gap-2">
+                {campaign.prizes.map((prize, index) => (
+                  <Card key={index} className="flex flex-col gap-2">
+                    <div className="flex items-center">
+                      <Trophy className="text-green-500 h-4 w-4 mr-2" />
+                      <p className="text-green-500">{index + 1}º Prêmio</p>
+                    </div>
+                    <CardTitle className="text-sm">{prize.title}</CardTitle>
+                  </Card>
+                ))}
+              </CardTitle>
+            </CardHeader>
+
+          </Card>
+        </div>
 
         <div className="flex w-full gap-6">
           <TicketGrid
@@ -175,7 +199,7 @@ export default function Rifa({ campaign }: CampaignProps) {
           />
         </div>
 
-        <ShareCampaign campaign={campaign}/>
+        <ShareCampaign campaign={campaign} />
       </main>
 
       <TicketsDrawer
@@ -186,7 +210,7 @@ export default function Rifa({ campaign }: CampaignProps) {
       />
 
       <TicketModal
-        handlePurchase={(buyerName, phone, paymentType, selectedNumbers, recipientName) => handlePurchase(buyerName, phone, paymentType, selectedNumbers, recipientName )}
+        handlePurchase={(buyerName, phone, paymentType, selectedNumbers, recipientName) => handlePurchase(buyerName, phone, paymentType, selectedNumbers, recipientName)}
         handleClose={() => setIsModalOpen(false)}
         price={campaign.price}
         selectedNumbers={selectedNumbers}

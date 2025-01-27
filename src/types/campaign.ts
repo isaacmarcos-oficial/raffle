@@ -34,6 +34,12 @@ export interface BuyerType {
   tickets: TicketType[]
 }
 
+export interface PrizeType {
+  id: string;
+  title: string;
+  description: string;
+}
+
 export interface CampaignType {
   id?: string;
   description: string;
@@ -53,6 +59,7 @@ export interface CampaignType {
   owner: {
     name: string
   }
+  prizes: PrizeType[]
 }
 
 export interface RaffleState {

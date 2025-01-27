@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Box, Eye } from "lucide-react";
+import TicketPrizes from "./_components/ticketPrizes";
 
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
@@ -21,6 +22,7 @@ export default function SorteioPage() {
   const [searchName, setSearchName] = useState("");
   const [searchNumber, setSearchNumber] = useState("");
   const [searchPhone, setSearchPhone] = useState("");
+  const [searchPaymentMethod, setSearchPaymentMethod] = useState("");
 
   const code = params.code
 
@@ -51,17 +53,20 @@ export default function SorteioPage() {
   const handleSearchName = (name: string) => setSearchName(name);
   const handleSearchNumber = (number: string) => setSearchNumber(number);
   const handleSearchPhone = (phone: string) => setSearchPhone(phone);
+  const handleSearchPaymentMethod = (paymentMethod: string) => setSearchPaymentMethod(paymentMethod);
 
 
   const filteredTickets = campaign?.tickets?.filter((ticket) => {
     const buyerName = ticket.buyer?.name?.toLowerCase() || "";
     const ticketNumbers = ticket.numbers.join(",").toLowerCase();
     const buyerPhone = ticket.buyer?.phone || "";
+    const paymentType = ticket.paymentType || "";
 
     return (
       buyerName.includes(searchName.toLowerCase()) &&
       (searchNumber === "" || ticketNumbers.includes(searchNumber)) &&
-      buyerPhone.includes(searchPhone)
+      buyerPhone.includes(searchPhone) &&
+      (searchPaymentMethod === "ALL" || paymentType === searchPaymentMethod)
     );
   }) || [];
 
@@ -182,10 +187,11 @@ export default function SorteioPage() {
             </div>
           </div>
 
-          <Tabs defaultValue="Insight">
+          <Tabs defaultValue="Insight" className="">
             <TabsList className="w-full mb-4" >
               <TabsTrigger value="Insight" className="w-full">Insight</TabsTrigger>
               <TabsTrigger value="Bilhetes" className="w-full">Bilhetes</TabsTrigger>
+              <TabsTrigger value="Prizes" className="w-full">Premios</TabsTrigger>
               <TabsTrigger value="Setting" className="w-full">Configurações</TabsTrigger>
             </TabsList>
 
@@ -195,6 +201,7 @@ export default function SorteioPage() {
 
             <TabsContent value="Bilhetes">
               <TicketsSearch
+                onSearchPaymentMethod={handleSearchPaymentMethod}
                 onSearchName={handleSearchName}
                 onSearchNumber={handleSearchNumber}
                 onSearchPhone={handleSearchPhone}
@@ -207,6 +214,10 @@ export default function SorteioPage() {
                 handleUndo={handleUndo}
                 handleViewNumbers={handleViewNumbers}
               />
+            </TabsContent>
+
+            <TabsContent value="Prizes">
+              {campaign && <TicketPrizes onUpdatePrizes={handleUpdateCampaign}  campaign={campaign} />}
             </TabsContent>
 
             <TabsContent value="Setting">

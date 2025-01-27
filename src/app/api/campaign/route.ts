@@ -15,7 +15,8 @@ export async function GET(req: Request) {
       orderBy: { drawDate: "asc" },
       include: {
         owner: true,
-        tickets: true
+        tickets: true,
+        prizes: true
       }
     });
 
