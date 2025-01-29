@@ -1,64 +1,57 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { motion } from "framer-motion"
 import { PackageOpen } from "lucide-react"
-import Link from "next/link"
+import { motion } from "framer-motion"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { FaWhatsapp } from "react-icons/fa"
+import { toast } from "sonner"
 
 interface Ticket {
   number: string;
+  numbers: string[];
   name: string;
   recipientName?: string;
   phone: string;
+  paid: boolean;
+  buyer?: { name: string; phone: string };
 }
 
-interface APIResponseTicket {
-  numbers: string[];
-  buyer?: {
-    name: string;
-    phone: string;
-  };
-  recipientName?: string;
+interface Prize {
+  id: string;
+  title: string;
+  description: string;
+  winnerNumber?: string;
+  winnerName?: string;
 }
 
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
-  const [shuffledTickets, setShuffledTickets] = useState<Ticket[]>([]);
-  const [currentNumber, setCurrentNumber] = useState("10");
+  const [prizes, setPrizes] = useState<Prize[]>([]);
+  const [currentNumber, setCurrentNumber] = useState("00");
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isCounting, setIsCounting] = useState(false);
-  const [selectedCards, setSelectedCards] = useState<Ticket[]>([]);
-  const [showName, setShowName] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [availableTickets, setAvailableTickets] = useState<Ticket[]>([]);
 
   const code = params?.code
 
-  // Fisher-Yates Shuffle Algorithm
-  const shuffleArray = (array: Ticket[]) => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
-
-  // Fetch tickets from API
+  // Carregar dados da campanha
   useEffect(() => {
-    const fetchTickets = async () => {
+    const fetchCampaignData = async () => {
       try {
         const response = await fetch(`/api/campaign/${code}`, {
           method: "GET",
-          headers: {
-            "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
-          },
+          headers: { "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "" },
         });
+  
         if (response.ok) {
           const data = await response.json();
-
-          const transformedTickets: Ticket[] = data.tickets.flatMap((ticket: APIResponseTicket) =>
+          console.log("[API] Dados recebidos:", data);
+          
+          const transformedTickets: Ticket[] = data.tickets
+          .filter((ticket: Ticket) => ticket.paid === true)
+          .flatMap((ticket: Ticket) =>
             ticket.numbers.map((number: string) => ({
               number,
               name: ticket.buyer?.name || "",
@@ -66,48 +59,138 @@ export default function SorteioPage() {
               phone: ticket.buyer?.phone || "",
             }))
           );
-
-          setShuffledTickets(shuffleArray(transformedTickets));
-        } else {
-          console.error("Erro ao buscar tickets.");
+          
+          console.log("[Transformação] Tickets processados:", {
+            quantidade: transformedTickets.length,
+            amostra: transformedTickets.slice(0, 3)
+          });
+          
+          setAvailableTickets(transformedTickets);
+          setPrizes(data.prizes);
         }
       } catch (error) {
-        console.error("Erro ao carregar tickets:", error);
+        console.error("Erro ao carregar dados da campanha:", error);
+        toast.error("Erro ao carregar dados da campanha");
+      } finally {
+        setIsLoading(false);
       }
     };
-
-    fetchTickets();
+  
+    fetchCampaignData();
   }, [code]);
 
-  const startCountdown = () => {
-    if (shuffledTickets.length === 0) return;
+  const assignPrizeToWinner = async (ticket: Ticket, prizeId?: string) => {
+    console.log("[Sorteio] Atribuindo prêmio:", {
+      ticket,
+      prizeId
+    });
 
+    if (!prizeId) {
+      toast.error("Não há mais prêmios disponíveis.");
+      return;
+    }
+
+    try {
+      const payload = {
+        id: prizeId,
+        winnerNumber: ticket.number,
+        winnerName: ticket.recipientName || ticket.name
+      };
+      
+      console.log("[API] Enviando dados para atualização:", payload);
+
+      const response = await fetch(`/api/campaign/${code}/prizes`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        console.log("[API] Resposta recebida com sucesso");
+        
+        setPrizes((prev) =>
+          prev.map((prize) =>
+            prize.id === prizeId
+              ? { ...prize, winnerNumber: ticket.number, winnerName: ticket.recipientName || ticket.name }
+              : prize
+          )
+        );
+
+        // Remove o ticket sorteado dos disponíveis
+        setAvailableTickets(prev => {
+          const newAvailable = prev.filter(t => t.number !== ticket.number);
+          console.log("[Estado] Tickets disponíveis atualizados:", {
+            anterior: prev.length,
+            atual: newAvailable.length,
+            removido: ticket.number
+          });
+          return newAvailable;
+        });
+
+        toast.success(`Prêmio atribuído ao número ${ticket.number}!`);
+      } else {
+        throw new Error("Falha ao atribuir prêmio");
+      }
+    } catch (error) {
+      console.error("Erro ao atribuir prêmio:", error);
+      toast.error("Erro ao atribuir prêmio.");
+    }
+  };
+
+  const startCountdown = () => {
+    if (availableTickets.length === 0 || prizes.length === 0) {
+      toast.error("Não há mais números disponíveis para sorteio!");
+      return;
+    }
+
+    console.log("[Sorteio] Iniciando sorteio com:", {
+      ticketsDisponiveis: availableTickets.length,
+      premiosDisponiveis: prizes.filter(p => !p.winnerNumber).length
+    });
+
+    // Inicia o estado de contagem
     setIsCounting(true);
     setCountdown(10);
     let counter = 10;
 
-    const intervalId = setInterval(() => {
+    // Embaralha os números durante a contagem
+    const animationInterval = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * availableTickets.length);
+      setCurrentNumber(availableTickets[randomIndex].number);
+    }, 100);
+
+    // Contagem regressiva
+    const countdownInterval = setInterval(() => {
       counter -= 1;
       setCountdown(counter);
 
-      // Mostra números embaralhados durante a contagem
-      setCurrentNumber((prev) => {
-        const currentIndex = shuffledTickets.findIndex((ticket) => ticket.number === prev);
-        const nextIndex = (currentIndex + 1) % shuffledTickets.length;
-        return shuffledTickets[nextIndex]?.number || "Boa sorte!";
-      });
-
-      // Finaliza o sorteio
       if (counter <= 0) {
-        clearInterval(intervalId);
+        // Limpa os intervalos
+        clearInterval(animationInterval);
+        clearInterval(countdownInterval);
 
-        const selectedTicket = shuffledTickets[0];
+        // Seleciona o vencedor aleatoriamente dos tickets disponíveis
+        const randomIndex = Math.floor(Math.random() * availableTickets.length);
+        const selectedTicket = availableTickets[randomIndex];
+        
+        console.log("[Sorteio] Ticket sorteado:", selectedTicket);
+        
         if (selectedTicket) {
+          // Atualiza o número mostrado
           setCurrentNumber(selectedTicket.number);
-          setSelectedCards((prev) => [...prev, selectedTicket]);
-          setShuffledTickets((prev) => prev.slice(1)); // Remove o número sorteado da lista
+
+          // Encontra o primeiro prêmio disponível e atribui ao vencedor
+          const currentPrizeIndex = prizes.findIndex((prize) => !prize.winnerNumber);
+          if (currentPrizeIndex !== -1) {
+            console.log("[Sorteio] Prêmio selecionado:", prizes[currentPrizeIndex]);
+            assignPrizeToWinner(selectedTicket, prizes[currentPrizeIndex]?.id);
+          }
         }
 
+        // Reseta estados de contagem
         setCountdown(null);
         setIsCounting(false);
       }
@@ -138,52 +221,30 @@ export default function SorteioPage() {
             <Button
               className="w-full p-6 text-lg bg-green-500 hover:bg-green-600"
               onClick={startCountdown}
-              disabled={isCounting || shuffledTickets.length === 0}
+              disabled={isCounting || availableTickets.length === 0 || !prizes.some(prize => !prize.winnerNumber)}
             >
               {isCounting ? "Sorteando!" : "Sortear"}
             </Button>
+
+            {isLoading && (
+              <div className="text-center mt-4">Carregando...</div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Selected Numbers Grid */}
         <div className="flex flex-col w-full gap-4">
-          {selectedCards.map((ticket, index) => (
-            <Card
-              key={index}
-              onClick={() => setShowName(ticket.number)}
-              className="w-full items-center cursor-pointer transform hover:scale-105 transition-transform"
-            >
-              <CardContent className="flex w-full items-center justify-between p-0">
-                <div className="font-semibold">
-                  {index + 1}º Prêmio
-                </div>
-                <div className="flex gap-4 justify-between items-center p-0 text-lg text-center text-green-600 font-semibold">
-                  <div className="flex flex-col">
-                    <p>{ticket.number}</p>
-                    {showName === ticket.number && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-primary"
-                      >
-                        {ticket.recipientName ? ticket.recipientName : ticket.name}
-
-                        {ticket.recipientName ?
-                          (
-                            <p className="text-xs text-primary/50 font-thin">
-                              {ticket.name}
-                            </p>
-                          ) : null
-                        }
-                      </motion.div>
-                    )}
+          {prizes.map((prize) => (
+            <Card key={prize.id} className="w-full">
+              <CardContent className="flex flex-col gap-2 p-4">
+                <div className="font-bold text-lg">{prize.title}</div>
+                {prize.winnerNumber ? (
+                  <div className="text-green-600 font-semibold">
+                    Número Sorteado: {prize.winnerNumber} <br />
+                    Ganhador: {prize.winnerName}
                   </div>
-                  <Link href={`https://wa.me/${ticket.phone}`}  target="_blank">
-                    <Button size="icon" className="p-2 hover:scale-110 transition-all">
-                      <FaWhatsapp className="w-8 h-8 text-green-600" />
-                    </Button>
-                  </Link>
-                </div>
+                ) : (
+                  <div className="text-yellow-500 font-semibold">Aguardando Sorteio...</div>
+                )}
               </CardContent>
             </Card>
           ))}

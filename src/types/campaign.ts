@@ -38,6 +38,8 @@ export interface PrizeType {
   id: string;
   title: string;
   description: string;
+  winnerNumber?: string;
+  winnerName?: string
 }
 
 export interface CampaignType {

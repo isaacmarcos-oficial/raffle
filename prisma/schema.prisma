@@ -19,8 +19,6 @@ enum PaymentType {
   CASH
 }
 
-
-
 model Campaign {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   code         String       @unique // Código de identificação (ex.: ABC123)
@@ -38,21 +36,21 @@ model Campaign {
   ownerId      String       @db.ObjectId
   owner        Owner        @relation(fields: [ownerId], references: [id])
   tickets      Ticket[] // Tickets vinculados à rifa
-  prizes Prize[]
+  prizes       Prize[]
 }
 
 model Ticket {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
   numbers       String[] // Número escolhido ou atribuído
-  paid         Boolean // Se o pagamento foi aprovado
-  paymentType PaymentType
-  purchaseDate DateTime // Data da compra
-  campaignId   String?   @db.ObjectId
-  campaign     Campaign? @relation(fields: [campaignId], references: [id])
-  buyerId      String?   @db.ObjectId
-  buyer        Buyer?    @relation(fields: [buyerId], references: [id]) // Relacionamento com o comprador
+  paid          Boolean // Se o pagamento foi aprovado
+  paymentType   PaymentType
+  purchaseDate  DateTime // Data da compra
+  campaignId    String?     @db.ObjectId
+  campaign      Campaign?   @relation(fields: [campaignId], references: [id])
+  buyerId       String?     @db.ObjectId
+  buyer         Buyer?      @relation(fields: [buyerId], references: [id]) // Relacionamento com o comprador
   recipientName String?
-  prizeId       String?   @db.ObjectId // Relacionamento com o prêmio (opcional)
+  prizeId       String?     @db.ObjectId // Relacionamento com o prêmio (opcional)
   prize         Prize[]
 }
 
@@ -73,12 +71,12 @@ model Buyer {
 }
 
 model Prize {
-   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String? // Descrição do prêmio
-  value       Float? // Valor estimado ou monetário do prêmio
-  campaignId  String    @db.ObjectId
-  campaign    Campaign  @relation(fields: [campaignId], references: [id])
-  ticketId    String?   @db.ObjectId
-  ticket      Ticket?   @relation(fields: [ticketId], references: [id]) // Relacionamento opcional com o ticket
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  campaignId   String   @db.ObjectId
+  campaign     Campaign @relation(fields: [campaignId], references: [id])
+  ticket       Ticket?  @relation(fields: [ticketId], references: [id]) // Relacionamento opcional com o ticket
+  ticketId     String?  @db.ObjectId
+  winnerNumber String?
+  winnerName   String?
 }

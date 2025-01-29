@@ -154,8 +154,8 @@ export default function Rifa({ campaign }: CampaignProps) {
 
         <ProgressCampaign campaign={campaign} />
 
-        <div className="flex w-full gap-6">
-          <Card className="p-6 w-2/3">
+        <div className="flex flex-col lg:flex-row w-full gap-6">
+          <Card className="p-6 w-full lg:w-2/3">
             <CardHeader className="p-0 mb-4">
               <CardTitle className="">
                 Descrição/ Regulamento
@@ -165,7 +165,7 @@ export default function Rifa({ campaign }: CampaignProps) {
               {campaign.description}
             </CardContent>
           </Card>
-          <Card className="w-1/3">
+          <Card className="w-full lg:w-1/3">
             <CardHeader className="p-0 mb-4">
               <CardTitle className="">
                 Prêmios
@@ -173,17 +173,25 @@ export default function Rifa({ campaign }: CampaignProps) {
             </CardHeader>
 
             <CardHeader className="flex flex-col p-0 mb-4 gap-2">
-              <CardTitle className="flex flex-col gap-2">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
                 {campaign.prizes.map((prize, index) => (
                   <Card key={index} className="flex flex-col gap-2">
-                    <div className="flex items-center">
+                    <div className="flex items-center font-bold">
                       <Trophy className="text-green-500 h-4 w-4 mr-2" />
                       <p className="text-green-500">{index + 1}º Prêmio</p>
                     </div>
                     <CardTitle className="text-sm">{prize.title}</CardTitle>
+                    <CardContent className="p-0">
+                      {!prize.winnerNumber
+                        ? <p className="text-yellow-500 font-semibold">Aguardando sorteio</p>
+                        : <div className="text-green-600 font-semibold">
+                          {prize.winnerNumber} |  {prize.winnerName}
+                        </div>
+                      }
+                    </CardContent>
                   </Card>
                 ))}
-              </CardTitle>
+              </div>
             </CardHeader>
 
           </Card>

@@ -20,6 +20,8 @@ export default function TicketPrizes({ campaign }: TicketPrizesProps) {
     setPrizes(campaign.prizes || []);
   }, [campaign.prizes]);
 
+  console.log(prizes)
+
   const handleAddPrize = (prize: { title: string; description: string }) => {
     const newPrize = {
       id: Math.random().toString(36).substring(2), // Gera um ID aleatório para simular
@@ -89,13 +91,26 @@ export default function TicketPrizes({ campaign }: TicketPrizesProps) {
           prizes.map((prize, index) => (
             <Card key={prize.id}>
               <div className="flex justify-between items-center">
-                <CardHeader className="p-0">
-                  <CardTitle>{`${index + 1}º Prêmio - ${prize.title}`}</CardTitle>
-                  <CardDescription>{prize.description}</CardDescription>
-                </CardHeader>
+                <div className="">
+                  <CardHeader className="p-0">
+                    <CardTitle>{`${index + 1}º Prêmio - ${prize.title}`}</CardTitle>
+                    <CardDescription>{prize.description}</CardDescription>
+
+                  </CardHeader>
+                  {!prize.winnerNumber
+                    ? <p className="text-yellow-500 font-semibold">Aguardando sorteio</p>
+                    : <div className="text-green-600 font-semibold">
+                      Número Sorteado: {prize.winnerNumber} <br />
+                      Ganhador: {prize.winnerName}
+                    </div>
+                  }
+                  <div className="text-green-500 font-bold">
+
+                  </div>
+                </div>
                 <div className="flex gap-4">
                   <EditPrizeModal campaign={campaign} prize={prize} onEdit={handleEditPrize} />
-                  
+
                   <Button
                     variant="link"
                     className="text-muted-foreground hover:text-red-500"

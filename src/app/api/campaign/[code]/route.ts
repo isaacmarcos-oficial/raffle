@@ -26,19 +26,32 @@ export async function GET(
     const campaign = await prisma.campaign.findUnique({
       where: code,
       include: {
+        owner: true,
         tickets: {
           include: {
             buyer: true,
             campaign: {
               select: {
                 price: true,
-                prizes: true
+                prizes: {
+                  include: {
+                    ticket: true
+                  }
+                }
               },
             },
           }
         },
-        owner: true,
-        prizes: true
+        
+        prizes: {
+          include: {
+            ticket: {
+              include: {
+                buyer: true,
+              }
+            }
+          }
+        }
       }
     });
 

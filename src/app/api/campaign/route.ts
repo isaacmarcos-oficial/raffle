@@ -16,7 +16,11 @@ export async function GET(req: Request) {
       include: {
         owner: true,
         tickets: true,
-        prizes: true
+        prizes: {
+          include: {
+            ticket: true
+          }
+        }
       }
     });
 
