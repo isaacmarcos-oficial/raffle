@@ -25,8 +25,6 @@ export default function SignIn({ onToggle, handleGoogleSignIn }: SignInProps) {
         redirect: false,
       });
 
-      console.log(result);
-
       if (result?.error) {
         toast.error("Erro ao tentar fazer login.");
       } else {

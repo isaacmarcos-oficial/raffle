@@ -47,7 +47,6 @@ export default function SorteioPage() {
   
         if (response.ok) {
           const data = await response.json();
-          console.log("[API] Dados recebidos:", data);
           
           const transformedTickets: Ticket[] = data.tickets
           .filter((ticket: Ticket) => ticket.paid === true)
@@ -59,12 +58,6 @@ export default function SorteioPage() {
               phone: ticket.buyer?.phone || "",
             }))
           );
-          
-          console.log("[Transformação] Tickets processados:", {
-            quantidade: transformedTickets.length,
-            amostra: transformedTickets.slice(0, 3)
-          });
-          
           setAvailableTickets(transformedTickets);
           setPrizes(data.prizes);
         }
@@ -80,11 +73,6 @@ export default function SorteioPage() {
   }, [code]);
 
   const assignPrizeToWinner = async (ticket: Ticket, prizeId?: string) => {
-    console.log("[Sorteio] Atribuindo prêmio:", {
-      ticket,
-      prizeId
-    });
-
     if (!prizeId) {
       toast.error("Não há mais prêmios disponíveis.");
       return;
@@ -97,8 +85,6 @@ export default function SorteioPage() {
         winnerName: ticket.recipientName || ticket.name
       };
       
-      console.log("[API] Enviando dados para atualização:", payload);
-
       const response = await fetch(`/api/campaign/${code}/prizes`, {
         method: "PATCH",
         headers: {
@@ -108,9 +94,7 @@ export default function SorteioPage() {
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
-        console.log("[API] Resposta recebida com sucesso");
-        
+      if (response.ok) {        
         setPrizes((prev) =>
           prev.map((prize) =>
             prize.id === prizeId
@@ -122,11 +106,6 @@ export default function SorteioPage() {
         // Remove o ticket sorteado dos disponíveis
         setAvailableTickets(prev => {
           const newAvailable = prev.filter(t => t.number !== ticket.number);
-          console.log("[Estado] Tickets disponíveis atualizados:", {
-            anterior: prev.length,
-            atual: newAvailable.length,
-            removido: ticket.number
-          });
           return newAvailable;
         });
 
@@ -145,11 +124,6 @@ export default function SorteioPage() {
       toast.error("Não há mais números disponíveis para sorteio!");
       return;
     }
-
-    console.log("[Sorteio] Iniciando sorteio com:", {
-      ticketsDisponiveis: availableTickets.length,
-      premiosDisponiveis: prizes.filter(p => !p.winnerNumber).length
-    });
 
     // Inicia o estado de contagem
     setIsCounting(true);
@@ -175,9 +149,7 @@ export default function SorteioPage() {
         // Seleciona o vencedor aleatoriamente dos tickets disponíveis
         const randomIndex = Math.floor(Math.random() * availableTickets.length);
         const selectedTicket = availableTickets[randomIndex];
-        
-        console.log("[Sorteio] Ticket sorteado:", selectedTicket);
-        
+                
         if (selectedTicket) {
           // Atualiza o número mostrado
           setCurrentNumber(selectedTicket.number);
@@ -185,7 +157,6 @@ export default function SorteioPage() {
           // Encontra o primeiro prêmio disponível e atribui ao vencedor
           const currentPrizeIndex = prizes.findIndex((prize) => !prize.winnerNumber);
           if (currentPrizeIndex !== -1) {
-            console.log("[Sorteio] Prêmio selecionado:", prizes[currentPrizeIndex]);
             assignPrizeToWinner(selectedTicket, prizes[currentPrizeIndex]?.id);
           }
         }

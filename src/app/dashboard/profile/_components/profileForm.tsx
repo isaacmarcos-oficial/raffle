@@ -44,7 +44,6 @@ export function ProfileForm() {
   const { toast } = useToast()
 
   const session = useSession()
-  console.log(session)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,11 +71,6 @@ export function ProfileForm() {
     };
 
     try {
-      console.log("Dados enviados:", {
-        id: session.data?.user?.id,
-        ...data,
-      });
-
       const response = await fetch(`/api/campaign/owner`, {
         method: "PATCH",
         headers: {
@@ -85,8 +79,6 @@ export function ProfileForm() {
         },
         body: JSON.stringify(payload),
       });
-
-      console.log("Resposta do servidor:", response);
 
       if (response.ok) {
         toast({

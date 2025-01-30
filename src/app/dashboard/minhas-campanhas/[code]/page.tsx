@@ -117,7 +117,6 @@ export default function SorteioPage() {
               ? "Bilhete aprovado com sucesso!"
               : "Aprovação desfeita com sucesso!"
         );
-        console.log(updatedTicket)
       } else {
         console.error("Erro ao atualizar o ticket.");
       }

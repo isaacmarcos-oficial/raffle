@@ -49,26 +49,43 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return;
-
+    if (!files || files.length === 0) {
+      toast.error("Selecione uma imagem para enviar.");
+      return;
+    }
+  
     const formData = new FormData();
     Array.from(files).forEach((file) => formData.append("files", file));
-
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-    if (data.urls) {
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, ...data.urls], // Adicionando novas imagens
-      }));
-    } else {
+  
+  
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        console.error("❌ Erro na resposta do servidor:", await response.json());
+        throw new Error("Erro no upload de imagens");
+      }
+  
+      const data = await response.json();
+  
+      if (data.urls) {
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, ...data.urls],
+        }));
+        toast.success("Imagens enviadas com sucesso!");
+      } else {
+        console.error("❌ Resposta inesperada do servidor:", data);
+        toast.error("Erro ao processar imagens");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao fazer upload:", error);
       toast.error("Erro ao enviar imagens");
     }
-  };
+  };  
 
   const removeImage = (index: number) => {
     setFormData((prev) => ({
@@ -124,20 +141,29 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
         <div className="flex gap-4 flex-wrap">
           <label className="border-[1px] border-dashed border-primary/20 rounded-lg p-6 flex flex-col items-center justify-center bg-primary-50 cursor-pointer h-28 w-28 hover:bg-muted transition-all">
             <Upload className="w-8 h-8 text-green-500 mb-2" />
-            <input type="file" multiple onChange={handleImageUpload} className="hidden" />
+            <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
           </label>
-          <div className="flex flex-wrap gap-4">
-            {formData.images.map((url, index) => (
-              <div key={index} className="relative group w-24 h-24">
-                <Image src={url} width={300} height={300} className="w-28 h-28 object-contain rounded-md border p-2" alt="Imagem da campanha" />
-                <button type="button" className="absolute top-1 right-1 bg-red-500 p-1 rounded-full" onClick={() => removeImage(index)}>
-                  <X className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
 
+          {/* Exibir imagens carregadas */}
+          {formData.images.map((url, index) => (
+            <div key={index} className="relative group w-24 h-24">
+              <Image
+                src={url}
+                width={300}
+                height={300}
+                className="w-28 h-28 object-contain rounded-md border p-2"
+                alt="Imagem da campanha"
+              />
+              <button
+                type="button"
+                className="absolute top-1 right-1 bg-red-500 p-1 rounded-full"
+                onClick={() => removeImage(index)}
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          ))}
+        </div>
 
         {/* NOME DA RIFA */}
         <div className="space-y-2">

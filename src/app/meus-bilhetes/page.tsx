@@ -51,8 +51,6 @@ export default function MeusBilhetes() {
     }
   };
 
-  console.log("Resposta da busca", buyer)
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-xl w-full">

@@ -6,7 +6,6 @@ export interface TabsTicketsProps {
 }
 
 export default function TicketsCard({ campaign }: TabsTicketsProps) {
-  console.log(campaign)
   const totalTickets = campaign.tickets?.length;
 
   const totalPaidValue = campaign.tickets?.reduce((total, ticket) => {

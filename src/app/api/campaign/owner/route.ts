@@ -114,8 +114,6 @@ export async function PATCH(req: Request) {
 
   try {
     const { id, name, email, phone, password } = await req.json();
-    console.log("Dados recebidos pelo backend:", { id, name, email, phone, password });
-
 
     // Validações básicas
     if (!id) {

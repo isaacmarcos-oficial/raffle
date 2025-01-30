@@ -20,8 +20,6 @@ export default function TicketPrizes({ campaign }: TicketPrizesProps) {
     setPrizes(campaign.prizes || []);
   }, [campaign.prizes]);
 
-  console.log(prizes)
-
   const handleAddPrize = (prize: { title: string; description: string }) => {
     const newPrize = {
       id: Math.random().toString(36).substring(2), // Gera um ID aleatório para simular

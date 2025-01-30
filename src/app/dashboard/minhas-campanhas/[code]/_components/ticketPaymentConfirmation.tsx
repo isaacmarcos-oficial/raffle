@@ -26,7 +26,6 @@ export default function TicketPaymentConfirmation({
       return toast.error("Selecione uma forma de pagamento!");
     }
     onConfirm(ticketId, selectedPayment);
-    console.log(selectedPayment)
   };
 
   return (
