@@ -7,8 +7,10 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem, Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { CampaignType } from "@/types/campaign";
-import { Check, Pencil } from "lucide-react";
+import { Check, Pencil, Upload, X } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export interface CampaignProps {
   campaign: CampaignType;
@@ -25,6 +27,7 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
     price: campaign.price || 0,
     drawDate: campaign.drawDate || "",
     pixKey: campaign.pixCode || "",
+    images: campaign.images || [],
     phone: campaign.contactPhone.startsWith("+") // Adiciona "+" se necessário
       ? campaign.contactPhone
       : `+${campaign.contactPhone}`,
@@ -43,6 +46,36 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
   });
 
   const [loading, setLoading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const formData = new FormData();
+    Array.from(files).forEach((file) => formData.append("files", file));
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (data.urls) {
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...data.urls], // Adicionando novas imagens
+      }));
+    } else {
+      toast.error("Erro ao enviar imagens");
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
 
   const toggleEditMode = (field: keyof typeof editMode) => {
     setEditMode((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -87,6 +120,25 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
   return (
     <div>
       <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+        {/* IMAGENS DA RIFA */}
+        <div className="flex gap-4 flex-wrap">
+          <label className="border-[1px] border-dashed border-primary/20 rounded-lg p-6 flex flex-col items-center justify-center bg-primary-50 cursor-pointer h-28 w-28 hover:bg-muted transition-all">
+            <Upload className="w-8 h-8 text-green-500 mb-2" />
+            <input type="file" multiple onChange={handleImageUpload} className="hidden" />
+          </label>
+          <div className="flex flex-wrap gap-4">
+            {formData.images.map((url, index) => (
+              <div key={index} className="relative group w-24 h-24">
+                <Image src={url} width={300} height={300} className="w-28 h-28 object-contain rounded-md border p-2" alt="Imagem da campanha" />
+                <button type="button" className="absolute top-1 right-1 bg-red-500 p-1 rounded-full" onClick={() => removeImage(index)}>
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+
         {/* NOME DA RIFA */}
         <div className="space-y-2">
           <Label htmlFor="title">Nome da Rifa</Label>

@@ -37,6 +37,7 @@ model Campaign {
   owner        Owner        @relation(fields: [ownerId], references: [id])
   tickets      Ticket[] // Tickets vinculados à rifa
   prizes       Prize[]
+  images       String[] // URL da imagem no Cloudinary
 }
 
 model Ticket {

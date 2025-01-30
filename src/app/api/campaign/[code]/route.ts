@@ -103,7 +103,8 @@ export async function PATCH(
       drawDate,
       pixCode,
       contactPhone,
-      prizes
+      prizes,
+      images
     } = body;
 
     // Atualiza os dados da campanha no banco de dados
@@ -119,6 +120,7 @@ export async function PATCH(
         drawDate: drawDate ? new Date(drawDate) : undefined, // Converte drawDate para Date
         pixCode,
         contactPhone,
+        images: images ? images : undefined, // Atualizando imagens
         prizes: prizes
           ? {
             set: prizes.map((prizeId: string) => ({ id: prizeId })), // Atualiza os prêmios associados

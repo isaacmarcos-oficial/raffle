@@ -62,6 +62,7 @@ export interface CampaignType {
     name: string
   }
   prizes: PrizeType[]
+  images: string[]
 }
 
 export interface RaffleState {

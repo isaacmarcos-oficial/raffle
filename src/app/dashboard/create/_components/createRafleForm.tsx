@@ -13,9 +13,14 @@ import { DatePicker } from '@/components/ui/date-picker'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 import { PhoneInput } from '@/components/ui/phone-input'
+import { useRouter } from 'next/navigation'
+import { Upload, X } from 'lucide-react'
+import Image from 'next/image'
 
 export function CreateRaffleForm() {
   const { data: session } = useSession();
+  const [images, setImages] = useState<string[]>([]);
+  const router = useRouter()
 
   const [raffleType, setRaffleType] = useState<'rifa' | 'loteria'>('rifa')
   const [formData, setFormData] = useState({
@@ -27,6 +32,7 @@ export function CreateRaffleForm() {
     drawDate: '',
     pixKey: '',
     phone: '',
+    images: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -61,6 +67,42 @@ export function CreateRaffleForm() {
     }));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const uploadPromises = Array.from(files).map(async (file) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (data.url) {
+          return data.url;
+        } else {
+          toast.error("Erro ao enviar imagem");
+          return null;
+        }
+      } catch (error) {
+        console.error("Erro ao processar a imagem:", error);
+        toast.error("Erro ao processar a imagem");
+        return null;
+      }
+    });
+
+    // Aguarda o upload de todas as imagens antes de atualizar o estado
+    const uploadedImages = (await Promise.all(uploadPromises)).filter(Boolean) as string[];
+
+    if (uploadedImages.length > 0) {
+      setImages((prev) => [...prev, ...uploadedImages]); // Adiciona as novas imagens ao estado
+    }
+  };
+
   const validateForm = () => {
     const requiredFields = ['name', 'description', 'price', 'pixKey', 'phone', 'drawDate'];
 
@@ -92,6 +134,8 @@ export function CreateRaffleForm() {
 
     setLoading(true);
 
+    const normalizedPhone = formData.phone.startsWith("+") ? formData.phone : `+${formData.phone}`;
+
     // Configura os dados conforme o tipo de campanha
     const payload = {
       title: formData.title,
@@ -102,8 +146,9 @@ export function CreateRaffleForm() {
       price: parseFloat(formData.price),
       drawDate: formData.drawDate,
       pixCode: formData.pixKey,
-      contactPhone: formData.phone,
-      ownerId: session?.user?.id
+      contactPhone: normalizedPhone,
+      ownerId: session?.user?.id,
+      images
     };
 
     try {
@@ -125,21 +170,10 @@ export function CreateRaffleForm() {
 
       const data = await response.json();
       toast.success('Campanha criada com sucesso!', {
-        description: `ID: ${data.id}`,
+        description: `Campanha: ${data.title}`,
       });
 
-      // Limpa o formulário após o sucesso
-      setFormData({
-        title: '',
-        description: '',
-        quantity: '',
-        minQuantity: '',
-        price: '',
-        drawDate: '',
-        pixKey: '',
-        phone: '',
-      });
-      setRaffleType('rifa');
+      router.push(`/dashboard/minhas-campanhas/${data.code}`);
     } catch (error) {
       console.error('Erro ao criar campanha:', error);
       toast.error('Erro ao criar campanha. Tente novamente.');
@@ -206,6 +240,30 @@ export function CreateRaffleForm() {
       </div>
 
       <div className="space-y-2">
+        <Label>Imagens</Label>
+        <div className="flex gap-4 flex-wrap">
+          <label className="border-[1px] border-dashed border-primary/20 rounded-lg p-6 flex flex-col items-center justify-center bg-primary-50 cursor-pointer h-28 w-28 hover:bg-muted transition-all">
+            <Input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} />
+            <Upload className="w-8 h-8 text-green-500 mb-2" />
+          </label>
+
+          {/* Exibição das imagens enviadas */}
+          {images.length > 0 && images.map((img, index) => (
+            <div key={index} className="relative group">
+              <Image src={img} alt={`Imagem ${index + 1}`} className="w-28 h-28 object-contain rounded-md border" />
+              <button
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-80 hover:opacity-100 transition"
+                onClick={() => setImages(images.filter((_, i) => i !== index))}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+
+      <div className="space-y-2">
         <Label htmlFor="title">Nome da Rifa</Label>
         <Input id="title" value={formData.title} onChange={handleChange} required />
       </div>
@@ -214,7 +272,6 @@ export function CreateRaffleForm() {
         <Label htmlFor="description">Descrição da Rifa</Label>
         <Textarea id="description" value={formData.description} onChange={handleChange} required />
       </div>
-
 
       <div className="flex flex-col md:flex-row gap-4 w-full items-center">
         {raffleType === 'rifa' && (
@@ -293,7 +350,7 @@ export function CreateRaffleForm() {
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button type="submit" className="w-full bg-green-500 hover:bg-green-500/80 text-primary font-semibold" disabled={loading}>
         {loading ? 'Criando...' : 'Criar Campanha'}
       </Button>
     </form>

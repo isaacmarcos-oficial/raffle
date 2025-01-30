@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       pixCode,
       contactPhone,
       ownerId,
+      images
     } = body;
 
     // Validações
@@ -87,6 +88,8 @@ export async function POST(req: Request) {
     // Geração de um código único para a campanha
     const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
+    const phoneNormalized = contactPhone.replace(/\D/g, '')
+
     // Criação da campanha no banco de dados
     const newCampaign = await prisma.campaign.create({
       data: {
@@ -101,8 +104,9 @@ export async function POST(req: Request) {
         startDate: new Date(), // Data de início atual
         drawDate: parsedDrawDate, // Certifique-se de passar uma data válida
         pixCode,
-        contactPhone,
+        contactPhone: phoneNormalized,
         ownerId, // Relaciona ao proprietário
+        images: images || []
       },
     });
 

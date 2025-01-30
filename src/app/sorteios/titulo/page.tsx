@@ -10,6 +10,8 @@ import ShareCampaign from '../_components/shareCampaign'
 import HeaderCampaign from '../_components/headerCampaign'
 import { toast } from 'sonner'
 import TicketModal from '../rifa/_components/TicketModal'
+import ImagesCarousel from '../_components/imagesCarousel'
+import PrizesCampaign from '../_components/prizesCampaign'
 
 export interface CampaignProps {
   campaign: CampaignType;
@@ -61,11 +63,11 @@ export default function LotteryPage({ campaign }: CampaignProps) {
       });
       if (response.ok) {
         setIsModalOpen(false);
-        toast.success("Compra realizada com sucesso!",{
+        toast.success("Compra realizada com sucesso!", {
           description: selectedNumbers.join(", "),
           duration: 10000
         },
-      );
+        );
       } else {
         const errorMessage = await response.text();
         console.error("Erro da API:", errorMessage); // Mensagem da API
@@ -76,7 +78,7 @@ export default function LotteryPage({ campaign }: CampaignProps) {
       toast.error("Erro ao processar a compra.");
     }
   }
-  
+
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -109,6 +111,11 @@ export default function LotteryPage({ campaign }: CampaignProps) {
                 </div>
               </div>
             </Card>
+
+            <div className="flex flex-col md:flex-row w-full gap-6">
+              <ImagesCarousel images={campaign.images} />
+              <PrizesCampaign campaign={campaign} />
+            </div>
 
             <Card className="">
               <div className="p-4">
