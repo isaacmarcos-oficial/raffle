@@ -24,11 +24,10 @@ type AddPrizeModalProps = {
 
 export default function EditPrizeModal({ prize, onEdit, campaign }: AddPrizeModalProps) {
   const [title, setTitle] = useState(prize.title);
-  const [description, setDescription] = useState(prize.description);
 
   const handleSubmit = async () => {
-    if (!title || !description) {
-      toast.error("Preencha todos os campos!");
+    if (!title) {
+      toast.error("O título não pode estar vazio!");
       return;
     }
 
@@ -39,7 +38,7 @@ export default function EditPrizeModal({ prize, onEdit, campaign }: AddPrizeModa
           "Content-Type": "application/json",
           "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
         },
-        body: JSON.stringify({ id: prize.id, title, description }),
+        body: JSON.stringify({ id: prize.id, title }),
       });
 
       if (response.ok) {
@@ -69,25 +68,14 @@ export default function EditPrizeModal({ prize, onEdit, campaign }: AddPrizeModa
         <DialogHeader>
           <DialogTitle>Editar Prêmio</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="title">Título do Prêmio</Label>
-            <Input
-              id="title"
-              placeholder="Ex: 1º Prêmio"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="description">Descrição</Label>
-            <Input
-              id="description"
-              placeholder="Ex: Viagem para o Caribe"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="title">Título do Prêmio</Label>
+          <Input
+            id="title"
+            placeholder="Ex: 1º Prêmio"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
         <DialogFooter>
           <Button
