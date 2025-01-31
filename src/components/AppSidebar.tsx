@@ -5,7 +5,6 @@ import { Home, List, User, ListCollapse, LifeBuoy, Ticket } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -53,11 +52,6 @@ export function AppSidebar() {
         ))}
       </SidebarMenu>
     </SidebarContent>
-    <SidebarFooter>
-      <p className="text-xs text-gray-500 px-4 py-2">
-        © 2023 RaffleHub. Todos os direitos reservados.
-      </p>
-    </SidebarFooter>
   </Sidebar>
   )
 }

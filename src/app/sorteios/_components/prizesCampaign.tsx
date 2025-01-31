@@ -10,34 +10,29 @@ export default function PrizesCampaign({ campaign }: PrizeType) {
   const sortedPrizes = [...campaign.prizes].sort((a, b) => a.position - b.position);
 
   return (
-    <Card className="w-full">
+    <Card className="w-full flex-1 flex flex-col items center">
       <CardHeader className="p-0 mb-4">
         <CardTitle className="">
           Prêmios
         </CardTitle>
       </CardHeader>
 
-      <CardHeader className="flex flex-col p-0 mb-4 gap-2">
-        <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
-          {sortedPrizes.map((prize) => (
-            <Card key={prize.position} className="flex flex-col gap-2">
-              <div className="flex items-center font-bold">
-                <Trophy className="text-green-500 h-4 w-4 mr-2" />
-                <p className="text-green-500">{prize.position}º Prêmio</p>
-              </div>
-              <CardTitle className="text-md">{prize.title}</CardTitle>
-              <CardContent className="p-0">
-                {!prize.winnerNumber
-                  ? <p className="text-yellow-500 font-semibold text-sm">Aguardando sorteio</p>
-                  : <div className="text-green-600 font-semibold text-sm">
-                    {prize.winnerNumber} |  {prize.winnerName}
-                  </div>
-                }
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </CardHeader>
+      <div className="flex flex-col gap-2">
+        {sortedPrizes.map((prize) => (
+          <Card key={prize.position} className="flex flex-col gap-2">
+            <CardTitle className="flex items-center text-base">
+              <Trophy className="text-green-500 h-4 w-4 mr-2" />
+              {prize.title}
+            </CardTitle>
+            <CardContent>
+              {prize.winnerNumber && <div className="text-green-600 font-semibold text-sm">
+                  {prize.winnerNumber} |  {prize.winnerName}
+                </div>
+              }
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </Card>
   )
 }

@@ -112,7 +112,7 @@ export default function LotteryPage({ campaign }: CampaignProps) {
               </div>
             </Card>
 
-            <div className="flex flex-col md:flex-row w-full gap-6">
+            <div className="flex flex-col md:flex-row w-full gap-8">
               <ImagesCarousel images={campaign.images} />
               <PrizesCampaign campaign={campaign} />
             </div>
@@ -129,7 +129,6 @@ export default function LotteryPage({ campaign }: CampaignProps) {
                 </div>
               </div>
             </Card>
-
             <ShareCampaign campaign={campaign} />
           </div>
         </div>

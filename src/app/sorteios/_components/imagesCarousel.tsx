@@ -16,23 +16,21 @@ type ImagesCarouselProps = {
 
 export default function ImagesCarousel({ images }: ImagesCarouselProps) {
   return (
-    <Carousel className="w-full max-h-xs">
-      <CarouselContent>
+    <Carousel className="flex-1 items-center max-h-[400px]">
+      <CarouselContent className="flex">
         {images.map((img, index) => (
           <CarouselItem key={index}>
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex max-h-[200px] md:max-h-xs w-full h-full max-h-xs aspect-square items-center justify-center p-2 relative object-contain">
-                  <Image
-                    src={img}
-                    alt={`Imagem ${index + 1}`}
-                    width={300}
-                    height={300}
-                    className="object-contain w-full h-full "
-                  />
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="flex object-contain items-center justify-center">
+              <CardContent className="flex max-h-[300px] aspect-square items-center justify-center">
+                <Image
+                  src={img}
+                  alt={`Imagem ${index + 1}`}
+                  width={300}
+                  height={300}
+                  className="object-contain max-h- w-full h-full"
+                />
+              </CardContent>
+            </Card>
           </CarouselItem>
         ))}
       </CarouselContent>
