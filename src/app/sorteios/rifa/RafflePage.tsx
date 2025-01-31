@@ -133,7 +133,7 @@ export default function Rifa({ campaign }: CampaignProps) {
           </CardContent>
         </Card>
         <div className="flex flex-col lg:flex-row w-full gap-6">
-          <ImagesCarousel images={campaign.images} />
+          {campaign.images.length > 0 && <ImagesCarousel images={campaign.images} />}
           <PrizesCampaign campaign={campaign} />
         </div>
 

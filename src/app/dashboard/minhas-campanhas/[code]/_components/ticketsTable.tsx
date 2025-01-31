@@ -6,6 +6,8 @@ import { Eye, Undo, X } from "lucide-react";
 import { TicketType } from "@/types/campaign";
 import { Badge } from "@/components/ui/badge";
 import TicketPaymentConfirmation from "./ticketPaymentConfirmation";
+import Link from "next/link";
+import { FaWhatsapp } from "react-icons/fa";
 
 
 type TabsTicketsProps = {
@@ -34,12 +36,16 @@ export default function TicketsTable({
     <Card key={ticket.id} className="mb-4">
       <CardContent className="flex w-full justify-between p-0">
         <div>
-          <div className={`${isApproved ? "text-green-500" : "text-yellow-500"} font-semibold`}>
+          <div className={`${isApproved ? "text-green-500" : "text-yellow-500"} font-semibold flex ietems-center gap-1`}>
             {ticket.buyer?.name || "Sem comprador"}
             {ticket.recipientName && ` (${ticket.recipientName})`}
+            <Link href={`https://wa.me/${ticket.buyer?.phone}`} target="_blank">
+              <FaWhatsapp className="h-5 w-5 text-green-500" />
+            </Link>
           </div>
-          <div className="text-sm text-zinc-600">
+          <div className="text-sm text-zinc-600 flex items-center gap-1">
             {ticket.buyer?.phone || "Sem telefone"}
+            
           </div>
           <div className="flex text-xs gap-1 mt-2">
             <Badge>{ticket.numbers.length} Bilhetes</Badge>

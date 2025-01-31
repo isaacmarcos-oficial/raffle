@@ -53,24 +53,24 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
       toast.error("Selecione uma imagem para enviar.");
       return;
     }
-  
+
     const formData = new FormData();
     Array.from(files).forEach((file) => formData.append("files", file));
-  
-  
+
+
     try {
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
-  
+
       if (!response.ok) {
         console.error("❌ Erro na resposta do servidor:", await response.json());
         throw new Error("Erro no upload de imagens");
       }
-  
+
       const data = await response.json();
-  
+
       if (data.urls) {
         setFormData((prev) => ({
           ...prev,
@@ -85,7 +85,7 @@ export default function CampaignSetting({ campaign, onUpdateCampaign }: Campaign
       console.error("❌ Erro ao fazer upload:", error);
       toast.error("Erro ao enviar imagens");
     }
-  };  
+  };
 
   const removeImage = (index: number) => {
     setFormData((prev) => ({

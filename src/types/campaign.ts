@@ -40,6 +40,7 @@ export interface PrizeType {
   description: string;
   winnerNumber?: string;
   winnerName?: string
+  position: number
 }
 
 export interface CampaignType {

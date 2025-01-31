@@ -18,7 +18,7 @@ export default function PaymentType({ setPaymentType, paymentType }:PaymentTypeP
         onValueChange={(value) => {
           setPaymentType(value as 'PIX_MANUAL' | 'CASH');
         }}
-        className='flex flex-col md:flex-row items-center justify-center gap-4 w-full'
+        className='flex items-center justify-center gap-4 w-full'
       >
         <Card
           className={cn(

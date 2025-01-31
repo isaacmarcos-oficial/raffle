@@ -14,7 +14,7 @@ interface TicketFormProps {
 }
 
 export function TicketForm({ buyer, phone, recipientName, setBuyer, setPhone, setRecipientName }: TicketFormProps) {
-
+  
   return (
     <div className="rounded-lg w-full max-w-md">
       <form className="space-y-4">

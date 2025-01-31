@@ -2,11 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle, DollarSign, UserCheck2 } from "lucide-react";
-import { TicketForm } from "./Modal/TicketForm";
+import { TicketForm } from "../../_components/Modal/TicketForm";
 import { useState } from "react";
 import { StepperSeparator, StepperTrigger } from "@/components/ui/stepper";
-import PaymentType from "./Modal/TicketPaymentType";
-import TicketInstruction from "./Modal/TicketInstruction";
+import PaymentType from "../../_components/Modal/TicketPaymentType";
+import TicketInstruction from "../../_components/Modal/TicketInstruction";
 import { toast } from "sonner";
 import { TicketType } from "@/types/campaign";
 
@@ -61,7 +61,7 @@ export default function TicketModal({ isOpen, onClose, pixKey, contactPhone, sel
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="">
         <DialogTitle>
           Falta pouco para finalizar
         </DialogTitle>
@@ -120,7 +120,7 @@ export default function TicketModal({ isOpen, onClose, pixKey, contactPhone, sel
           </Button>
           {currentStep === steps.length ? (
             <Button type="submit" onClick={finalizePurchase}>
-              Finalizar
+              Reservar
             </Button>
           ) : (
             <Button

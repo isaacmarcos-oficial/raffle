@@ -27,7 +27,7 @@ export default function TicketInstruction({ pixKey, contactPhone, paymentType }:
         <CardContent>
           <CardTitle className="font-semibold">Próximos Passos:</CardTitle>
           <div className="text-muted-foreground text-sm">
-            <ul className="list-disc ml-6 mt-2">
+            <ul className="list-disc ml-6 mt-2 leading-6">
               <li>
                 Entre em contato via{" "}
                 <Link
@@ -39,6 +39,7 @@ export default function TicketInstruction({ pixKey, contactPhone, paymentType }:
                 </Link>{" "}
                 para combinar o pagamento.
               </li>
+              <li>Confirme a reserva do número.</li>
               <li>Após verificado o pagamento, o organizador irá confirmar o seu número.</li>
             </ul>
           </div>
@@ -64,7 +65,7 @@ export default function TicketInstruction({ pixKey, contactPhone, paymentType }:
               {pixKey}
               <Copy className="ml-1 h-3 w-3" />
             </Card>
-            <ul className="list-disc ml-6 mt-2">
+            <ul className="list-disc ml-6 mt-2 leading-6">
               <li>
                 Envie o comprovante via{" "}
                 <Link
@@ -76,6 +77,7 @@ export default function TicketInstruction({ pixKey, contactPhone, paymentType }:
                 </Link>
                 .
               </li>
+              <li>Confirme a reserva do número.</li>
               <li>Após verificado o pagamento, o organizador irá confirmar o seu número.</li>
             </ul>
           </div>

@@ -22,11 +22,10 @@ type AddPrizeModalProps = {
 
 export default function AddPrizeModal({ onAdd, campaign }: AddPrizeModalProps) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
 
   const handleSubmit = async () => {
-    if (!title || !description) {
-      toast.error("Preencha todos os campos!");
+    if (!title) {
+      toast.error("O título não pode estar vazio!");
       return;
     }
 
@@ -37,14 +36,13 @@ export default function AddPrizeModal({ onAdd, campaign }: AddPrizeModalProps) {
           "Content-Type": "application/json",
           "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
         },
-        body: JSON.stringify({ title, description }),
+        body: JSON.stringify({ title }),
       });
   
       if (response.ok) {
         const newPrize = await response.json();
         onAdd(newPrize); // Atualiza a lista de prêmios no estado local
         setTitle("");
-        setDescription("");
         toast.success("Prêmio adicionado com sucesso!");
       } else {
         toast.error("Erro ao adicionar prêmio.");
@@ -66,8 +64,7 @@ export default function AddPrizeModal({ onAdd, campaign }: AddPrizeModalProps) {
         <DialogHeader>
           <DialogTitle>Adicionar Novo Prêmio</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
+        <div className="space-y-1">
             <Label htmlFor="title">Título do Prêmio</Label>
             <Input
               id="title"
@@ -75,16 +72,6 @@ export default function AddPrizeModal({ onAdd, campaign }: AddPrizeModalProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-          </div>
-          <div>
-            <Label htmlFor="description">Descrição</Label>
-            <Input
-              id="description"
-              placeholder="Ex: Viagem para o Caribe"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
         </div>
         <DialogFooter>
           <Button

@@ -80,4 +80,5 @@ model Prize {
   ticketId     String?  @db.ObjectId
   winnerNumber String?
   winnerName   String?
+  position     Int      @default(0) // Campo para armazenar a posição
 }

@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge"
 
 interface Ticket {
   number: string;
@@ -44,20 +45,20 @@ export default function SorteioPage() {
           method: "GET",
           headers: { "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "" },
         });
-  
+
         if (response.ok) {
           const data = await response.json();
-          
+
           const transformedTickets: Ticket[] = data.tickets
-          .filter((ticket: Ticket) => ticket.paid === true)
-          .flatMap((ticket: Ticket) =>
-            ticket.numbers.map((number: string) => ({
-              number,
-              name: ticket.buyer?.name || "",
-              recipientName: ticket.recipientName || "",
-              phone: ticket.buyer?.phone || "",
-            }))
-          );
+            .filter((ticket: Ticket) => ticket.paid === true)
+            .flatMap((ticket: Ticket) =>
+              ticket.numbers.map((number: string) => ({
+                number,
+                name: ticket.buyer?.name || "",
+                recipientName: ticket.recipientName || "",
+                phone: ticket.buyer?.phone || "",
+              }))
+            );
           setAvailableTickets(transformedTickets);
           setPrizes(data.prizes);
         }
@@ -68,7 +69,7 @@ export default function SorteioPage() {
         setIsLoading(false);
       }
     };
-  
+
     fetchCampaignData();
   }, [code]);
 
@@ -84,7 +85,7 @@ export default function SorteioPage() {
         winnerNumber: ticket.number,
         winnerName: ticket.recipientName || ticket.name
       };
-      
+
       const response = await fetch(`/api/campaign/${code}/prizes`, {
         method: "PATCH",
         headers: {
@@ -94,7 +95,7 @@ export default function SorteioPage() {
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {        
+      if (response.ok) {
         setPrizes((prev) =>
           prev.map((prize) =>
             prize.id === prizeId
@@ -149,7 +150,7 @@ export default function SorteioPage() {
         // Seleciona o vencedor aleatoriamente dos tickets disponíveis
         const randomIndex = Math.floor(Math.random() * availableTickets.length);
         const selectedTicket = availableTickets[randomIndex];
-                
+
         if (selectedTicket) {
           // Atualiza o número mostrado
           setCurrentNumber(selectedTicket.number);
@@ -209,9 +210,11 @@ export default function SorteioPage() {
               <CardContent className="flex flex-col gap-2 p-4">
                 <div className="font-bold text-lg">{prize.title}</div>
                 {prize.winnerNumber ? (
-                  <div className="text-green-600 font-semibold">
-                    Número Sorteado: {prize.winnerNumber} <br />
-                    Ganhador: {prize.winnerName}
+                  <div className="flex items-center gap-2 text-lg text-green-600 font-semibold">
+                    <Badge className="flex text-lg items-center justify-center">
+                      {prize.winnerNumber}
+                    </Badge>
+                    {prize.winnerName}
                   </div>
                 ) : (
                   <div className="text-yellow-500 font-semibold">Aguardando Sorteio...</div>

@@ -7,6 +7,8 @@ type PrizeType = {
 }
 
 export default function PrizesCampaign({ campaign }: PrizeType) {
+  const sortedPrizes = [...campaign.prizes].sort((a, b) => a.position - b.position);
+
   return (
     <Card className="w-full">
       <CardHeader className="p-0 mb-4">
@@ -17,11 +19,11 @@ export default function PrizesCampaign({ campaign }: PrizeType) {
 
       <CardHeader className="flex flex-col p-0 mb-4 gap-2">
         <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
-          {campaign.prizes.map((prize, index) => (
-            <Card key={index} className="flex flex-col gap-2">
+          {sortedPrizes.map((prize) => (
+            <Card key={prize.position} className="flex flex-col gap-2">
               <div className="flex items-center font-bold">
                 <Trophy className="text-green-500 h-4 w-4 mr-2" />
-                <p className="text-green-500">{index + 1}º Prêmio</p>
+                <p className="text-green-500">{prize.position}º Prêmio</p>
               </div>
               <CardTitle className="text-md">{prize.title}</CardTitle>
               <CardContent className="p-0">

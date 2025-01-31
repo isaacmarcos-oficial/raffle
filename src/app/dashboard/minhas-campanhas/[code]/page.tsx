@@ -22,7 +22,7 @@ export default function SorteioPage() {
   const [searchName, setSearchName] = useState("");
   const [searchNumber, setSearchNumber] = useState("");
   const [searchPhone, setSearchPhone] = useState("");
-  const [searchPaymentMethod, setSearchPaymentMethod] = useState("");
+  const [searchPaymentMethod, setSearchPaymentMethod] = useState("ALL");
 
   const code = params.code
 
@@ -216,7 +216,7 @@ export default function SorteioPage() {
             </TabsContent>
 
             <TabsContent value="Prizes">
-              {campaign && <TicketPrizes onUpdatePrizes={handleUpdateCampaign}  campaign={campaign} />}
+              {campaign && <TicketPrizes onUpdatePrizes={handleUpdateCampaign} campaign={campaign} />}
             </TabsContent>
 
             <TabsContent value="Setting">

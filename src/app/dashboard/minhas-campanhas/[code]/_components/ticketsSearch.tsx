@@ -44,7 +44,7 @@ export default function TicketsSearch({ onSearchName, onSearchNumber, onSearchPh
       />
       <Select onValueChange={onSearchPaymentMethod}>
         <SelectTrigger className="p-2 border rounded w-1/4">
-          <SelectValue placeholder="Forma de pagamento" />
+          <SelectValue defaultValue="ALL" placeholder="Forma de pagamento" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
