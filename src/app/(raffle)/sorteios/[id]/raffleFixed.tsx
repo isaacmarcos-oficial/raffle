@@ -1,23 +1,23 @@
 "use client"
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import TicketsDrawer from './_components/TicketDrawer';
-import { TicketGrid } from '../_components/TicketGrid';
+import TicketsDrawer from './_componentsFixed/TicketDrawer';
+import { TicketGrid } from './_components/TicketGrid';
 import { toast } from 'sonner';
 import { CampaignType, TicketType } from "@/types/campaign";
-import TicketModal from "./_components/TicketModal";
-import ShareCampaign from "../_components/shareCampaign";
-import HeaderCampaign from "../_components/headerCampaign";
-import ProgressCampaign from "../_components/progressCampaign";
-import PrizesCampaign from "../_components/prizesCampaign";
-import BannerCampaign from "../_components/bannerCampaign";
-import ImagesCarousel from "../_components/imagesCarousel";
+import TicketModal from "./_componentsFixed/TicketModal";
+import ShareCampaign from "./_components/shareCampaign";
+import HeaderCampaign from "./_components/headerCampaign";
+import ProgressCampaign from "./_components/progressCampaign";
+import PrizesCampaign from "./_components/prizesCampaign";
+import BannerCampaign from "./_components/bannerCampaign";
+import ImagesCarousel from "./_components/imagesCarousel";
 
 export interface CampaignProps {
   campaign: CampaignType;
 }
 
-export default function Rifa({ campaign }: CampaignProps) {
+export default function RafleFixed({ campaign }: CampaignProps) {
   const [tickets, setTickets] = useState<TicketType[]>([]);
   const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);

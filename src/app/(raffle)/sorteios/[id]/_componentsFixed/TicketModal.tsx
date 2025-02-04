@@ -2,11 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle, DollarSign, UserCheck2 } from "lucide-react";
-import { TicketForm } from "../../_components/Modal/TicketForm";
+import { TicketForm } from "../_components/Modal/TicketForm";
 import { useState } from "react";
 import { StepperSeparator, StepperTrigger } from "@/components/ui/stepper";
-import PaymentType from "../../_components/Modal/TicketPaymentType";
-import TicketInstruction from "../../_components/Modal/TicketInstruction";
+import PaymentType from "../_components/Modal/TicketPaymentType";
+import TicketInstruction from "../_components/Modal/TicketInstruction";
 import { toast } from "sonner";
 import { TicketType } from "@/types/campaign";
 

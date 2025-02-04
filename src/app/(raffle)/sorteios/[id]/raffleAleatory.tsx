@@ -1,23 +1,23 @@
 "use client"
 import { Card } from '@/components/ui/card'
-import { LotteryTicketsSelector } from './_components/lotteryTicketsSelector'
-import { TicketInput } from './_components/ticketInput'
+import { LotteryTicketsSelector } from './_componentsAleatory/lotteryTicketsSelector'
+import { TicketInput } from './_componentsAleatory/ticketInput'
 import { useState } from 'react'
-import { TicketPurchase } from './_components/ticketPurchase'
+import { TicketPurchase } from './_componentsAleatory/ticketPurchase'
 import { CampaignType, TicketType } from '@/types/campaign'
-import BannerCampaign from '../_components/bannerCampaign'
-import ShareCampaign from '../_components/shareCampaign'
-import HeaderCampaign from '../_components/headerCampaign'
+import BannerCampaign from './_components/bannerCampaign'
+import ShareCampaign from './_components/shareCampaign'
+import HeaderCampaign from './_components/headerCampaign'
 import { toast } from 'sonner'
-import TicketModal from '../rifa/_components/TicketModal'
-import ImagesCarousel from '../_components/imagesCarousel'
-import PrizesCampaign from '../_components/prizesCampaign'
+import TicketModal from './_componentsFixed/TicketModal'
+import ImagesCarousel from './_components/imagesCarousel'
+import PrizesCampaign from './_components/prizesCampaign'
 
 export interface CampaignProps {
   campaign: CampaignType;
 }
 
-export default function LotteryPage({ campaign }: CampaignProps) {
+export default function RaffleAleatory({ campaign }: CampaignProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ticketCount, setTicketCount] = useState(campaign.minQuotes)
 

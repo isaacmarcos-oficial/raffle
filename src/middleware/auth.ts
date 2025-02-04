@@ -15,6 +15,11 @@ export async function authMiddleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Redirecionamento de "/dashboard" para "/dashboard/minhas-campanhas"
+  if (pathname === "/dashboard") {
+    return NextResponse.redirect(new URL("/dashboard/minhas-campanhas", req.url));
+  }
+
   // Redirecionar se o usuário não estiver autenticado
   if (!token) {
     const url = req.nextUrl.clone();

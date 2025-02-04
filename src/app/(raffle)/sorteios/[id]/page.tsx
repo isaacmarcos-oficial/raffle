@@ -1,6 +1,6 @@
-import Rifa from "../rifa/RafflePage";
-import Lottery from "../titulo/page";
 import { CampaignType } from "@/types/campaign";
+import RaffleAleatory from "./raffleAleatory";
+import RaffleFixed from "./raffleFixed";
 
 export default async function RafflePage({ params }: { params: Promise<{ id?: string }> }) {
   const resolvedParams = await params;
@@ -38,9 +38,9 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
     campaign.drawDate = new Date(campaign.drawDate);
 
     return campaign.type === "FIXED" ? (
-      <Rifa campaign={campaign} />
+      <RaffleFixed campaign={campaign} />
     ) : (
-      <Lottery campaign={campaign} />
+      <RaffleAleatory campaign={campaign} />
     );
   } catch (error) {
     console.error("Erro ao carregar os dados da API:", error);

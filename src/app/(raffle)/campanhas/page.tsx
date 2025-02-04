@@ -11,7 +11,6 @@ import { useState } from "react";
 import { toast } from 'sonner';
 
 export default function Campanhas() {
-
   const [code, setCode] = useState('');
   const [campaign, setCampaign] = useState<CampaignType | null>(null);
   const [isSearching, setIsSearching] = useState(false);
