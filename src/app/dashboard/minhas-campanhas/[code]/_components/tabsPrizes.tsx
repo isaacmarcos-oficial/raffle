@@ -14,7 +14,7 @@ type TicketPrizesProps = {
   onUpdatePrizes?: (updatedCampaign: Partial<CampaignType>) => Promise<void>; // Torna opcional
 }
 
-export default function TicketPrizes({ campaign }: TicketPrizesProps) {
+export default function TabsPrizes({ campaign }: TicketPrizesProps) {
   const [prizes, setPrizes] = useState(campaign.prizes || []);
 
   useEffect(() => {
@@ -32,10 +32,10 @@ export default function TicketPrizes({ campaign }: TicketPrizesProps) {
 
     const updatedPrizes = [...prizes];
     const swapIndex = direction === "up" ? index - 1 : index + 1;
-    
+
     // Troca a posição dos prêmios
     [updatedPrizes[index], updatedPrizes[swapIndex]] = [updatedPrizes[swapIndex], updatedPrizes[index]];
-    
+
     setPrizes(updatedPrizes);
     savePrizeOrder(updatedPrizes);
   };
@@ -72,7 +72,7 @@ export default function TicketPrizes({ campaign }: TicketPrizesProps) {
       description: prize.description,
       position: prizes.length + 1, // Garante que o novo prêmio tenha um position válido
     };
-  
+
     setPrizes((prev) => [...prev, newPrize]); // Atualiza a lista mantendo os prêmios existentes
     toast.success("Prêmio adicionado com sucesso!");
   };
@@ -139,11 +139,10 @@ export default function TicketPrizes({ campaign }: TicketPrizesProps) {
               <div className="flex justify-between items-center">
                 <div className="flex gap-5">
                   <div className="flex flex-col justify-between items-center gap-2">
-                  <Button size="sm" onClick={() => movePrize(index, "up")} disabled={index === 0}>
+                    <Button size="sm" onClick={() => movePrize(index, "up")} disabled={index === 0}>
                       <ChevronUp className="h-4 w-4" />
                     </Button>
                     <Button size="sm" onClick={() => movePrize(index, "down")} disabled={index === prizes.length - 1}>
-
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </div>

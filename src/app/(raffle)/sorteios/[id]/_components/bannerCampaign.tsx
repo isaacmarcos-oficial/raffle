@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
+import { formatDate } from "@/lib/format";
 import { CampaignType } from "@/types/campaign";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { Banknote, Bookmark, Calendar, Users } from "lucide-react";
 
 interface BannerCampaignProps {
@@ -33,7 +32,7 @@ export default function BannerCampaign({campaign}: BannerCampaignProps) {
           <div className="flex items-center">
             <Calendar className="text-green-500 h-4 w-4 mr-2" />
             <p className="text-xs">
-              {format(new Date(campaign.drawDate), "dd/MM/yyyy", { locale: ptBR, })}
+              {formatDate(campaign.drawDate)}
             </p>
           </div>
           <div className="flex items-center">

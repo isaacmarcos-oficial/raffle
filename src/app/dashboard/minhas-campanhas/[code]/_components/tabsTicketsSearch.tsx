@@ -10,7 +10,7 @@ type TicketsSearchProps = {
   onSearchPaymentMethod: (paymentMethod: string) => void;
 };
 
-export default function TicketsSearch({ onSearchName, onSearchNumber, onSearchPhone, onSearchPaymentMethod }: TicketsSearchProps) {
+export default function TabsTicketsSearch({ onSearchName, onSearchNumber, onSearchPhone, onSearchPaymentMethod }: TicketsSearchProps) {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const [phone, setPhone] = useState("");

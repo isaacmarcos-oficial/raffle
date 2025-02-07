@@ -1,18 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
 import { CampaignType, TicketType } from "@/types/campaign";
-import TabsTickets from "./_components/ticketsTable";
 import ModalTickets from "./_components/ticketsModal";
-import TicketsCard from "./_components/ticketsCard";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
-import TicketsSearch from "./_components/ticketsSearch";
-import CampaignSetting from "./_components/campaignSetting";
+import TabsTicketsSearch from "./_components/tabsTicketsSearch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Box, Eye } from "lucide-react";
-import TicketPrizes from "./_components/ticketPrizes";
+import TabsInsight from "./_components/tabsInsight";
+import TabsTicketsList from "./_components/tabsTicketsList";
+import TabsSetting from "./_components/tabsSetting";
+import TabsPrizes from "./_components/tabsPrizes";
+import { formatDate } from "@/lib/format";
 
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
@@ -165,9 +166,18 @@ export default function SorteioPage() {
     <div className="flex w-full items-center justify-center">
       <main className="flex-1 py-6 px-4 min-h-screen max-w-[900px]">
         <div className="container mx-auto space-y-8">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Sorteio</h1>
-            <div className="flex gap-2">
+          {/* HEADER */}
+          <div className="flex flex-col w-full md:flex-row items-center text-center md:text-left gap-4">
+            <div className="w-full">
+              <h1 className="text-2xl font-bold">{campaign?.title}</h1>
+              <div className="text-xs text-zinc-700">
+                <p><span className="font-bold">Criado:</span> {campaign?.startDate ? formatDate(campaign.startDate) : null}</p>
+                <p><span className="font-bold">Data do Sorteio:</span> {campaign?.drawDate ? formatDate(campaign.drawDate) : null}</p>
+
+              </div>
+            </div>
+
+            <div className="flex gap-2 w-full items-center md:justify-end justify-center">
               <Button asChild size="icon">
                 <Link href={`/dashboard/minhas-campanhas/`}>
                   <ArrowLeft className=" h-4 w-4" />
@@ -189,24 +199,24 @@ export default function SorteioPage() {
           <Tabs defaultValue="Insight" className="">
             <TabsList className="w-full mb-4" >
               <TabsTrigger value="Insight" className="w-full">Insight</TabsTrigger>
-              <TabsTrigger value="Bilhetes" className="w-full">Bilhetes</TabsTrigger>
+              <TabsTrigger value="Tickets" className="w-full">Bilhetes</TabsTrigger>
               <TabsTrigger value="Prizes" className="w-full">Premios</TabsTrigger>
               <TabsTrigger value="Setting" className="w-full">Configurações</TabsTrigger>
             </TabsList>
 
             <TabsContent value="Insight">
-              {campaign && <TicketsCard campaign={campaign} />}
+              {campaign && <TabsInsight campaign={campaign} />}
             </TabsContent>
 
-            <TabsContent value="Bilhetes">
-              <TicketsSearch
+            <TabsContent value="Tickets">
+              <TabsTicketsSearch
                 onSearchPaymentMethod={handleSearchPaymentMethod}
                 onSearchName={handleSearchName}
                 onSearchNumber={handleSearchNumber}
                 onSearchPhone={handleSearchPhone}
               />
 
-              <TabsTickets
+              <TabsTicketsList
                 tickets={filteredTickets || []}
                 handleApprove={handleApprove}
                 handleReject={handleReject}
@@ -216,11 +226,11 @@ export default function SorteioPage() {
             </TabsContent>
 
             <TabsContent value="Prizes">
-              {campaign && <TicketPrizes onUpdatePrizes={handleUpdateCampaign} campaign={campaign} />}
+              {campaign && <TabsPrizes onUpdatePrizes={handleUpdateCampaign} campaign={campaign} />}
             </TabsContent>
 
             <TabsContent value="Setting">
-              {campaign && <CampaignSetting onUpdateCampaign={handleUpdateCampaign} campaign={campaign} />}
+              {campaign && <TabsSetting onUpdateCampaign={handleUpdateCampaign} campaign={campaign} />}
             </TabsContent>
           </Tabs>
 

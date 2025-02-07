@@ -51,6 +51,7 @@ export interface CampaignType {
   type?: "FIXED" | "ALEATORY";
   price: number;
   drawDate: string | Date;
+  startDate: string | Date;
   quote: number;
   minQuotes: number;
   digitLength: number;

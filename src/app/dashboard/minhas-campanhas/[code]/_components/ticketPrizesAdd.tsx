@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -38,7 +39,7 @@ export default function AddPrizeModal({ onAdd, campaign }: AddPrizeModalProps) {
         },
         body: JSON.stringify({ title }),
       });
-  
+
       if (response.ok) {
         const newPrize = await response.json();
         onAdd(newPrize); // Atualiza a lista de prêmios no estado local
@@ -56,7 +57,7 @@ export default function AddPrizeModal({ onAdd, campaign }: AddPrizeModalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full p-6 bg-green-500 hover:bg-green-500/80 text-primary">
+        <Button className="w-full p-6">
           Adicionar prêmio
         </Button>
       </DialogTrigger>
@@ -65,17 +66,22 @@ export default function AddPrizeModal({ onAdd, campaign }: AddPrizeModalProps) {
           <DialogTitle>Adicionar Novo Prêmio</DialogTitle>
         </DialogHeader>
         <div className="space-y-1">
-            <Label htmlFor="title">Título do Prêmio</Label>
-            <Input
-              id="title"
-              placeholder="Ex: 1º Prêmio"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
+          <Label htmlFor="title">Título do Prêmio</Label>
+          <Input
+            id="title"
+            placeholder="Ex: 1º Prêmio"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
-        <DialogFooter>
+        <DialogFooter className="flex items-center justify-between w-full">
+          <DialogClose>
+            <Button variant="outline">
+              Cancelar
+            </Button>
+          </DialogClose>
           <Button
-            className="bg-green-500 hover:bg-green-500/80"
+            className=""
             onClick={handleSubmit}
           >
             Salvar

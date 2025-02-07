@@ -146,7 +146,7 @@ const CountrySelectOption = ({
   return (
     <CommandItem className="gap-2" onSelect={() => onChange(country)}>
       <FlagComponent country={country} countryName={countryName} />
-      <span className="flex-1 text-sm">{countryName}</span>
+      <span className="flex-1 text-sm ">{countryName}</span>
       <span className="text-sm text-foreground/50">{`+${RPNInput.getCountryCallingCode(country)}`}</span>
       <CheckIcon
         className={`ml-auto size-4 ${country === selectedCountry ? "opacity-100" : "opacity-0"}`}

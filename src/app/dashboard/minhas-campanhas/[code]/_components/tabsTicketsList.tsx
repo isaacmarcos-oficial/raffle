@@ -24,7 +24,7 @@ const formatBRL = (value: number) =>
     currency: "BRL",
   }).format(value);
 
-export default function TicketsTable({
+export default function TabsTicketsList({
   tickets,
   handleApprove,
   handleReject,

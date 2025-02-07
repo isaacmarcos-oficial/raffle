@@ -61,7 +61,7 @@ export async function POST(req: Request) {
     } = body;
 
     // Validações
-    if (!title || !description || !type || !price || !drawDate || !pixCode || !contactPhone || !ownerId) {
+    if (!title || !description || !type || !quote || !minQuotes || !price || !drawDate || !pixCode || !contactPhone || !ownerId) {
       return NextResponse.json(
         { error: "Campos obrigatórios ausentes ou inválidos" },
         { status: 400 }

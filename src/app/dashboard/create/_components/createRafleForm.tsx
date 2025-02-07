@@ -14,20 +14,22 @@ import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { useRouter } from 'next/navigation'
-import { Upload, X } from 'lucide-react'
+import { Info, Upload, X } from 'lucide-react'
 import Image from 'next/image'
+import { MoneyInput } from '@/components/ui/money-input'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 
 export function CreateRaffleForm() {
   const { data: session } = useSession();
   const [images, setImages] = useState<string[]>([]);
   const router = useRouter()
 
-  const [raffleType, setRaffleType] = useState<'rifa' | 'loteria'>('rifa')
+  const [raffleType, setRaffleType] = useState<'FIXED' | 'ALEATORY'>('FIXED')
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    quantity: '',
-    minQuantity: '',
+    quote: '',
+    minQuotes: '',
     price: '',
     drawDate: '',
     pixKey: '',
@@ -49,14 +51,6 @@ export function CreateRaffleForm() {
     setFormData((prevData) => ({
       ...prevData,
       phone: value || '',
-    }));
-  };
-
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const date = event?.target?.value ? new Date(event.target.value) : null;
-    setFormData((prevData) => ({
-      ...prevData,
-      drawDate: date ? date.toISOString().split('T')[0] : '', // Converte Date para string no formato YYYY-MM-DD
     }));
   };
 
@@ -104,17 +98,17 @@ export function CreateRaffleForm() {
   };
 
   const validateForm = () => {
-    const requiredFields = ['name', 'description', 'price', 'pixKey', 'phone', 'drawDate'];
+    const requiredFields = ['name', 'description', 'price', 'pixKey', 'phone', 'quote', 'minQuotes', 'drawDate'];
 
-    if (raffleType === 'rifa' &&
-      (!formData.quantity || isNaN(parseInt(formData.quantity)))
+    if (raffleType === 'FIXED' &&
+      (!formData.quote || isNaN(parseInt(formData.quote)))
     ) {
       return false;
     }
 
     if (
-      raffleType === 'loteria' &&
-      (!formData.minQuantity || isNaN(parseInt(formData.minQuantity)))
+      raffleType === 'ALEATORY' &&
+      (!formData.minQuotes || isNaN(parseInt(formData.minQuotes)))
     ) {
       return false;
     }
@@ -138,17 +132,17 @@ export function CreateRaffleForm() {
 
     // Configura os dados conforme o tipo de campanha
     const payload = {
+      type: raffleType === 'FIXED' ? 'FIXED' : 'ALEATORY',
+      images,
       title: formData.title,
       description: formData.description,
-      type: raffleType === 'rifa' ? 'FIXED' : 'ALEATORY',
-      ...(raffleType === 'rifa' && { quote: parseInt(formData.quantity) }),
-      ...(raffleType === 'loteria' && { minQuotes: parseInt(formData.minQuantity) }),
+      quote: parseInt(formData.quote),
+      minQuotes: parseInt(formData.minQuotes),
       price: parseFloat(formData.price),
       drawDate: formData.drawDate,
       pixCode: formData.pixKey,
       contactPhone: normalizedPhone,
       ownerId: session?.user?.id,
-      images
     };
 
     try {
@@ -184,24 +178,26 @@ export function CreateRaffleForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-      <div className="flex gap-2 w-full items-center justify-center">
+      {/* MODELO DA CAMPANHA */}
+      <div className="flex flex-col gap-2 w-full">
+        <Label>Modelo da campanha</Label>
         <RadioGroup
-          defaultValue="rifa"
+          defaultValue="FIXED"
           onValueChange={(value) => {
-            setRaffleType(value as 'rifa' | 'loteria');
+            setRaffleType(value as 'FIXED' | 'ALEATORY');
             setFormData((prevData) => ({
               ...prevData,
-              quantity: "",
-              minQuantity: "",
+              quote: "",
+              minQuotes: "",
             }));
           }}
           className='flex flex-col md:flex-row items-center justify-center gap-4 w-full'
         >
           <Card
-            onClick={() => setRaffleType('rifa')}
+            onClick={() => setRaffleType('FIXED')}
             className={cn(
               'flex gap-4 cursor-pointer border transition-all',
-              raffleType === 'rifa' ? 'border-green-500 bg-green-500/20 shadow-lg' : 'border-gray-300'
+              raffleType === 'FIXED' ? 'border-green-500 bg-green-500/20 shadow-lg' : 'border-gray-300'
             )}
           >
 
@@ -218,10 +214,10 @@ export function CreateRaffleForm() {
             </div>
           </Card>
           <Card
-            onClick={() => setRaffleType('loteria')}
+            onClick={() => setRaffleType('ALEATORY')}
             className={cn(
               'flex gap-4 cursor-pointer border transition-all',
-              raffleType === 'loteria' ? 'border-green-500 shadow-lg bg-green-500/20' : 'border-gray-300'
+              raffleType === 'ALEATORY' ? 'border-green-500 shadow-lg bg-green-500/20' : 'border-gray-300'
             )}
           >
             <div className="flex-1 flex-col gap-2">
@@ -239,6 +235,7 @@ export function CreateRaffleForm() {
         </RadioGroup>
       </div>
 
+      {/* IMAGENS */}
       <div className="space-y-2">
         <Label>Imagens</Label>
         <div className="flex gap-4 flex-wrap">
@@ -262,83 +259,109 @@ export function CreateRaffleForm() {
         </div>
       </div>
 
-
+      {/* TITULO */}
       <div className="space-y-2">
         <Label htmlFor="title">Nome da Rifa</Label>
         <Input id="title" value={formData.title} onChange={handleChange} required />
       </div>
 
+      {/* DESCRIÇÃO */}
       <div className="space-y-2">
         <Label htmlFor="description">Descrição da Rifa</Label>
         <Textarea id="description" value={formData.description} onChange={handleChange} required />
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 w-full items-center">
-        {raffleType === 'rifa' && (
-          <div className="space-y-2 w-full">
-            <Label htmlFor="quantity">Quantidade de números</Label>
-            <Select
-              onValueChange={(value) => handleSelectChange(value, 'quantity')}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {[25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map((val) => (
-                    <SelectItem key={val} value={val.toString()}>
-                      {val}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-        {raffleType === 'loteria' && (
-          <div className="space-y-2 w-full">
-            <Label htmlFor="minQuantity">Quantidade mínima de números</Label>
-            <Input
-              id="minQuantity"
-              type="number"
-              min="1"
-              value={formData.minQuantity}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        )}
-
+        {/* QUANTIDADE DE BILHETES */}
         <div className="space-y-2 w-full">
-          <Label htmlFor="price">Preço do número</Label>
+          <Label htmlFor="quote" className='flex items-center'>Bilhetes
+            <HoverCard>
+              <HoverCardTrigger className='cursor-help hover:text-green-500'>
+                <Info className="w-4 h-4 ml-1" />
+              </HoverCardTrigger>
+              <HoverCardContent>
+                A Quantidade de números que terá a sua campanha. A Quantidade mínima é 25.
+              </HoverCardContent>
+            </HoverCard>
+          </Label>
+          <Select
+            onValueChange={(value) => handleSelectChange(value, 'quote')}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {[25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map((val) => (
+                  <SelectItem key={val} value={val.toString()}>
+                    {val}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* QUANTIDADE MINIMA */}
+        <div className="space-y-2 w-full">
+          <Label htmlFor="minQuotes">Quantidade mínima</Label>
           <Input
-            id="price"
+            id="minQuotes"
             type="number"
-            min="0"
-            step="0.01"
-            value={formData.price}
+            min="1"
+            value={formData.minQuotes}
             onChange={handleChange}
             required
           />
         </div>
+      </div>
 
+      <div className="flex flex-col md:flex-row gap-4 w-full items-center">
+        {/* PREÇO */}
+        <div className="space-y-2 w-full">
+          <Label htmlFor="price">Valor do bilhete</Label>
+          <MoneyInput
+            value={formData.price}
+            onChange={(value) =>
+              setFormData((prev) => ({ ...prev, price: value }))
+            }
+          />
+
+          {/* <Input
+            id="price"
+            type="number"
+            min="0.00"
+            step="0.01"
+            value={formData.price}
+            onChange={handleChange}
+            required
+          /> */}
+        </div>
+
+        {/* DATA DO SORTEIO */}
         <div className="space-y-2 w-full">
           <Label htmlFor="drawDate">Data do sorteio</Label>
           <DatePicker
             id="drawDate"
-            value={formData.drawDate ? new Date(formData.drawDate).toISOString().split('T')[0] : ''} // Converte para string no formato correto
-            onChange={(date) => handleDateChange(date)} // Atualiza o estado
+            value={formData.drawDate}
+            onDateChange={(formattedDate) => setFormData((prevData) => ({
+              ...prevData,
+              drawDate: formattedDate
+            }))}
+            allowPastDates={false}
             required
           />
         </div>
       </div>
 
       <div className="w-full flex gap-4 flex-col md:flex-row">
+        {/* CHAVE PIX */}
         <div className="space-y-2 w-full">
           <Label htmlFor="pixKey">Chave Pix para pagamento</Label>
           <Input id="pixKey" value={formData.pixKey} onChange={handleChange} required />
         </div>
 
+        {/* TELEFONE */}
         <div className="space-y-2 w-full">
           <Label htmlFor="phone">Telefone para envio do comprovante</Label>
           <PhoneInput
@@ -350,10 +373,9 @@ export function CreateRaffleForm() {
         </div>
       </div>
 
-      <Button type="submit" className="w-full bg-green-500 hover:bg-green-500/80 text-primary font-semibold" disabled={loading}>
+      <Button type="submit" className="w-full" disabled={loading}>
         {loading ? 'Criando...' : 'Criar Campanha'}
       </Button>
     </form>
   )
 }
-

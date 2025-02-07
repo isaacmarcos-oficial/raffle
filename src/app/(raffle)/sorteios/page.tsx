@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { formatDate } from "@/lib/format"
 import { CampaignType } from "@/types/campaign"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import { Calendar, Gift, LogIn, Ticket, Users } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -93,9 +92,7 @@ export default function Raffles() {
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2" />
                       <p className="text-xs">
-                        {format(new Date(campaign.drawDate), "dd/MM/yyyy", {
-                          locale: ptBR,
-                        })}
+                        {formatDate(campaign.drawDate)}
                       </p>
                     </div>
                     <div className="flex items-center mt-2">

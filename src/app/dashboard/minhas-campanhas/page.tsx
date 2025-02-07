@@ -18,7 +18,6 @@ export default function MeusSorteios() {
           </div>
           <div>
             <CampaignsCard/>
-            {/* <RaffleTable /> */}
           </div>
         </div>
       </main>
