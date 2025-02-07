@@ -51,7 +51,6 @@ export async function POST(req: Request) {
       type,
       quote,
       minQuotes,
-      digitLength,
       price,
       drawDate,
       pixCode,
@@ -97,16 +96,16 @@ export async function POST(req: Request) {
         title,
         description,
         type,
-        quote: type === "FIXED" ? quote : 7,
-        minQuotes: type === "ALEATORY" ? minQuotes : 5,
+        quote,
+        minQuotes,
         price,
-        digitLength: type === "ALEATORY" ? digitLength : 7,
         startDate: new Date(), // Data de início atual
         drawDate: parsedDrawDate, // Certifique-se de passar uma data válida
         pixCode,
         contactPhone: phoneNormalized,
         ownerId, // Relaciona ao proprietário
-        images: images || []
+        images: images || [],
+        status: "DRAFT"
       },
     });
 

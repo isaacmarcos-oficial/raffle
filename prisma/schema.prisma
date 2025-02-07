@@ -19,12 +19,12 @@ enum PaymentType {
   CASH
 }
 
-// enum CampaignStatus {
-//   DRAFT
-//   ACTIVE
-//   FINISHED
-//   CANCELED
-// }
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  FINISHED
+  CANCELED
+}
 
 model Campaign {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
@@ -39,13 +39,12 @@ model Campaign {
   pixCode      String // Chave Pix para pagamento
   contactPhone String // Telefone para envio do comprovante
   minQuotes    Int? // Quantidade mínima (aplicável apenas para rifas aleatórias)
-  digitLength  Int? // Número de dígitos para rifas aleatórias
   ownerId      String         @db.ObjectId
   owner        Owner          @relation(fields: [ownerId], references: [id])
   tickets      Ticket[] // Tickets vinculados à rifa
   prizes       Prize[]
   images       String[] // URL da imagem no Cloudinary
-  // status       CampaignStatus
+  status       CampaignStatus
 }
 
 model Ticket {

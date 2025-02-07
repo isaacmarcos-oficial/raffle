@@ -14,10 +14,11 @@ import TabsTicketsList from "./_components/tabsTicketsList";
 import TabsSetting from "./_components/tabsSetting";
 import TabsPrizes from "./_components/tabsPrizes";
 import { formatDate } from "@/lib/format";
+import CampaignActions from "../_components/campaignActions";
 
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
-  const [campaign, setCampaign] = useState<CampaignType>();
+  const [campaign, setCampaign] = useState<CampaignType | null>(null); // Inicia como `null`
   const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [searchName, setSearchName] = useState("");
@@ -173,28 +174,59 @@ export default function SorteioPage() {
               <div className="text-xs text-zinc-700">
                 <p><span className="font-bold">Criado:</span> {campaign?.startDate ? formatDate(campaign.startDate) : null}</p>
                 <p><span className="font-bold">Data do Sorteio:</span> {campaign?.drawDate ? formatDate(campaign.drawDate) : null}</p>
-
+                <p><span className="font-bold">Status:</span> {campaign?.status}</p>
               </div>
             </div>
 
-            <div className="flex gap-2 w-full items-center md:justify-end justify-center">
-              <Button asChild size="icon">
-                <Link href={`/dashboard/minhas-campanhas/`}>
-                  <ArrowLeft className=" h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link href={`/dashboard/minhas-campanhas/${code}/sorteio`}>
-                  <Box className="mr-2 h-4 w-4" /> Sortear
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link href={`/sorteios/${code}`}>
-                  <Eye className="mr-2 h-4 w-4" /> Ver campanha
-                </Link>
-              </Button>
+            <div className="flex flex-col gap-2 items-center md:items-end">
+              <div className="flex gap-2 w-full items-center md:justify-end justify-center">
+                <Button asChild size="sm">
+                  <Link href={`/dashboard/minhas-campanhas/`}>
+                    <ArrowLeft className=" h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href={`/dashboard/minhas-campanhas/${code}/sorteio`}>
+                    <Box className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href={`/sorteios/${code}`}>
+                    <Eye className="h-4 w-4" />
+                  </Link>
+                </Button>
+                {campaign && (
+                  <CampaignActions
+                    campaign={campaign} // Garante que só passamos se `campaign` existir
+                    onUpdateStatus={async (status) => {
+                      if (!campaign) return; // Garante que `campaign` não seja null antes de atualizar
+
+                      const response = await fetch(`/api/campaign/${campaign.code}/status`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status }),
+                      });
+
+                      if (!response.ok) {
+                        console.error("Erro ao atualizar status da campanha.");
+                        toast.error("Erro ao atualizar status.");
+                        return;
+                      }
+
+                      // Garante que `setCampaign` receba um objeto válido
+                      setCampaign((prev) =>
+                        prev ? { ...prev, status } : null
+                      );
+
+                      toast.success(`Campanha atualizada para ${status}!`);
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
+
+
 
           <Tabs defaultValue="Insight" className="">
             <TabsList className="w-full mb-4" >

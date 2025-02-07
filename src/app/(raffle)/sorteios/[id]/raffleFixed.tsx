@@ -120,34 +120,49 @@ export default function RafleFixed({ campaign }: CampaignProps) {
 
         <BannerCampaign campaign={campaign} />
 
-        <ProgressCampaign campaign={campaign} />
+        {campaign.status === "CANCELED" ? (
+          <Card className="flex w-full justify-center items-center text-2xl font-bold uppercase bg-destructive text-white">
+            Campanha Cancelada
+          </Card>
+        ) : campaign.status === "FINISHED" ? (
+          <Card className="flex w-full justify-center items-center text-2xl font-bold uppercase">
+            Campanha Finalizada
+          </Card>) : null
+        }
 
-        <Card className="p-6 w-full">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="">
-              Descrição/ Regulamento
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 whitespace-pre-line">
-            {campaign.description}
-          </CardContent>
-        </Card>
-        <div className="flex flex-col lg:flex-row w-full gap-6">
-          {campaign.images.length > 0 && <ImagesCarousel images={campaign.images} />}
-          <PrizesCampaign campaign={campaign} />
-        </div>
+        {campaign.status !== "CANCELED" && (
+          <>
+            <ProgressCampaign campaign={campaign} />
 
-        <div className="flex w-full gap-6">
-          <TicketGrid
-            onTicketDeselect={handleTicketRemove}
-            tickets={tickets}
-            selectedNumbers={selectedNumbers}
-            totalNumbers={campaign.quote}
-            onTicketSelect={handleTicketSelect}
-          />
-        </div>
+            <Card className="p-6 w-full">
+              <CardHeader className="p-0 mb-4">
+                <CardTitle className="">
+                  Descrição/ Regulamento
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 whitespace-pre-line">
+                {campaign.description}
+              </CardContent>
+            </Card>
+            <div className="flex flex-col lg:flex-row w-full gap-6">
+              {campaign.images.length > 0 && <ImagesCarousel images={campaign.images} />}
+              <PrizesCampaign campaign={campaign} />
+            </div>
 
-        <ShareCampaign campaign={campaign} />
+            {campaign.status === "ACTIVE" &&
+              <div className="flex w-full gap-6">
+                <TicketGrid
+                  onTicketDeselect={handleTicketRemove}
+                  tickets={tickets}
+                  selectedNumbers={selectedNumbers}
+                  totalNumbers={campaign.quote}
+                  onTicketSelect={handleTicketSelect}
+                />
+              </div>
+            }
+            <ShareCampaign campaign={campaign} />
+          </>
+        )}
       </main>
 
       <TicketsDrawer

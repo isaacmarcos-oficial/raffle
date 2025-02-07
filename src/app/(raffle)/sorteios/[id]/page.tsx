@@ -22,7 +22,7 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
       const errorDetails = await response.json();
       console.error("Erro ao carregar campanha:", errorDetails);
       return (
-        <div>
+        <div className="flex items-center justify-center w-screen h-screen text-2xl font-bold">
           Erro ao carregar a campanha
           {errorDetails && <pre>{JSON.stringify(errorDetails, null, 2)}</pre>}
         </div>
@@ -31,8 +31,8 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
 
     const campaign: CampaignType = await response.json();
 
-    if (!campaign || !campaign.type) {
-      return <div>Campanha não encontrada ou tipo inválido.</div>;
+    if (!campaign || !campaign.type || campaign.status === "DRAFT") {
+      return <div className="flex items-center justify-center w-screen h-screen text-2xl font-bold">Campanha não encontrada ou tipo inválido.</div>;
     }
 
     campaign.drawDate = new Date(campaign.drawDate);
@@ -42,6 +42,7 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
     ) : (
       <RaffleAleatory campaign={campaign} />
     );
+    
   } catch (error) {
     console.error("Erro ao carregar os dados da API:", error);
     return <div>Erro ao carregar os dados da campanha.</div>;

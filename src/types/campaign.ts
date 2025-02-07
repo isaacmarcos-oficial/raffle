@@ -44,7 +44,7 @@ export interface PrizeType {
 }
 
 export interface CampaignType {
-  id?: string;
+  id: string;
   description: string;
   title: string;
   code?: string;
@@ -54,7 +54,6 @@ export interface CampaignType {
   startDate: string | Date;
   quote: number;
   minQuotes: number;
-  digitLength: number;
   pixCode: string;
   contactPhone: string;
   ownerId: string;
@@ -65,6 +64,7 @@ export interface CampaignType {
   }
   prizes: PrizeType[]
   images: string[]
+  status: "DRAFT" | "ACTIVE" | "CANCELED" | 'FINISHED';
 }
 
 export interface RaffleState {

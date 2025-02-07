@@ -7,6 +7,7 @@ import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
+import { CampaignType } from "@/types/campaign"
 
 interface Ticket {
   number: string;
@@ -29,6 +30,7 @@ interface Prize {
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
   const [prizes, setPrizes] = useState<Prize[]>([]);
+  const [campaign, setCampaign] = useState<CampaignType>();
   const [currentNumber, setCurrentNumber] = useState("00");
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isCounting, setIsCounting] = useState(false);
@@ -61,6 +63,7 @@ export default function SorteioPage() {
             );
           setAvailableTickets(transformedTickets);
           setPrizes(data.prizes);
+          setCampaign(data);
         }
       } catch (error) {
         console.error("Erro ao carregar dados da campanha:", error);
@@ -72,6 +75,29 @@ export default function SorteioPage() {
 
     fetchCampaignData();
   }, [code]);
+
+  // Atualiza o status da campanha
+  const updateCampaignStatus = async (status: string) => {
+    try {
+      const response = await fetch(`/api/campaign/${code}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY || "",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        toast.success(`Campanha foi atualizada para ${status}`);
+      } else {
+        throw new Error("Falha ao atualizar status da campanha");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar status da campanha:", error);
+      toast.error("Erro ao atualizar status da campanha.");
+    }
+  };
 
   const assignPrizeToWinner = async (ticket: Ticket, prizeId?: string) => {
     if (!prizeId) {
@@ -171,59 +197,81 @@ export default function SorteioPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br p-4">
-      <div className="max-w-lg w-full my-auto mx-auto space-y-8">
-        <Card className="flex flex-col items-center w-full">
-          <CardHeader className="flex flex-col items-center gap-2">
-            <PackageOpen className="w-12 h-12 text-green-500" />
-            <CardTitle className="text-2xl">Boa sorte!</CardTitle>
-          </CardHeader>
-          <CardContent className="w-full">
-            <Card className="w-full my-4 flex items-center justify-center p-8 bg-foreground">
-              <motion.div
-                key={currentNumber}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="text-4xl font-bold tracking-[1.5rem] text-green-500 font-mono"
-              >
-                {countdown !== null ? countdown : currentNumber}
-              </motion.div>
-            </Card>
-
-            <Button
-              className="w-full p-6 text-lg bg-green-500 hover:bg-green-600"
-              onClick={startCountdown}
-              disabled={isCounting || availableTickets.length === 0 || !prizes.some(prize => !prize.winnerNumber)}
-            >
-              {isCounting ? "Sorteando!" : "Sortear"}
-            </Button>
-
-            {isLoading && (
-              <div className="text-center mt-4">Carregando...</div>
-            )}
-          </CardContent>
+      {campaign?.status === "DRAFT" ? (
+        <Card className="flex flex-col items-center w-full text-xl font-bold">
+          Você precisa ativar a campanha antes de iniciar o sorteio.
         </Card>
+      ) : campaign?.status === "CANCELED" ? (
+        <Card className="flex flex-col items-center w-full text-xl font-bold">
+          A campanha foi cancelada.
+        </Card>
+      ) :
+        (campaign?.status === "ACTIVE" || campaign?.status === "FINISHED") &&
+        (
+          <div className="max-w-lg w-full my-auto mx-auto space-y-8">
+            <Card className="flex flex-col items-center w-full">
+              <CardHeader className="flex flex-col items-center gap-2">
+                <PackageOpen className="w-12 h-12 text-green-500" />
+                <CardTitle className="text-2xl">Boa sorte!</CardTitle>
+              </CardHeader>
+              <CardContent className="w-full">
+                <Card className="w-full my-4 flex items-center justify-center p-8 bg-foreground">
+                  <motion.div
+                    key={currentNumber}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-4xl font-bold tracking-[1.5rem] text-green-500 font-mono"
+                  >
+                    {countdown !== null ? countdown : currentNumber}
+                  </motion.div>
+                </Card>
 
-        <div className="flex flex-col w-full gap-4">
-          {prizes.map((prize) => (
-            <Card key={prize.id} className="w-full">
-              <CardContent className="flex flex-col gap-2 p-4">
-                <div className="font-bold text-lg">{prize.title}</div>
-                {prize.winnerNumber ? (
-                  <div className="flex items-center gap-2 text-lg text-green-600 font-semibold">
-                    <Badge className="flex text-lg items-center justify-center">
-                      {prize.winnerNumber}
-                    </Badge>
-                    {prize.winnerName}
-                  </div>
+                {campaign?.status !== "ACTIVE" ? (
+                  <Button
+                    className="w-full p-6 text-lg bg-blue-500 hover:bg-blue-600"
+                    onClick={() => updateCampaignStatus("draft")}
+                  >
+                    Finalizar campanha
+                  </Button>
                 ) : (
-                  <div className="text-yellow-500 font-semibold">Aguardando Sorteio...</div>
+                  <Button
+                    className="w-full p-6 text-lg bg-green-500 hover:bg-green-600"
+                    onClick={startCountdown}
+                    disabled={isCounting || availableTickets.length === 0 || !prizes.some(prize => !prize.winnerNumber)}
+                  >
+                    {isCounting ? "Sorteando!" : "Sortear"}
+                  </Button>
+                )}
+
+
+                {isLoading && (
+                  <div className="text-center mt-4">Carregando...</div>
                 )}
               </CardContent>
             </Card>
-          ))}
-        </div>
-      </div>
+
+            <div className="flex flex-col w-full gap-4">
+              {prizes.map((prize) => (
+                <Card key={prize.id} className="w-full">
+                  <CardContent className="flex flex-col gap-2 p-4">
+                    <div className="font-bold text-lg">{prize.title}</div>
+                    {prize.winnerNumber ? (
+                      <div className="flex items-center gap-2 text-lg text-green-600 font-semibold">
+                        <Badge className="flex text-lg items-center justify-center">
+                          {prize.winnerNumber}
+                        </Badge>
+                        {prize.winnerName}
+                      </div>
+                    ) : (
+                      <div className="text-yellow-500 font-semibold">Aguardando Sorteio...</div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
     </div>
   )
 }
