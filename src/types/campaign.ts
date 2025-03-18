@@ -65,6 +65,7 @@ export interface CampaignType {
   prizes: PrizeType[]
   images: string[]
   status: "DRAFT" | "ACTIVE" | "CANCELED" | 'FINISHED';
+  paid: boolean
 }
 
 export interface RaffleState {

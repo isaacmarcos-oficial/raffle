@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 interface CampaignActionsProps {
   campaign: CampaignType;
-  onUpdateStatus: (status: "DRAFT" | "ACTIVE" | "FINISHED" | "CANCELED") => void;
+  onUpdateStatus: (status: "DRAFT" | "ACTIVE" | "FINISHED" | "CANCELED") => Promise<void>;
 }
 
 export default function CampaignActions({
@@ -14,11 +14,17 @@ export default function CampaignActions({
 
   const handleStatusChange = async (newStatus: "ACTIVE" | "FINISHED" | "CANCELED") => {
     try {
+      // Bloqueia ativação se a campanha não estiver paga
+      if (newStatus === "ACTIVE" && !campaign.paid) {
+        toast.error("A campanha precisa ser paga antes de ser ativada.");
+        return;
+      }
+
       await onUpdateStatus(newStatus);
       toast.success(`Status atualizado para: ${newStatus}`);
     } catch (error) {
-      console.error("Erro ao atualizar status:", error);
-      toast.error("Erro ao atualizar status");
+      console.error("❌ Erro ao atualizar status:", error);
+      toast.error("Erro ao atualizar status.");
     }
   };
 
@@ -27,10 +33,19 @@ export default function CampaignActions({
       {/* Se a campanha estiver em DRAFT */}
       {campaign.status === "DRAFT" && (
         <>
-          <Button size={"sm"} onClick={() => handleStatusChange("ACTIVE")} className="bg-green-500">
+          <Button
+            size={"sm"}
+            onClick={() => handleStatusChange("ACTIVE")}
+            className="bg-green-500"
+          >
             Publicar
           </Button>
-          <Button size={"sm"} variant={"destructive"} onClick={() => handleStatusChange("CANCELED")} className="font-bold">
+          <Button
+            size={"sm"}
+            variant={"destructive"}
+            onClick={() => handleStatusChange("CANCELED")}
+            className="font-bold"
+          >
             Cancelar
           </Button>
         </>
@@ -39,10 +54,16 @@ export default function CampaignActions({
       {/* Se a campanha estiver ativa */}
       {campaign.status === "ACTIVE" && (
         <>
-          <Button onClick={() => handleStatusChange("FINISHED")} className="bg-blue-500">
+          <Button
+            onClick={() => handleStatusChange("FINISHED")}
+            className="bg-blue-500"
+          >
             Finalizar
           </Button>
-          <Button onClick={() => handleStatusChange("CANCELED")} className="bg-red-500">
+          <Button
+            onClick={() => handleStatusChange("CANCELED")}
+            className="bg-red-500"
+          >
             Cancelar
           </Button>
         </>

@@ -15,6 +15,7 @@ import TabsSetting from "./_components/tabsSetting";
 import TabsPrizes from "./_components/tabsPrizes";
 import { formatDate } from "@/lib/format";
 import CampaignActions from "../_components/campaignActions";
+import PayCampaignButton from "@/components/StripeCheckout/PayCampaignButton";
 
 export default function SorteioPage() {
   const params = useParams<{ code: string }>()
@@ -195,11 +196,12 @@ export default function SorteioPage() {
                     <Eye className="h-4 w-4" />
                   </Link>
                 </Button>
+
                 {campaign && (
                   <CampaignActions
-                    campaign={campaign} // Garante que só passamos se `campaign` existir
+                    campaign={campaign} // Garante que `campaign` não seja null
                     onUpdateStatus={async (status) => {
-                      if (!campaign) return; // Garante que `campaign` não seja null antes de atualizar
+                      if (!campaign) return; // Evita execução se `campaign` for null
 
                       const response = await fetch(`/api/campaign/${campaign.code}/status`, {
                         method: "PATCH",
@@ -207,22 +209,34 @@ export default function SorteioPage() {
                         body: JSON.stringify({ status }),
                       });
 
+                      console.log("🔵 Resposta recebida da API:", response);
+
                       if (!response.ok) {
-                        console.error("Erro ao atualizar status da campanha.");
-                        toast.error("Erro ao atualizar status.");
+                        const errorData = await response.json();
+                        console.error("❌ Erro ao atualizar status da campanha:", errorData);
+                        toast.error(errorData.error || "Erro ao atualizar status.");
                         return;
                       }
 
-                      // Garante que `setCampaign` receba um objeto válido
-                      setCampaign((prev) =>
-                        prev ? { ...prev, status } : null
-                      );
+                      // Obtém os novos dados da campanha após a atualização
+                      const updatedCampaign = await response.json();
+
+                      // Atualiza o estado corretamente
+                      setCampaign((prev) => (prev ? { ...prev, ...updatedCampaign } : null));
 
                       toast.success(`Campanha atualizada para ${status}!`);
                     }}
                   />
                 )}
               </div>
+              <div className="">
+                {campaign?.paid}
+              </div>
+              {campaign?.paid === false && (
+                <div className="flex gap-2">
+                  <PayCampaignButton campaignId={campaign.id} type="PAY_PER_CAMPAIGN" />
+                </div>
+              )}
             </div>
           </div>
 

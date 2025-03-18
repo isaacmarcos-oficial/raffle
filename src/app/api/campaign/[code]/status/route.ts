@@ -8,13 +8,28 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ co
     const code =  await params;
 
     if (!code) {
-      return NextResponse.json({ error: "ID da campanha é obrigatório." }, { status: 400 });
+      return NextResponse.json({ error: "Código da campanha é obrigatório." }, { status: 400 });
+    }
+
+    // Verifica se a campanha existe
+    const campaign = await prisma.campaign.findUnique({
+      where: code,
+      select: { status: true, paid: true },
+    });
+
+    if (!campaign) {
+      return NextResponse.json({ error: "Campanha não encontrada." }, { status: 404 });
     }
 
     // Valida se o status é válido
     const validStatuses = ["DRAFT", "ACTIVE", "CANCELED", "FINISHED"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json({ error: "Status inválido." }, { status: 400 });
+    }
+
+    // ❌ Bloqueia a ativação se a campanha não estiver paga
+    if (status === "ACTIVE" && !campaign.paid) {
+      return NextResponse.json({ error: "A campanha precisa ser paga antes de ser ativada." }, { status: 400 });
     }
 
     // Atualiza o status da campanha

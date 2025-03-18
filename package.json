@@ -29,6 +29,7 @@
     "embla-carousel-react": "^8.5.1",
     "framer-motion": "^11.13.5",
     "lucide-react": "^0.462.0",
+    "micro": "^10.0.1",
     "next": "15.0.3",
     "next-auth": "^4.24.11",
     "next-share": "^0.27.0",
@@ -44,6 +45,7 @@
     "shadcn": "^2.1.7",
     "sidebar": "^1.0.2",
     "sonner": "^1.7.0",
+    "stripe": "^17.7.0",
     "tailwind-merge": "^2.5.5",
     "vaul": "^1.1.1"
   },

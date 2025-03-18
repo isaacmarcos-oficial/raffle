@@ -62,13 +62,9 @@ export const authOptions: NextAuthOptions = {
 		}),
 	],
 	callbacks: {
-		/**
-		 * Callback chamado no login
-		 * - Cria um novo `Owner` se o e-mail não existir no banco.
-		 * - Caso o e-mail já exista, utiliza a conta existente.
-		 */
-
-
+		async redirect({ url, baseUrl }) {
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
 		async signIn({ user, account }) {
 			if (account?.provider === "google") {
 				try {
@@ -103,11 +99,6 @@ export const authOptions: NextAuthOptions = {
 
 			return true; // Autoriza outros métodos de login
 		},
-
-		/**
-		 * Callback chamado ao criar a sessão do usuário.
-		 * - Inclui o ID e outras informações do `Owner` na sessão.
-		 */
 		async session({ session }) {
 
 			if (session.user?.email) {

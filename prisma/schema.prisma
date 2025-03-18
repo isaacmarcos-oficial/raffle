@@ -45,6 +45,7 @@ model Campaign {
   prizes       Prize[]
   images       String[] // URL da imagem no Cloudinary
   status       CampaignStatus
+  paid         Boolean        @default(false)
 }
 
 model Ticket {
@@ -63,12 +64,13 @@ model Ticket {
 }
 
 model Owner {
-  id       String     @id @default(auto()) @map("_id") @db.ObjectId
-  email    String     @unique // E-mail do owner para login
-  password String // Senha do owner (para integrar ao NextAuth)
-  name     String
-  phone    String
-  campaign Campaign[] // Rifas criadas pelo owner
+  id              String     @id @default(auto()) @map("_id") @db.ObjectId
+  email           String     @unique // E-mail do owner para login
+  password        String // Senha do owner (para integrar ao NextAuth)
+  name            String
+  phone           String
+  campaign        Campaign[] // Rifas criadas pelo owner
+  hasSubscription Boolean    @default(false) // Indica se o usuário tem plano ativo
 }
 
 model Buyer {

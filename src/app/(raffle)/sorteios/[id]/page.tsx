@@ -11,7 +11,7 @@ export default async function RafflePage({ params }: { params: Promise<{ id?: st
   }
 
   try {
-    const response = await fetch(`${process.env.API_URL}/api/campaign/${code}`, {
+    const response = await fetch(`${process.env.BASE_URL}/api/campaign/${code}`, {
       cache: "no-cache",
       headers: {
         "x-api-key": process.env.API_KEY || "",
